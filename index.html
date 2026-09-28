@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Veena Studios | Stories, Books, Games & Creativity</title>
+  <meta name="description" content="Official website of Veena Studios — books, children's learning, games and original entertainment.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #080b14;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    header {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 70% 30%, rgba(129, 83, 255, .28), transparent 35%),
+        radial-gradient(circle at 20% 70%, rgba(255, 176, 59, .15), transparent 30%),
+        linear-gradient(135deg, #080b14, #10152a);
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      margin-top: 0;
+      padding: 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .logo span {
+      color: #f4b84a;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 28px;
+    }
+
+    nav a {
+      color: #e9e9ef;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: #f4b84a;
+    }
+
+    .hero {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 70px 28px 110px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-content {
+      max-width: 780px;
+    }
+
+    .tag {
+      color: #f4b84a;
+      font-weight: bold;
+      letter-spacing: 3px;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(52px, 9vw, 105px);
+      line-height: .95;
+      letter-spacing: -4px;
+      margin-bottom: 28px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, #f6c65b, #f092ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      color: #bfc3d1;
+      font-size: 19px;
+      max-width: 650px;
+      margin-bottom: 35px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #ffffff;
+      color: #090b13;
+      padding: 14px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid #555b70;
+    }
+
+    section {
+      padding: 95px 28px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .section-label {
+      color: #f4b84a;
+      font-size: 12px;
+      letter-spacing: 3px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: clamp(34px, 5vw, 54px);
+      margin-bottom: 16px;
+    }
+
+    .intro {
+      color: #aeb3c3;
+      max-width: 700px;
+      margin-bottom: 45px;
+    }
+
+    .brands {
+      background: #0d101c;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      min-height: 260px;
+      padding: 32px;
+      border: 1px solid #24293b;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #141827, #0d101a);
+      transition: .25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #6e668f;
+    }
+
+    .card-number {
+      color: #777e94;
+      font-size: 13px;
+      margin-bottom: 50px;
+    }
+
+    .card h3 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #aeb3c3;
+    }
+
+    .books {
+      background: #080b14;
+    }
+
+    .book-box {
+      border: 1px solid #292e41;
+      border-radius: 20px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      background: #101421;
+    }
+
+    .book-art {
+      min-height: 380px;
+      border-radius: 14px;
+      background:
+        linear-gradient(rgba(8,10,20,.1), rgba(8,10,20,.6)),
+        linear-gradient(135deg, #d29a44, #5b2e76 60%, #101525);
+      display: flex;
+      align-items: end;
+      padding: 30px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .book-copy h3 {
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+
+    .book-copy p {
+      color: #b7bbca;
+      margin-bottom: 25px;
+    }
+
+    .about {
+      background: linear-gradient(135deg, #12162a, #0a0d17);
+    }
+
+    .about p {
+      color: #bbc0cf;
+      max-width: 800px;
+      font-size: 18px;
+    }
+
+    footer {
+      border-top: 1px solid #252a3b;
+      padding: 40px 28px;
+      color: #8e94a6;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    @media (max-width: 750px) {
+      nav ul {
+        display: none;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .grid,
+      .book-box {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header id="home">
+  <nav>
+    <div class="logo">VEENA <span>STUDIOS</span></div>
+
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#worlds">Our Worlds</a></li>
+      <li><a href="#books">Books</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-content">
+      <div class="tag">STORIES • LEARNING • PLAY</div>
+
+      <h1>Ideas become <span>worlds.</span></h1>
+
+      <p>
+        Veena Studios is an independent creative studio building meaningful
+        stories, books, learning experiences, games and original entertainment.
+      </p>
+
+      <a class="btn" href="#worlds">Explore Veena Studios</a>
+      <a class="btn secondary" href="#books">Discover Our Books</a>
+    </div>
+  </div>
+</header>
+
+
+<section class="brands" id="worlds">
+  <div class="container">
+
+    <div class="section-label">OUR CREATIVE UNIVERSE</div>
+    <h2>Different worlds. One studio.</h2>
+
+    <p class="intro">
+      From thoughtful books to children's learning and interactive play,
+      every Veena Studios project is created with a clear purpose.
+    </p>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-number">01 / PUBLISHING</div>
+        <h3>Veena Publishing</h3>
+        <p>
+          Books and original writing created to entertain, connect and leave
+          something meaningful with the reader.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-number">02 / KIDS</div>
+        <h3>SR KIDS</h3>
+        <p>
+          Colourful activity and learning experiences designed to make
+          curiosity part of childhood.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-number">03 / INTERACTIVE</div>
+        <h3>SR GAMERS</h3>
+        <p>
+          Child-friendly games where play, discovery and learning come
+          together.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-number">04 / ENTERTAINMENT</div>
+        <h3>Veena Originals</h3>
+        <p>
+          Original stories, short-form drama and future screen entertainment
+          from the world of Veena Studios.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="books" id="books">
+  <div class="container">
+
+    <div class="section-label">VEENA PUBLISHING</div>
+    <h2>Stories worth keeping.</h2>
+
+    <p class="intro">
+      Our growing publishing catalogue includes personal stories,
+      thoughtful writing and books created especially for young learners.
+    </p>
+
+    <div class="book-box">
+
+      <div class="book-art">
+        VEENA STUDIOS<br>
+        Publishing Collection
+      </div>
+
+      <div class="book-copy">
+        <div class="section-label">BOOKS & EDITIONS</div>
+
+        <h3>A growing independent catalogue.</h3>
+
+        <p>
+          Discover Veena Studios books including original Hindi and English
+          titles and the expanding SR KIDS learning collection.
+        </p>
+
+        <a class="btn" href="#">Books coming here soon</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="about" id="about">
+  <div class="container">
+
+    <div class="section-label">ABOUT THE STUDIO</div>
+    <h2>Created independently.<br>Built to grow.</h2>
+
+    <p>
+      Veena Studios brings publishing, children's learning, interactive
+      experiences and original storytelling under one creative identity.
+      What begins with a book or an idea can grow into something much bigger.
+    </p>
+
+  </div>
+</section>
+
+
+<footer>
+  <div class="footer-inner">
+    <strong>VEENA STUDIOS</strong>
+    <span>© 2026 Veena Studios. All rights reserved.</span>
+  </div>
+</footer>
+
+</body>
+</html>
