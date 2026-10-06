@@ -472,6 +472,21 @@ footer{
 
   .footer{flex-direction:column}
 }
+
+/* SR GAMERS CINEMATIC SECTION */
+.sr-games-hero{margin-top:42px;border-radius:28px;overflow:hidden;position:relative;min-height:330px;border:1px solid rgba(231,189,98,.28);background:radial-gradient(circle at 50% 18%,rgba(231,189,98,.30),transparent 28%),linear-gradient(135deg,#080b12,#16100b 52%,#07101a);display:grid;place-items:center;text-align:center;padding:38px 22px}
+.sr-games-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 25%,rgba(231,189,98,.08) 45%,transparent 65%),repeating-linear-gradient(90deg,transparent 0 90px,rgba(255,255,255,.015) 91px);pointer-events:none}
+.sr-ram-mark{position:relative;width:116px;height:116px;border:2px solid #e7bd62;border-radius:50%;display:grid;place-items:center;margin:auto;box-shadow:0 0 45px rgba(231,189,98,.18)}
+.sr-ram-mark span{font-size:48px;color:#e7bd62;font-weight:900;line-height:1}.sr-ram-mark small{position:absolute;bottom:10px;font-size:9px;letter-spacing:2px;color:#fff}
+.sr-brand{position:relative}.sr-brand h3{font-size:clamp(46px,8vw,82px);line-height:.9;margin:18px 0 10px;color:#e7bd62;letter-spacing:-3px;text-shadow:0 3px 0 #4a3513}.sr-brand p{color:#e5e5e5;letter-spacing:5px;font-size:12px}.sr-brand .sr-motto{margin-top:13px;color:#aeb2bd;letter-spacing:3px;font-size:11px}
+.tap-showcase{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;margin-top:24px}.tap-visual,.tap-info{border-radius:28px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(145deg,#151925,#0b0f17);min-height:360px;overflow:hidden}
+.tap-visual{position:relative;display:flex;align-items:center;justify-content:center;padding:30px;background:radial-gradient(circle at 45% 45%,#26324a 0,#101725 42%,#080b12 75%)}
+.tap-orb{position:absolute;border-radius:50%;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 30px rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.2)}.orb-good{width:90px;height:90px;background:#49c56c;left:14%;top:22%;font-size:35px}.orb-bad{width:82px;height:82px;background:#d94848;right:13%;top:20%;font-size:32px}.orb-star{width:110px;height:110px;background:#e7bd62;color:#151515;left:42%;bottom:22%;font-size:46px}
+.phone{width:150px;height:270px;border:7px solid #252a35;border-radius:28px;background:linear-gradient(#132036,#0c111b);position:absolute;right:7%;bottom:-28px;transform:rotate(6deg);box-shadow:0 18px 45px rgba(0,0,0,.55)}.phone:before{content:"120 ★";position:absolute;top:18px;left:25px;color:#fff;font-weight:800}.phone:after{content:"●   ✦   ●";position:absolute;top:100px;left:20px;color:#e7bd62;font-size:23px;letter-spacing:7px}
+.finger{position:absolute;right:3%;bottom:20px;font-size:72px;transform:rotate(-25deg);filter:drop-shadow(0 8px 10px rgba(0,0,0,.4))}
+.tap-title{position:absolute;left:8%;bottom:12%;z-index:2}.tap-title strong{display:block;font-size:clamp(38px,6vw,65px);line-height:1;color:#fff}.tap-title span{color:#e7bd62;letter-spacing:3px;font-size:11px}
+.tap-info{padding:38px;display:flex;flex-direction:column;justify-content:center}.tap-info h3{font-size:42px;line-height:1;margin:7px 0 15px}.tap-info p{color:#a9adb8}.game-features{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.game-features span{padding:8px 11px;border-radius:20px;background:#171d29;color:#d6d8df;font-size:11px;border:1px solid rgba(255,255,255,.08)}
+@media(max-width:800px){.tap-showcase{grid-template-columns:1fr}.tap-visual{min-height:330px}.phone{width:125px;height:225px;right:4%}.finger{font-size:55px}.tap-title{left:7%;bottom:8%}.sr-games-hero{min-height:300px}}
 </style>
 <meta name="author" content="Varun Gupta">
 <meta name="theme-color" content="#070910">
@@ -608,21 +623,33 @@ footer{
 <section id="games">
 <div class="container">
   <div class="section-tag">SR GAMERS • NOW PLAYABLE</div>
-  <h2 class="section-title">Tap. Dodge. Score Big.</h2>
-  <p class="section-desc">Veena Studios now has a playable world. Tap Rush is our first SR GAMERS release — quick to start, easy to understand and built for repeat play.</p>
-  <div class="active-grid">
-    <div class="feature-card games">
-      <div class="card-label">PLAY NOW</div>
-      <h3>Tap Rush</h3>
-      <p>Catch the right targets, avoid danger and chase your best score as the pace rises.</p>
-      <div class="buttons">
-        <a class="btn btn-primary" href="https://tap-rush-trial-2-acshom.v2.appdeploy.ai/" target="_blank" rel="noopener">Play Tap Rush</a>
-      </div>
+  <h2 class="section-title">Play. Think. Improve.</h2>
+  <p class="section-desc">The gaming world of Veena Studios — beginning with Tap Rush and built to grow one finished game at a time.</p>
+
+  <div class="sr-games-hero" aria-label="SR Gamers brand">
+    <div class="sr-brand">
+      <div class="sr-ram-mark"><span>🏹</span><small>SHRI RAM</small></div>
+      <h3>SR GAMERS</h3>
+      <p>SHRI RAM GAMERS</p>
+      <div class="sr-motto">PLAY • LEARN • GROW</div>
     </div>
-    <div class="feature-card">
-      <div class="card-label">SR GAMERS</div>
-      <h3>More games will join this world.</h3>
-      <p>Tap Rush is live today. New games will be added only when they are genuinely ready to play.</p>
+  </div>
+
+  <div class="tap-showcase">
+    <div class="tap-visual" aria-label="Tap Rush game preview">
+      <div class="tap-orb orb-good">✓</div>
+      <div class="tap-orb orb-bad">!</div>
+      <div class="tap-orb orb-star">★</div>
+      <div class="phone" aria-hidden="true"></div>
+      <div class="finger" aria-hidden="true">👆</div>
+      <div class="tap-title"><span>SR GAMERS PRESENTS</span><strong>TAP RUSH</strong></div>
+    </div>
+    <div class="tap-info">
+      <div class="card-label">LIVE • PLAY NOW</div>
+      <h3>Tap Rush</h3>
+      <p>Tap the right targets, avoid danger and chase your best score as the pace rises. Quick rounds, simple controls and instant play.</p>
+      <div class="game-features"><span>Simple Gameplay</span><span>Quick Rounds</span><span>Reaction & Focus</span></div>
+      <div class="buttons"><a class="btn btn-primary" href="https://tap-rush-trial-2-acshom.v2.appdeploy.ai/" target="_blank" rel="noopener">▶ Play Tap Rush</a></div>
     </div>
   </div>
 </div>
