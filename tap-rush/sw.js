@@ -1,4 +1,4 @@
-const CACHE = 'tap-rush-worlds-5';
+const CACHE = 'tap-rush-worlds-audio-1';
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', event => event.waitUntil((async () => { for (const key of await caches.keys()) if (key.startsWith('tap-rush-') && key !== CACHE) await caches.delete(key); await self.clients.claim(); })()));
 self.addEventListener('fetch', event => {

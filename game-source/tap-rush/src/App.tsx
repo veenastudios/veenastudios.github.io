@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { GameAudio } from './audio';
 
 type Target = {
   id: number;
@@ -46,6 +47,8 @@ const themes = {
 const bestKey = (world: World) => world === 'jungle' ? 'tapRushBest' : world === 'city' ? 'tapRushBestCity' : world === 'space' ? 'tapRushBestSpace' : world === 'water' ? 'tapRushBestWater' : 'tapRushBestHimalaya';
 const storageKey = (key: string) => PREVIEW ? 'cityPreview:' + key : key;
 function App() {
+  const audio = useRef<GameAudio | null>(null);
+  if (!audio.current) audio.current = new GameAudio();
   const [bursts, setBursts] = useState<Burst[]>([]);
   const burstId = useRef(0);
   const burstTimers = useRef<number[]>([]);
@@ -106,10 +109,23 @@ function App() {
   const [sound, setSound] = useState(
     () => localStorage.getItem(storageKey('srSound')) !== 'off'
   );
+  useEffect(() => {
+    const sync = () => {
+      if (phase === 'play' && sound && !document.hidden) audio.current?.start(world);
+      else audio.current?.stop();
+    };
+    sync();
+    document.addEventListener('visibilitychange', sync);
+    const hide = () => audio.current?.stop();
+    window.addEventListener('pagehide', hide);
+    return () => { document.removeEventListener('visibilitychange', sync); window.removeEventListener('pagehide', hide); audio.current?.stop(); };
+  }, [phase, sound, world]);
+  useEffect(() => () => audio.current?.dispose(), []);
   const startRef = useRef(0);
   const idRef = useRef(1);
   const flashTimer = useRef<number | null>(null);
   const begin = () => {
+    if (sound) audio.current?.unlock();
     setRoundCoins(0);
     setBursts([]);
     setScore(0);
@@ -224,18 +240,7 @@ function App() {
         });
       navigator.vibrate?.(25);
     }
-    if (sound && 'AudioContext' in window) {
-      const C = window.AudioContext || (window as any).webkitAudioContext;
-      const c = new C(),
-        o = c.createOscillator(),
-        g = c.createGain();
-      o.frequency.value = t.danger ? 120 : 520;
-      g.gain.value = 0.035;
-      o.connect(g);
-      g.connect(c.destination);
-      o.start();
-      o.stop(c.currentTime + 0.06);
-    }
+    if (sound) audio.current?.hit(t.danger, t.glyph === COIN);
     if (flashTimer.current) clearTimeout(flashTimer.current);
     flashTimer.current = window.setTimeout(() => setFlash(''), 420);
   };
