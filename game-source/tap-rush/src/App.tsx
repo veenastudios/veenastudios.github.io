@@ -16,6 +16,7 @@ type Burst = {
   danger: boolean;
   text: string;
 };
+type World = 'jungle' | 'city';
 type Phase = 'hub' | 'map' | 'play' | 'over';
 const SAFE = ['⭐', '💎', '🍭', '⚡', '🎯'];
 const COIN = '🪙';
@@ -34,6 +35,8 @@ function sprite(t: Target) {
   if (t.glyph === COIN) return 3;
   return t.glyph === '💎' ? 1 : t.glyph === '🍭' || t.glyph === '🎯' ? 2 : 0;
 }
+const PREVIEW = window.location.pathname.startsWith('/tap-rush-city/');
+const storageKey = (key: string) => PREVIEW ? 'cityPreview:' + key : key;
 function App() {
   const [bursts, setBursts] = useState<Burst[]>([]);
   const burstId = useRef(0);
@@ -60,6 +63,7 @@ function App() {
       )
     );
   };
+  const [world, setWorld] = useState<World>('jungle');
   const [phase, setPhase] = useState<Phase>('hub');
   useEffect(() => {
     const onBack = (event: PopStateEvent) => {
@@ -81,10 +85,10 @@ function App() {
   const [roundCoins, setRoundCoins] = useState(0);
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(() =>
-    Number(localStorage.getItem('tapRushBest') || 0)
+    Number(localStorage.getItem(storageKey('tapRushBest')) || 0)
   );
   const [coins, setCoins] = useState(() =>
-    Number(localStorage.getItem('srCoins') || 0)
+    Number(localStorage.getItem(storageKey('srCoins')) || 0)
   );
   const [time, setTime] = useState(30);
   const [targets, setTargets] = useState<Target[]>([]);
@@ -92,7 +96,7 @@ function App() {
   const [flash, setFlash] = useState('');
   const [settings, setSettings] = useState(false);
   const [sound, setSound] = useState(
-    () => localStorage.getItem('srSound') !== 'off'
+    () => localStorage.getItem(storageKey('srSound')) !== 'off'
   );
   const startRef = useRef(0);
   const idRef = useRef(1);
@@ -113,7 +117,7 @@ function App() {
     setTargets([]);
   };
   useEffect(() => {
-    localStorage.setItem('srSound', sound ? 'on' : 'off');
+    localStorage.setItem(storageKey('srSound'), sound ? 'on' : 'off');
   }, [sound]);
   useEffect(() => {
     if (phase !== 'play') return;
@@ -129,7 +133,7 @@ function App() {
         setScore(final => {
           setBest(old => {
             const next = Math.max(old, final);
-            localStorage.setItem('tapRushBest', String(next));
+            localStorage.setItem(storageKey(world === 'city' ? 'tapRushBestCity' : 'tapRushBest'), String(next));
             return next;
           });
           return final;
@@ -188,7 +192,7 @@ function App() {
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [phase]);
+  }, [phase, world]);
   const hit = (t: Target) => {
     if (phase !== 'play') return;
     setTargets(v => v.filter(x => x.id !== t.id));
@@ -207,7 +211,7 @@ function App() {
       if (isCoin)
         setCoins(v => {
           const n = v + 1;
-          localStorage.setItem('srCoins', String(n));
+          localStorage.setItem(storageKey('srCoins'), String(n));
           return n;
         });
       navigator.vibrate?.(25);
@@ -230,7 +234,7 @@ function App() {
   if (phase === 'map') {
     const worlds = [
       { id: 'jungle', name: 'Jungle', subtitle: 'The treasure trail', mark: '01', ready: true },
-      { id: 'city', name: 'City', subtitle: 'Coming soon', mark: '02', ready: false },
+      { id: 'city', name: 'City', subtitle: 'The neon boulevard', mark: '02', ready: true },
       { id: 'space', name: 'Space', subtitle: 'Coming soon', mark: '03', ready: false },
       { id: 'water', name: 'Underwater', subtitle: 'Coming soon', mark: '04', ready: false },
       { id: 'himalaya', name: 'Rock & Himalaya', subtitle: 'Coming soon', mark: '05', ready: false },
@@ -238,10 +242,15 @@ function App() {
     return (
       <main className='worldMap'>
         <div className='mapTop'><button onClick={home} aria-label='Back to SR Gamers'>←</button><div><small>TAP RUSH</small><h1>Choose your world</h1></div></div>
-        <p className='mapIntro'>Your adventure begins in the jungle.</p>
+        <p className='mapIntro'>Choose the treasure trail or the neon boulevard.</p>
         <div className='worldTrail'>
           {worlds.map(world => (
-            <button key={world.id} className={'worldNode world-' + world.id} disabled={!world.ready} onClick={world.ready ? begin : undefined}>
+            <button key={world.id} className={'worldNode world-' + world.id} disabled={!world.ready} onClick={world.ready ? () => {
+                const selected = world.id as World;
+                setWorld(selected);
+                setBest(Number(localStorage.getItem(storageKey(selected === 'city' ? 'tapRushBestCity' : 'tapRushBest')) || 0));
+                begin();
+              } : undefined}>
               <span className='worldNumber'>{world.ready ? world.mark : '🔒'}</span>
               <span className='worldCopy'><b>{world.name}</b><small>{world.subtitle}</small></span>
               <span className='worldStatus'>{world.ready ? 'PLAY ▶' : 'SOON'}</span>
@@ -318,7 +327,7 @@ function App() {
   return (
     <main
       className={
-        'game jungleGame ' +
+        'game jungleGame ' + (world === 'city' ? 'cityGame ' : '') +
         (time <= 10 && phase === 'play' ? 'finalRush ' : '') +
         (flash.includes('DANGER') ? 'dangerFlash' : '')
       }
@@ -346,7 +355,7 @@ function App() {
           </div>
           <div className="jungleGuide" aria-hidden="true">
             <img
-              src="./tap-rush-3d.webp"
+              src={world === 'city' ? './city-trophy.webp' : './tap-rush-3d.webp'}
               alt=""
             />
             <span>
@@ -356,7 +365,7 @@ function App() {
                   ? 'Great streak!'
                   : time <= 10
                     ? 'Final rush!'
-                    : 'Tap the treasures'}
+                    : world === 'city' ? 'City loot! Avoid cones & bombs' : 'Tap the treasures'}
             </span>
           </div>
           <div className="combo">
@@ -417,10 +426,10 @@ function App() {
         </>
       )}
       {phase === 'over' && (
-        <section className='panel result3d' aria-label='Jungle round result'>
+        <section className='panel result3d' aria-label={world === 'city' ? 'City round result' : 'Jungle round result'}>
           <div className='resultCard'>
-            <div className='resultEyebrow'>JUNGLE ADVENTURE</div>
-            <img className='trophy3d' src='./jungle-trophy.webp' alt='Golden emerald jungle trophy' />
+            <div className='resultEyebrow'>{world === 'city' ? 'CITY ADVENTURE' : 'JUNGLE ADVENTURE'}</div>
+            <img className='trophy3d' src={world === 'city' ? './city-trophy.webp' : './jungle-trophy.webp'} alt={world === 'city' ? 'Golden skyline city trophy' : 'Golden emerald jungle trophy'} />
             <h2>ROUND COMPLETE</h2>
             <div className='scorePedestal'><small>YOUR SCORE</small><h1>{score}</h1></div>
             <div className='resultStats'><div><small>PERSONAL BEST</small><b>{best}</b></div><div><small>COINS THIS ROUND</small><b>+{roundCoins}</b></div></div>

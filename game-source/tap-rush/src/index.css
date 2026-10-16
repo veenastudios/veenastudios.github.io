@@ -1136,3 +1136,21 @@ footer {
 .result3d button:active {transform:translateY(3px);}
 @media(max-height:700px) {.result3d{padding-top:14px;padding-bottom:24px}.resultCard{padding:16px 18px 10px}.trophy3d{height:100px;width:84px}.result3d .scorePedestal h1{font-size:46px}.resultStats{margin:12px 0 15px}.resultCard h2{margin-bottom:10px}}
 
+
+/* City uses the locked round mechanics, with its own art and rewards. */
+.cityGame {background:linear-gradient(#07152c55,#04132922 50%,#04132988),url('./assets/city-scene.webp') center/cover no-repeat,#081b36;}
+.cityGame header {background:linear-gradient(#07152cf5,#10274fc9,transparent);}
+.cityGame header > div:not(.brand) {border-color:#69dfffa0;background:linear-gradient(145deg,#19416af0,#0a1938f0);box-shadow:inset 0 1px #b2f5ff55,0 4px #040d2388,0 7px 15px #0005;}
+.cityGame header small {color:#a2e9ff;}
+.cityGame .roundTrack i {background:linear-gradient(90deg,#40d9ff,#ffa64e);}
+.cityGame .jungleMist {background:radial-gradient(ellipse at 50% 65%,#39b3ff22,transparent 65%);}
+.cityGame .target span.sprite {background-image:url('./assets/city-sprites.webp');height:100%;top:0;filter:drop-shadow(0 5px 4px #020d25b0) drop-shadow(0 0 8px #7ceaff55);}
+.cityGame .bad span.sprite {filter:drop-shadow(0 5px 4px #020d25b0) drop-shadow(0 0 7px #ff623ba0);}
+.cityGame .result3d {background:#06162b66;}
+.cityGame .resultCard {border-color:#83e2ff;border-right-color:#3389b6;border-bottom-color:#22638e;background:radial-gradient(ellipse at 50% 16%,#509bdf55,transparent 48%),linear-gradient(150deg,#1e426a,#0a2142 65%,#07172e);box-shadow:inset 0 2px #d3f5ff77,inset 0 0 0 4px #5dc9ff22,0 8px #244f73,0 13px #0b1730,0 24px 50px #0009;}
+.cityGame .scorePedestal {background:linear-gradient(#071b35,#183e65);border-color:#7be0ff66;}
+.cityGame .resultStats div {background:#04172e88;border-color:#78d5ff33;}
+.cityGame .resultStats small {color:#aacde8;}
+.cityGame .result3d .resultCard .resultMap {background:linear-gradient(#2d648d,#164066);border-color:#73c3eb;box-shadow:inset 0 1px #c0efff55,0 4px #092440;}
+.cityGame .result3d .resultCard .resultHome {color:#b2cde6;}
+.world-city:not(:disabled) {border-color:#83e2ff;background:linear-gradient(135deg,#276789,#142f57);box-shadow:inset 0 2px #b1f1ff55,0 5px #0b2744,0 9px 20px #0005;}
