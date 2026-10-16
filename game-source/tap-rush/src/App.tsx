@@ -16,7 +16,7 @@ type Burst = {
   danger: boolean;
   text: string;
 };
-type World = 'jungle' | 'city' | 'space';
+type World = 'jungle' | 'city' | 'space' | 'water' | 'himalaya';
 type Phase = 'hub' | 'map' | 'play' | 'over';
 const SAFE = ['⭐', '💎', '🍭', '⚡', '🎯'];
 const COIN = '🪙';
@@ -36,7 +36,14 @@ function sprite(t: Target) {
   return t.glyph === '💎' ? 1 : t.glyph === '🍭' || t.glyph === '🎯' ? 2 : 0;
 }
 const PREVIEW = window.location.pathname.startsWith('/tap-rush-city/');
-const bestKey = (world: World) => world === 'jungle' ? 'tapRushBest' : world === 'city' ? 'tapRushBestCity' : 'tapRushBestSpace';
+const themes = {
+ jungle: {title:'JUNGLE ADVENTURE', guide:'Tap the treasures', trophy:'jungle-trophy.webp', alt:'Golden emerald jungle trophy'},
+ city: {title:'CITY ADVENTURE', guide:'City loot! Avoid cones & bombs', trophy:'city-trophy.webp', alt:'Golden skyline city trophy'},
+ space: {title:'SPACE ADVENTURE', guide:'Cosmic loot! Avoid meteors & mines', trophy:'space-trophy.webp', alt:'Golden cosmic rocket trophy'},
+ water: {title:'UNDERWATER ADVENTURE', guide:'Ocean loot! Avoid jellyfish & mines', trophy:'water-trophy.webp', alt:'Golden ocean pearl trophy'},
+ himalaya: {title:'HIMALAYA ADVENTURE', guide:'Summit loot! Avoid rocks & sharp ice', trophy:'himalaya-trophy.webp', alt:'Golden Himalayan summit trophy'},
+};
+const bestKey = (world: World) => world === 'jungle' ? 'tapRushBest' : world === 'city' ? 'tapRushBestCity' : world === 'space' ? 'tapRushBestSpace' : world === 'water' ? 'tapRushBestWater' : 'tapRushBestHimalaya';
 const storageKey = (key: string) => PREVIEW ? 'cityPreview:' + key : key;
 function App() {
   const [bursts, setBursts] = useState<Burst[]>([]);
@@ -237,13 +244,13 @@ function App() {
       { id: 'jungle', name: 'Jungle', subtitle: 'The treasure trail', mark: '01', ready: true },
       { id: 'city', name: 'City', subtitle: 'The neon boulevard', mark: '02', ready: true },
       { id: 'space', name: 'Space', subtitle: 'The cosmic voyage', mark: '03', ready: true },
-      { id: 'water', name: 'Underwater', subtitle: 'Coming soon', mark: '04', ready: false },
-      { id: 'himalaya', name: 'Rock & Himalaya', subtitle: 'Coming soon', mark: '05', ready: false },
+      { id: 'water', name: 'Underwater', subtitle: 'The pearl kingdom', mark: '04', ready: true },
+      { id: 'himalaya', name: 'Rock & Himalaya', subtitle: 'The summit trail', mark: '05', ready: true },
     ];
     return (
       <main className='worldMap'>
         <div className='mapTop'><button onClick={home} aria-label='Back to SR Gamers'>←</button><div><small>TAP RUSH</small><h1>Choose your world</h1></div></div>
-        <p className='mapIntro'>Choose your adventure: Jungle, City or Space.</p>
+        <p className='mapIntro'>Five worlds. Choose your next adventure.</p>
         <div className='worldTrail'>
           {worlds.map(world => (
             <button key={world.id} className={'worldNode world-' + world.id} disabled={!world.ready} onClick={world.ready ? () => {
@@ -328,7 +335,7 @@ function App() {
   return (
     <main
       className={
-        'game jungleGame ' + (world === 'city' ? 'cityGame ' : world === 'space' ? 'spaceGame ' : '') +
+        'game jungleGame ' + (world === 'jungle' ? '' : world + 'Game ') +
         (time <= 10 && phase === 'play' ? 'finalRush ' : '') +
         (flash.includes('DANGER') ? 'dangerFlash' : '')
       }
@@ -356,7 +363,7 @@ function App() {
           </div>
           <div className="jungleGuide" aria-hidden="true">
             <img
-              src={world === 'space' ? './space-trophy.webp' : world === 'city' ? './city-trophy.webp' : './tap-rush-3d.webp'}
+              src={world === 'jungle' ? './tap-rush-3d.webp' : './' + themes[world].trophy}
               alt=""
             />
             <span>
@@ -366,7 +373,7 @@ function App() {
                   ? 'Great streak!'
                   : time <= 10
                     ? 'Final rush!'
-                    : world === 'space' ? 'Cosmic loot! Avoid meteors & mines' : world === 'city' ? 'City loot! Avoid cones & bombs' : 'Tap the treasures'}
+                    : themes[world].guide}
             </span>
           </div>
           <div className="combo">
@@ -427,10 +434,10 @@ function App() {
         </>
       )}
       {phase === 'over' && (
-        <section className='panel result3d' aria-label={world === 'space' ? 'Space round result' : world === 'city' ? 'City round result' : 'Jungle round result'}>
+        <section className='panel result3d' aria-label={world + ' round result'}>
           <div className='resultCard'>
-            <div className='resultEyebrow'>{world === 'space' ? 'SPACE ADVENTURE' : world === 'city' ? 'CITY ADVENTURE' : 'JUNGLE ADVENTURE'}</div>
-            <img className='trophy3d' src={world === 'space' ? './space-trophy.webp' : world === 'city' ? './city-trophy.webp' : './jungle-trophy.webp'} alt={world === 'space' ? 'Golden cosmic rocket trophy' : world === 'city' ? 'Golden skyline city trophy' : 'Golden emerald jungle trophy'} />
+            <div className='resultEyebrow'>{themes[world].title}</div>
+            <img className='trophy3d' src={'./' + themes[world].trophy} alt={themes[world].alt} />
             <h2>ROUND COMPLETE</h2>
             <div className='scorePedestal'><small>YOUR SCORE</small><h1>{score}</h1></div>
             <div className='resultStats'><div><small>PERSONAL BEST</small><b>{best}</b></div><div><small>COINS THIS ROUND</small><b>+{roundCoins}</b></div></div>
