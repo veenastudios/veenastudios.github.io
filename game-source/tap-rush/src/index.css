@@ -1154,3 +1154,21 @@ footer {
 .cityGame .result3d .resultCard .resultMap {background:linear-gradient(#2d648d,#164066);border-color:#73c3eb;box-shadow:inset 0 1px #c0efff55,0 4px #092440;}
 .cityGame .result3d .resultCard .resultHome {color:#d5eaff;background:#0b2442;border:1px solid #6bb8df66;box-shadow:none;}
 .world-city:not(:disabled) {border-color:#83e2ff;background:linear-gradient(135deg,#276789,#142f57);box-shadow:inset 0 2px #b1f1ff55,0 5px #0b2744,0 9px 20px #0005;}
+
+/* Space uses the locked round mechanics, with its own art and rewards. */
+.spaceGame {background:linear-gradient(#07152c55,#04132922 50%,#04132988),url('./assets/space-scene.webp') center/cover no-repeat,#081b36;}
+.spaceGame header {background:linear-gradient(#07152cf5,#10274fc9,transparent);}
+.spaceGame header > div:not(.brand) {border-color:#69dfffa0;background:linear-gradient(145deg,#19416af0,#0a1938f0);box-shadow:inset 0 1px #b2f5ff55,0 4px #040d2388,0 7px 15px #0005;}
+.spaceGame header small {color:#a2e9ff;}
+.spaceGame .roundTrack i {background:linear-gradient(90deg,#b479ff,#ffa64e);}
+.spaceGame .jungleMist {background:radial-gradient(ellipse at 50% 65%,#39b3ff22,transparent 65%);}
+.spaceGame .target span.sprite {background-image:url('./assets/space-sprites.webp');height:100%;top:0;filter:drop-shadow(0 5px 4px #020d25b0) drop-shadow(0 0 8px #7ceaff55);}
+.spaceGame .bad span.sprite {filter:drop-shadow(0 5px 4px #020d25b0) drop-shadow(0 0 7px #ff623ba0);}
+.spaceGame .result3d {background:#06162b66;}
+.spaceGame .resultCard {border-color:#d5a4ff;border-right-color:#8052ad;border-bottom-color:#51307b;background:radial-gradient(ellipse at 50% 16%,#509bdf55,transparent 48%),linear-gradient(150deg,#492968,#201137 65%,#130c27);box-shadow:inset 0 2px #d3f5ff77,inset 0 0 0 4px #5dc9ff22,0 8px #244f73,0 13px #0b1730,0 24px 50px #0009;}
+.spaceGame .scorePedestal {background:linear-gradient(#071b35,#183e65);border-color:#7be0ff66;}
+.spaceGame .resultStats div {background:#04172e88;border-color:#78d5ff33;}
+.spaceGame .resultStats small {color:#aacde8;}
+.spaceGame .result3d .resultCard .resultMap {background:linear-gradient(#2d648d,#164066);border-color:#73c3eb;box-shadow:inset 0 1px #c0efff55,0 4px #092440;}
+.spaceGame .result3d .resultCard .resultHome {color:#d5eaff;background:#0b2442;border:1px solid #6bb8df66;box-shadow:none;}
+.world-space:not(:disabled) {border-color:#d5a4ff;background:linear-gradient(135deg,#714093,#2a164e);box-shadow:inset 0 2px #b1f1ff55,0 5px #0b2744,0 9px 20px #0005;}

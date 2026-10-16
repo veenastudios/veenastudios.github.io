@@ -16,7 +16,7 @@ type Burst = {
   danger: boolean;
   text: string;
 };
-type World = 'jungle' | 'city';
+type World = 'jungle' | 'city' | 'space';
 type Phase = 'hub' | 'map' | 'play' | 'over';
 const SAFE = ['⭐', '💎', '🍭', '⚡', '🎯'];
 const COIN = '🪙';
@@ -36,6 +36,7 @@ function sprite(t: Target) {
   return t.glyph === '💎' ? 1 : t.glyph === '🍭' || t.glyph === '🎯' ? 2 : 0;
 }
 const PREVIEW = window.location.pathname.startsWith('/tap-rush-city/');
+const bestKey = (world: World) => world === 'jungle' ? 'tapRushBest' : world === 'city' ? 'tapRushBestCity' : 'tapRushBestSpace';
 const storageKey = (key: string) => PREVIEW ? 'cityPreview:' + key : key;
 function App() {
   const [bursts, setBursts] = useState<Burst[]>([]);
@@ -133,7 +134,7 @@ function App() {
         setScore(final => {
           setBest(old => {
             const next = Math.max(old, final);
-            localStorage.setItem(storageKey(world === 'city' ? 'tapRushBestCity' : 'tapRushBest'), String(next));
+            localStorage.setItem(storageKey(bestKey(world)), String(next));
             return next;
           });
           return final;
@@ -235,20 +236,20 @@ function App() {
     const worlds = [
       { id: 'jungle', name: 'Jungle', subtitle: 'The treasure trail', mark: '01', ready: true },
       { id: 'city', name: 'City', subtitle: 'The neon boulevard', mark: '02', ready: true },
-      { id: 'space', name: 'Space', subtitle: 'Coming soon', mark: '03', ready: false },
+      { id: 'space', name: 'Space', subtitle: 'The cosmic voyage', mark: '03', ready: true },
       { id: 'water', name: 'Underwater', subtitle: 'Coming soon', mark: '04', ready: false },
       { id: 'himalaya', name: 'Rock & Himalaya', subtitle: 'Coming soon', mark: '05', ready: false },
     ];
     return (
       <main className='worldMap'>
         <div className='mapTop'><button onClick={home} aria-label='Back to SR Gamers'>←</button><div><small>TAP RUSH</small><h1>Choose your world</h1></div></div>
-        <p className='mapIntro'>Choose the treasure trail or the neon boulevard.</p>
+        <p className='mapIntro'>Choose your adventure: Jungle, City or Space.</p>
         <div className='worldTrail'>
           {worlds.map(world => (
             <button key={world.id} className={'worldNode world-' + world.id} disabled={!world.ready} onClick={world.ready ? () => {
                 const selected = world.id as World;
                 setWorld(selected);
-                setBest(Number(localStorage.getItem(storageKey(selected === 'city' ? 'tapRushBestCity' : 'tapRushBest')) || 0));
+                setBest(Number(localStorage.getItem(storageKey(bestKey(selected))) || 0));
                 begin();
               } : undefined}>
               <span className='worldNumber'>{world.ready ? world.mark : '🔒'}</span>
@@ -327,7 +328,7 @@ function App() {
   return (
     <main
       className={
-        'game jungleGame ' + (world === 'city' ? 'cityGame ' : '') +
+        'game jungleGame ' + (world === 'city' ? 'cityGame ' : world === 'space' ? 'spaceGame ' : '') +
         (time <= 10 && phase === 'play' ? 'finalRush ' : '') +
         (flash.includes('DANGER') ? 'dangerFlash' : '')
       }
@@ -355,7 +356,7 @@ function App() {
           </div>
           <div className="jungleGuide" aria-hidden="true">
             <img
-              src={world === 'city' ? './city-trophy.webp' : './tap-rush-3d.webp'}
+              src={world === 'space' ? './space-trophy.webp' : world === 'city' ? './city-trophy.webp' : './tap-rush-3d.webp'}
               alt=""
             />
             <span>
@@ -365,7 +366,7 @@ function App() {
                   ? 'Great streak!'
                   : time <= 10
                     ? 'Final rush!'
-                    : world === 'city' ? 'City loot! Avoid cones & bombs' : 'Tap the treasures'}
+                    : world === 'space' ? 'Cosmic loot! Avoid meteors & mines' : world === 'city' ? 'City loot! Avoid cones & bombs' : 'Tap the treasures'}
             </span>
           </div>
           <div className="combo">
@@ -426,10 +427,10 @@ function App() {
         </>
       )}
       {phase === 'over' && (
-        <section className='panel result3d' aria-label={world === 'city' ? 'City round result' : 'Jungle round result'}>
+        <section className='panel result3d' aria-label={world === 'space' ? 'Space round result' : world === 'city' ? 'City round result' : 'Jungle round result'}>
           <div className='resultCard'>
-            <div className='resultEyebrow'>{world === 'city' ? 'CITY ADVENTURE' : 'JUNGLE ADVENTURE'}</div>
-            <img className='trophy3d' src={world === 'city' ? './city-trophy.webp' : './jungle-trophy.webp'} alt={world === 'city' ? 'Golden skyline city trophy' : 'Golden emerald jungle trophy'} />
+            <div className='resultEyebrow'>{world === 'space' ? 'SPACE ADVENTURE' : world === 'city' ? 'CITY ADVENTURE' : 'JUNGLE ADVENTURE'}</div>
+            <img className='trophy3d' src={world === 'space' ? './space-trophy.webp' : world === 'city' ? './city-trophy.webp' : './jungle-trophy.webp'} alt={world === 'space' ? 'Golden cosmic rocket trophy' : world === 'city' ? 'Golden skyline city trophy' : 'Golden emerald jungle trophy'} />
             <h2>ROUND COMPLETE</h2>
             <div className='scorePedestal'><small>YOUR SCORE</small><h1>{score}</h1></div>
             <div className='resultStats'><div><small>PERSONAL BEST</small><b>{best}</b></div><div><small>COINS THIS ROUND</small><b>+{roundCoins}</b></div></div>
