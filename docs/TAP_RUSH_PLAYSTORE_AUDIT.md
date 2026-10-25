@@ -20,3 +20,9 @@ Branch: `audit/tap-rush-playstore-safe-20261025` (isolated from website `main`).
 
 ## Safety
 No edits to public `main`, no production release, no invented PASS status. Preserve original assets and behavior. Fix the broken offline link only after finding a working downloadable build.
+
+## Additional static inspection (2026-10-25)
+- No `package.json` at repository root or `tap-rush/package.json` (these two paths checked only).
+- `tap-rush/sw.js` uses network-first caching and does not precache assets on install; first-use offline is unverified.
+- Bundled JS includes React, localStorage, Web Audio, pointer/touch events, vibration and service-worker registration; these do not constitute device QA PASS.
+- No obvious Three.js references in bundle; do not assume genuine 3D rendering.
