@@ -23,6 +23,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
+      - name: Verify offline web bundle dependencies
+        run: python3 android/tap-rush/verify_assets.py
       - name: Stage offline web assets
         run: python3 android/tap-rush/prepare_assets.py
       - name: Build unsigned-for-release debug APK
