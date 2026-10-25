@@ -1,6 +1,8 @@
 package com.veenastudios.taprush;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -26,6 +28,15 @@ public final class MainActivity extends Activity {
       .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
       .build();
     web.setWebViewClient(new WebViewClientCompat() {
+      @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        Uri uri = request.getUrl();
+        if ("appassets.androidplatform.net".equals(uri.getHost()) && "https".equals(uri.getScheme())
+            && uri.getPath() != null && uri.getPath().startsWith("/assets/tap-rush/")) return false;
+        if (request.isForMainFrame() && ("https".equals(uri.getScheme()) || "http".equals(uri.getScheme()))) {
+          try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); } catch (android.content.ActivityNotFoundException ignored) { }
+        }
+        return true;
+      }
       @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         return loader.shouldInterceptRequest(request.getUrl());
       }
