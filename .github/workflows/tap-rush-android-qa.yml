@@ -1,0 +1,31 @@
+name: Tap Rush Android QA
+on:
+  push:
+    branches: ['release/tap-rush-play-20261102']
+    paths: ['tap-rush-android/**', '.github/workflows/tap-rush-android-qa.yml']
+  pull_request:
+    branches: ['main']
+    paths: ['tap-rush-android/**', '.github/workflows/tap-rush-android-qa.yml']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Build debug APK and unsigned release AAB
+        working-directory: tap-rush-android
+        run: gradle --no-daemon assembleDebug bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tap-rush-qa-unsigned
+          path: |
+            tap-rush-android/app/build/outputs/apk/debug/*.apk
+            tap-rush-android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
