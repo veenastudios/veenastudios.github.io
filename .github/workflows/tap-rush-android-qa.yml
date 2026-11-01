@@ -3,6 +3,9 @@ on:
   push:
     branches: ['release/tap-rush-play-20261102']
     paths: ['tap-rush-android/**', '.github/workflows/tap-rush-android-qa.yml']
+  pull_request:
+    branches: ['main']
+    paths: ['tap-rush-android/**', '.github/workflows/tap-rush-android-qa.yml']
   workflow_dispatch:
 jobs:
   build:
