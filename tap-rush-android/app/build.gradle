@@ -1,0 +1,7 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'in.veenastudios.taprush'
+ compileSdk 36
+ defaultConfig { applicationId 'in.veenastudios.taprush'; minSdk 24; targetSdk 36; versionCode 1; versionName '1.0.0' }
+ buildTypes { release { minifyEnabled false } }
+}
