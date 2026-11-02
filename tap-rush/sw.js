@@ -1,4 +1,4 @@
-const CACHE = 'tap-rush-offline-v3';
+const CACHE = 'tap-rush-offline-v4';
 const CORE = ['./', './index.html', './manifest.webmanifest', './assets/index-B_be548G.js', './assets/index-DJsOUZk8.css', './icon-192.png', './icon-512.png', './tap-rush-3d.webp', './jungle-trophy.webp', './city-trophy.webp', './space-trophy.webp', './water-trophy.webp', './himalaya-trophy.webp'];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
@@ -18,8 +18,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith(self.registration.scope)) return;
   event.respondWith((async () => {
+    const isNavigation = event.request.mode === 'navigate';
     const cached = await caches.match(event.request);
-    if (cached) return cached;
+    if (!isNavigation && cached) return cached;
     try {
       const response = await fetch(event.request);
       if (response.ok) {
@@ -28,7 +29,8 @@ self.addEventListener('fetch', event => {
       }
       return response;
     } catch {
-      if (event.request.mode === 'navigate') {
+      if (cached) return cached;
+      if (isNavigation) {
         const home = await caches.match('./');
         if (home) return home;
       }
