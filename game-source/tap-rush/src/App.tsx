@@ -164,6 +164,7 @@ function App() {
       lastSpawn = 0;
     const loop = (now: number) => {
       if (paused || document.hidden) {
+        if (pausedAt.current === null) pausedAt.current = now;
         raf = requestAnimationFrame(loop);
         return;
       }
@@ -392,7 +393,7 @@ function App() {
       {phase === 'play' && (
         <>
           <button className="pauseButton" onClick={() => { pausedAt.current = performance.now(); setPaused(true); }} aria-label="Pause game">Ⅱ PAUSE</button>
-          {paused && <div className="pauseOverlay" role="dialog" aria-label="Game paused"><h2>PAUSED</h2><p>Your round is safe.</p><button onClick={resume}>▶ RESUME</button><button onClick={() => { setPaused(false); pausedAt.current = null; setPhase('map'); }}>WORLD MAP</button></div>}
+          {paused && <div className="pauseOverlay" role="dialog" aria-modal="true" aria-label="Game paused"><h2>PAUSED</h2><p>Your round is safe.</p><button onClick={resume}>▶ RESUME</button><button onClick={() => { setPaused(false); pausedAt.current = null; setPhase('map'); }}>WORLD MAP</button></div>}
           <div className="roundTrack" aria-hidden="true">
             <i style={{ width: (time / 30) * 100 + '%' }} />
           </div>
@@ -417,6 +418,7 @@ function App() {
           <div className="lane">
             {targets.map(t => (
               <button
+                disabled={paused}
                 aria-label={t.danger ? 'danger target' : 'safe target'}
                 key={t.id}
                 onPointerDown={e => {
