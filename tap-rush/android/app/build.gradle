@@ -24,7 +24,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            if (System.getenv('TAP_RUSH_KEYSTORE_PATH')) {
+            if (System.getenv('TAP_RUSH_KEYSTORE_PATH') && System.getenv('TAP_RUSH_KEYSTORE_PASSWORD') && System.getenv('TAP_RUSH_KEY_ALIAS') && System.getenv('TAP_RUSH_KEY_PASSWORD')) {
                 signingConfig signingConfigs.release
             }
         }
