@@ -64,7 +64,7 @@ function App() {
         x: rect.left - root.left + rect.width / 2,
         y: rect.top - root.top + rect.height / 2,
         danger: t.danger,
-        text: t.danger ? '−2' : t.glyph === COIN || combo >= 4 ? '+2' : '+1',
+        text: t.danger ? '−2' : '+' + ((t.glyph === COIN ? 2 : 1) + (combo >= 4 ? 1 : 0)),
       },
     ]);
     burstTimers.current.push(
@@ -123,10 +123,12 @@ function App() {
   useEffect(() => () => audio.current?.dispose(), []);
   const startRef = useRef(0);
   const idRef = useRef(1);
+  const hitIds = useRef<Set<number>>(new Set());
   const flashTimer = useRef<number | null>(null);
   const begin = () => {
     if (sound) audio.current?.unlock();
     setRoundCoins(0);
+    hitIds.current.clear();
     setBursts([]);
     setScore(0);
     setTime(30);
@@ -218,7 +220,8 @@ function App() {
     return () => cancelAnimationFrame(raf);
   }, [phase, world]);
   const hit = (t: Target) => {
-    if (phase !== 'play') return;
+    if (phase !== 'play' || hitIds.current.has(t.id)) return false;
+    hitIds.current.add(t.id);
     setTargets(v => v.filter(x => x.id !== t.id));
     if (t.danger) {
       setScore(v => Math.max(0, v - 2));
@@ -243,6 +246,7 @@ function App() {
     if (sound) audio.current?.hit(t.danger, t.glyph === COIN);
     if (flashTimer.current) clearTimeout(flashTimer.current);
     flashTimer.current = window.setTimeout(() => setFlash(''), 420);
+    return true;
   };
   if (phase === 'map') {
     const worlds = [
@@ -390,8 +394,7 @@ function App() {
                 aria-label={t.danger ? 'danger target' : 'safe target'}
                 key={t.id}
                 onPointerDown={e => {
-                  burst(t, e);
-                  hit(t);
+                  if (hit(t)) burst(t, e);
                 }}
                 className={'target ' + (t.danger ? 'bad' : 'good')}
                 style={{
