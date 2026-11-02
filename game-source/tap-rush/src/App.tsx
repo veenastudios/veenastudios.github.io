@@ -96,12 +96,14 @@ function App() {
   const [roundCoins, setRoundCoins] = useState(0);
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(() =>
-    Number(localStorage.getItem(storageKey('tapRushBest')) || 0)
+    Number(localStorage.getItem(storageKey(bestKey('jungle'))) || 0)
   );
   const [coins, setCoins] = useState(() =>
     Number(localStorage.getItem(storageKey('srCoins')) || 0)
   );
   const [time, setTime] = useState(30);
+  const [paused, setPaused] = useState(false);
+  const pausedAt = useRef<number | null>(null);
   const [targets, setTargets] = useState<Target[]>([]);
   const [combo, setCombo] = useState(0);
   const [flash, setFlash] = useState('');
@@ -111,7 +113,7 @@ function App() {
   );
   useEffect(() => {
     const sync = () => {
-      if (phase === 'play' && sound && !document.hidden) audio.current?.start(world);
+      if (phase === 'play' && !paused && sound && !document.hidden) audio.current?.start(world);
       else audio.current?.stop();
     };
     sync();
@@ -119,13 +121,15 @@ function App() {
     const hide = () => audio.current?.stop();
     window.addEventListener('pagehide', hide);
     return () => { document.removeEventListener('visibilitychange', sync); window.removeEventListener('pagehide', hide); audio.current?.stop(); };
-  }, [phase, sound, world]);
+  }, [phase, sound, world, paused]);
   useEffect(() => () => audio.current?.dispose(), []);
   const startRef = useRef(0);
   const idRef = useRef(1);
   const hitIds = useRef<Set<number>>(new Set());
   const flashTimer = useRef<number | null>(null);
   const begin = () => {
+    setPaused(false);
+    pausedAt.current = null;
     if (sound) audio.current?.unlock();
     setRoundCoins(0);
     hitIds.current.clear();
@@ -139,6 +143,8 @@ function App() {
     setPhase('play');
   };
   const home = () => {
+    setPaused(false);
+    pausedAt.current = null;
     setPhase('hub');
     setTargets([]);
   };
@@ -147,9 +153,20 @@ function App() {
   }, [sound]);
   useEffect(() => {
     if (phase !== 'play') return;
+    const onVisibility = () => {
+      if (document.hidden) {
+        if (pausedAt.current === null) pausedAt.current = performance.now();
+        setPaused(true);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
     let raf = 0,
       lastSpawn = 0;
     const loop = (now: number) => {
+      if (paused || document.hidden) {
+        raf = requestAnimationFrame(loop);
+        return;
+      }
       const elapsed = (now - startRef.current) / 1000,
         left = Math.max(0, 30 - elapsed);
       setTime(Math.ceil(left));
@@ -217,10 +234,17 @@ function App() {
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [phase, world]);
+    return () => { cancelAnimationFrame(raf); document.removeEventListener('visibilitychange', onVisibility); };
+  }, [phase, world, paused]);
+  const resume = () => {
+    if (pausedAt.current !== null) {
+      startRef.current += performance.now() - pausedAt.current;
+      pausedAt.current = null;
+    }
+    setPaused(false);
+  };
   const hit = (t: Target) => {
-    if (phase !== 'play' || hitIds.current.has(t.id)) return false;
+    if (phase !== 'play' || paused || document.hidden || hitIds.current.has(t.id)) return false;
     hitIds.current.add(t.id);
     setTargets(v => v.filter(x => x.id !== t.id));
     if (t.danger) {
@@ -367,6 +391,8 @@ function App() {
       </header>
       {phase === 'play' && (
         <>
+          <button className="pauseButton" onClick={() => { pausedAt.current = performance.now(); setPaused(true); }} aria-label="Pause game">Ⅱ PAUSE</button>
+          {paused && <div className="pauseOverlay" role="dialog" aria-label="Game paused"><h2>PAUSED</h2><p>Your round is safe.</p><button onClick={resume}>▶ RESUME</button><button onClick={() => { setPaused(false); pausedAt.current = null; setPhase('map'); }}>WORLD MAP</button></div>}
           <div className="roundTrack" aria-hidden="true">
             <i style={{ width: (time / 30) * 100 + '%' }} />
           </div>
