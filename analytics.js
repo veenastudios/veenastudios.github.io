@@ -1,0 +1,3 @@
+// Cookie popup and optional analytics are disabled.
+// Keep the existing script URL so all website pages receive this change.
+(()=>{'use strict';function init(){document.getElementById('vs-consent')?.remove();document.querySelectorAll('.vs-privacy-links').forEach(node=>node.remove());const footer=document.createElement('div');footer.style.cssText='padding:12px;text-align:center;font:12px Arial,sans-serif';const link=document.createElement('a');link.href='/privacy.html';link.textContent='Privacy';link.style.color='#e7bd62';footer.appendChild(link);document.body.appendChild(footer);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();

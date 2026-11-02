@@ -1,0 +1,77 @@
+name: Tap Rush Android build
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tap-rush/android/**'
+      - '.github/workflows/tap-rush-android.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Install Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
+      - name: Prepare release signing when secrets exist
+        env:
+          KEYSTORE_B64: ${{ secrets.TAP_RUSH_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.TAP_RUSH_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.TAP_RUSH_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.TAP_RUSH_KEY_PASSWORD }}
+        run: |
+          if [[ -n "$KEYSTORE_B64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
+            printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/tap-rush-release.jks"
+            echo "TAP_RUSH_KEYSTORE_PATH=$RUNNER_TEMP/tap-rush-release.jks" >> "$GITHUB_ENV"
+            echo "TAP_RUSH_KEYSTORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "TAP_RUSH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "TAP_RUSH_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+          else
+            echo "No complete signing secrets: release AAB will be unsigned."
+          fi
+      - name: Verify release signing readiness
+        run: |
+          if [[ -z "${TAP_RUSH_KEYSTORE_PATH:-}" ]]; then
+            echo "::warning::Release signing secrets missing. AAB is for verification only, not Play Store upload."
+          fi
+      - name: Build debug APK and release AAB
+        working-directory: tap-rush/android
+        run: gradle --no-daemon :app:assembleDebug :app:bundleRelease
+      - name: Verify Android package outputs
+        working-directory: tap-rush/android
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          test -s "$APK" && test -s "$AAB"
+          ls -lh "$APK" "$AAB"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -n 5
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          if [[ -n "${TAP_RUSH_KEYSTORE_PATH:-}" ]]; then
+            jarsigner -verify "$AAB"
+          else
+            echo "::warning::Unsigned release AAB: do not upload to Play Console."
+          fi
+      - name: Upload installable debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: tap-rush-debug-apk
+          if-no-files-found: error
+          path: tap-rush/android/app/build/outputs/apk/debug/*.apk
+      - name: Upload signed Play Store bundle
+        if: ${{ env.TAP_RUSH_KEYSTORE_PATH != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tap-rush-signed-release-aab
+          if-no-files-found: error
+          path: tap-rush/android/app/build/outputs/bundle/release/*.aab
