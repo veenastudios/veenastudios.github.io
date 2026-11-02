@@ -40,9 +40,28 @@ jobs:
           else
             echo "No complete signing secrets: release AAB will be unsigned."
           fi
+      - name: Verify release signing readiness
+        run: |
+          if [[ -z "${TAP_RUSH_KEYSTORE_PATH:-}" ]]; then
+            echo "::warning::Release signing secrets missing. AAB is for verification only, not Play Store upload."
+          fi
       - name: Build debug APK and release AAB
         working-directory: tap-rush/android
         run: gradle --no-daemon :app:assembleDebug :app:bundleRelease
+      - name: Verify Android package outputs
+        working-directory: tap-rush/android
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          test -s "$APK" && test -s "$AAB"
+          ls -lh "$APK" "$AAB"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -n 5
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          if [[ -n "${TAP_RUSH_KEYSTORE_PATH:-}" ]]; then
+            jarsigner -verify "$AAB"
+          else
+            echo "::warning::Unsigned release AAB: do not upload to Play Console."
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: tap-rush-android-build
