@@ -22,12 +22,29 @@ jobs:
           gradle-version: '8.10.2'
       - name: Install Android SDK
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
-      - name: Build debug APK and unsigned release AAB
+      - name: Prepare release signing when secrets exist
+        env:
+          KEYSTORE_B64: ${{ secrets.TAP_RUSH_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.TAP_RUSH_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.TAP_RUSH_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.TAP_RUSH_KEY_PASSWORD }}
+        run: |
+          if [[ -n "$KEYSTORE_B64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
+            printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/tap-rush-release.jks"
+            echo "TAP_RUSH_KEYSTORE_PATH=$RUNNER_TEMP/tap-rush-release.jks" >> "$GITHUB_ENV"
+            echo "TAP_RUSH_KEYSTORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "TAP_RUSH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "TAP_RUSH_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+          else
+            echo "No complete signing secrets: release AAB will be unsigned."
+          fi
+      - name: Build debug APK and release AAB
         working-directory: tap-rush/android
         run: gradle --no-daemon :app:assembleDebug :app:bundleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: tap-rush-android-build
+          if-no-files-found: error
           path: |
             tap-rush/android/app/build/outputs/apk/debug/*.apk
             tap-rush/android/app/build/outputs/bundle/release/*.aab
