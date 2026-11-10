@@ -86,17 +86,37 @@ if not world_art.is_file():
  print("FAIL: exact approved world-selection image not yet in Android source:",world_art)
  sys.exit(1)
 shutil.copy2(world_art,dst/"approved-world-selection.webp")
+home_art=Path(__file__).resolve().parent/"approved-home-carousel.png"
+if not home_art.is_file():
+ print("FAIL: approved carousel home image not yet uploaded:",home_art)
+ sys.exit(1)
+shutil.copy2(home_art,dst/"approved-home-carousel.png")
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
-launcher_js="""<script>(function(){
-const panel=document.createElement('section');panel.className='srGamesPanel';panel.setAttribute('aria-label','More SR Games');
-panel.innerHTML='<h2>🎮 SR GAMERS</h2><div class="srGamesGrid"><button class="ready" type="button">🐯<span>Tap Rush</span><span class="status">▶ PLAY</span></button><button disabled>🦁<span>Jungle Friends Quiz</span><span class="status">🔒 Coming Soon</span></button><button disabled>➕<span>Math Challenge</span><span class="status">🔒 Coming Soon</span></button><button disabled>🌍<span>Flags &amp; Capitals</span><span class="status">🔒 Coming Soon</span></button><button class="more" type="button">🎮<span>More Games</span><span class="status">View All ›</span></button></div>';
-panel.querySelector('.ready').addEventListener('click',()=>{document.querySelector('.liveShelf .gameCard')?.click()});
-panel.querySelector('.more').addEventListener('click',()=>{window.location.href='/tap-rush/game-hub.html'});
-function position(){const img=document.querySelector('.hub .premiumHome');const shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){panel.remove();return}if(!document.body.contains(panel))document.body.appendChild(panel);const r=img.getBoundingClientRect(),scale=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight);if(!Number.isFinite(scale)||!scale)return;const w=img.naturalWidth*scale,h=img.naturalHeight*scale,x=r.left+(r.width-w)/2,y=r.top+(r.height-h)/2;panel.style.left=x+'px';panel.style.width=w+'px';panel.style.top=(y+h*.64)+'px';panel.style.height=(h*.23)+'px'}
-new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
-window.addEventListener('resize',position);window.addEventListener('orientationchange',position);
-document.addEventListener('load',position,true);position();
+launcher_js="""<style id="sr-premium-home">
+.hub:has(.premiumHome) .premiumHome{opacity:0!important}
+.hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
+.srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
+.srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
+.srPremiumHome button:focus-visible{outline:3px solid #ffe078;outline-offset:-3px}
+.srPremiumHome .srHomePlay{left:29%;top:46%;width:43%;height:13%}
+.srPremiumHome .srHomeSettings{left:89%;top:0;width:11%;height:7%}
+.srPremiumHome .srHomeCoins{left:76%;top:0;width:13%;height:7%}
+.srPremiumHome .srCarouselPrev{left:0;top:67%;width:10%;height:12%}
+.srPremiumHome .srCarouselNext{right:0;top:67%;width:10%;height:12%}
+.srPremiumHome .srCarouselPrev:disabled,.srPremiumHome .srCarouselNext:disabled{pointer-events:none}
+</style><script>(function(){
+const home=document.createElement('section');home.className='srPremiumHome';home.setAttribute('aria-label','Tap Rush premium home');
+home.innerHTML='<button class="srHomePlay" aria-label="Play Tap Rush">Play</button><button class="srHomeSettings" aria-label="Settings">Settings</button><button class="srHomeCoins" aria-label="Coins">Coins</button><button class="srCarouselPrev" aria-label="Previous games" disabled>Previous</button><button class="srCarouselNext" aria-label="Next games" disabled>Next</button>';
+home.querySelector('.srHomePlay').onclick=()=>document.querySelector('.liveShelf .gameCard')?.click();
+home.querySelector('.srHomeSettings').onclick=()=>document.querySelector('.hub .gear')?.click();
+home.querySelector('.srHomeCoins').onclick=()=>document.querySelector('.hub .coinBox')?.click();
+const titles=['Jungle Friends Quiz','Math Challenge','Flags & Capitals'];let page=0;
+function updateCarousel(){const pages=Math.ceil(titles.length/3);home.querySelector('.srCarouselPrev').disabled=page===0;home.querySelector('.srCarouselNext').disabled=page>=pages-1}
+home.querySelector('.srCarouselPrev').onclick=()=>{page=Math.max(0,page-1);updateCarousel()};
+home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(titles.length/3)-1,page+1);updateCarousel()};
+function position(){const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel()}
+new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
  print("FAIL: no body tag for home shelf launcher")
