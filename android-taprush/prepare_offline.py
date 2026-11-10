@@ -48,6 +48,20 @@ if not site_source.is_file():
 if dst.exists():shutil.rmtree(dst)
 shutil.copytree(src,dst)
 shutil.copy2(site_source,dst/site_image)
+# Ship the approved-structure SR GAMERS hub in the offline APK.
+hub=Path(__file__).resolve().parent/"game-hub.html"
+if not hub.is_file():
+ print("FAIL: game hub missing:",hub)
+ sys.exit(1)
+shutil.copy2(hub,dst/"game-hub.html")
+# Expose the hub from the Android game's entry screen, not the live website.
+entry=dst/"index.html"
+markup=entry.read_text(encoding="utf-8")
+launcher='<a id="sr-games-hub-launcher" href="/tap-rush/game-hub.html" aria-label="More SR Games" style="position:fixed;right:12px;top:calc(env(safe-area-inset-top) + 12px);z-index:2147483647;background:#190a53;color:#fff;border:2px solid #00dfff;border-radius:24px;padding:8px 12px;font:700 13px system-ui;box-shadow:0 0 10px #00dfff;text-decoration:none">🎮 More Games</a>'
+if "</body>" not in markup:
+ print("FAIL: no HTML body to attach game hub")
+ sys.exit(1)
+entry.write_text(markup.replace("</body>",launcher+"</body>"),encoding="utf-8")
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
  s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
