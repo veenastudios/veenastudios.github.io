@@ -86,7 +86,7 @@ if not world_art.is_file():
  print("FAIL: exact approved world-selection image not yet in Android source:",world_art)
  sys.exit(1)
 shutil.copy2(world_art,dst/"approved-world-selection.webp")
-home_art=Path(__file__).resolve().parent/"file_000000004d88208849588bc009b398c.png"
+home_art=Path(__file__).resolve().parent/"file_0000000004d88208849588bc009b398c.png"
 if not home_art.is_file():
  print("FAIL: approved carousel home image not yet uploaded:",home_art)
  sys.exit(1)
