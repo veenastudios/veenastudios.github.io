@@ -26,6 +26,21 @@ for css in src.rglob("*.css"):
  for ref in re.findall(r'url\(\s*["\']?([^\)"\']+)',s):check(ref,str(css.relative_to(src)),css.parent)
 for js in src.rglob("*.js"):
  s=js.read_text(encoding="utf-8")
+ # Add real React-managed pause state to the offline bundle, without touching live site.
+ if 'const Wt=El.useRef(0),Cl=El.useRef(1)' in s:
+  changes=[
+   ('const Wt=El.useRef(0),Cl=El.useRef(1)', 'const [paused,setPaused]=El.useState(!1),pauseStarted=El.useRef(0),Wt=El.useRef(0),Cl=El.useRef(1)'),
+   ('Wt.current=performance.now(),cl("play")','setPaused(!1),pauseStarted.current=0,Wt.current=performance.now(),cl("play")'),
+   ('if(x!=="play")return;let z=0,L=0;', 'if(x!=="play"||paused)return;let z=0,L=0;'),
+   ('},[x,P]);const dl=z=>', '},[x,P,paused]);const dl=z=>'),
+   ('if(x==="play"){if(Kl(o=>', 'if(x==="play"&&!paused){if(Kl(o=>'),
+   ('x==="play"&&O.jsxs(O.Fragment,{children:[', 'x==="play"&&O.jsxs(O.Fragment,{children:[O.jsx("button",{className:"srPauseButton","aria-label":paused?"Resume game":"Pause game",onClick:()=>{if(paused){Wt.current+=performance.now()-pauseStarted.current;pauseStarted.current=0;setPaused(!1)}else{pauseStarted.current=performance.now();setPaused(!0)}},children:paused?"▶ Resume":"⏸ Pause"}),paused&&O.jsx("div",{className:"srPauseOverlay",children:O.jsxs("div",{children:[O.jsx("h2",{children:"Game Paused"}),O.jsx("button",{onClick:()=>{Wt.current+=performance.now()-pauseStarted.current;pauseStarted.current=0;setPaused(!1)},children:"▶ Resume Game"})]})}),'),
+  ]
+  for old,new in changes:
+   if s.count(old)!=1:
+    print("FAIL: pause patch anchor missing or ambiguous",old,s.count(old))
+    sys.exit(1)
+   s=s.replace(old,new,1)
  for ref in re.findall(r"""["']((?:\./|/tap-rush/)[^"']+\.(?:png|webp|jpg|jpeg|svg|mp3|wav|ogg))["']""",s,re.I):check(ref,str(js.relative_to(src)))
  for ref in re.findall(r'["\']([\w-]+-trophy\.(?:webp|png))["\']',s,re.I):check(ref,str(js.relative_to(src)))
 site_image="file_00000000c1108207931406ed369edda6.jpg"
@@ -61,7 +76,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .hub .liveShelf h2{display:none!important}
 .hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
 .hub .liveShelf #sr-games-hub-launcher{position:absolute!important;left:50%!important;top:auto!important;bottom:7%!important;transform:translateX(-50%)!important;pointer-events:auto!important;white-space:nowrap!important}
-.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n</style>"""
+.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n</style>"""
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
