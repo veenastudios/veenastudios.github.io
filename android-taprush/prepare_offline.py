@@ -60,17 +60,21 @@ home_css="""<style id="taprush-mobile-home-fix">
 .hub .liveShelf{left:0!important;right:0!important;bottom:0!important;top:0!important;pointer-events:none!important}
 .hub .liveShelf h2{display:none!important}
 .hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
-.hub .liveShelf #sr-games-hub-launcher{position:absolute!important;left:50%!important;top:auto!important;bottom:7%!important;transform:translateX(-50%)!important;pointer-events:auto!important;white-space:nowrap!important}
+.srBottomDock{position:fixed;z-index:100;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 18px);display:flex;gap:10px;align-items:stretch;padding:9px;border:2px solid #d4ac54;border-radius:22px;background:linear-gradient(110deg,#062c2a,#10173a);box-shadow:0 0 20px #000b,0 0 10px #d4ac5470;max-width:480px;margin:auto}
+.srBottomDock a,.srBottomDock button{flex:1;min-width:0;min-height:49px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:13px;text-decoration:none;font:800 13px system-ui;cursor:pointer}
+.srBottomDock button{background:linear-gradient(#ffe98d,#f3ae26);color:#231806;border:1px solid #ffdf7d}
+.srBottomDock a{background:#180c4b;color:white;border:2px solid #00dfff}
+
 .worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n</style>"""
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
-const link=document.createElement('a');
-link.href='/tap-rush/game-hub.html';
-link.textContent='🎮 More SR Games';
-link.setAttribute('aria-label','Open More SR Games');
-link.style.cssText='display:block;margin:0;width:max-content;max-width:100%;padding:7px 14px;border-radius:20px;border:2px solid #00dfff;background:#17094d;color:#fff;font:700 13px system-ui;text-decoration:none;box-shadow:0 0 8px #00dfff';
-function mount(){const shelf=document.querySelector('.liveShelf');if(shelf&&!shelf.contains(link))shelf.appendChild(link)}
+const dock=document.createElement('nav');
+dock.className='srBottomDock';
+dock.setAttribute('aria-label','Tap Rush quick actions');
+dock.innerHTML='<button type="button" aria-label="Play Tap Rush">▶ Tap Rush · PLAY</button><a href="/tap-rush/game-hub.html">🎮 More SR Games</a>';
+dock.querySelector('button').addEventListener('click',()=>{const play=document.querySelector('.liveShelf .gameCard');if(play)play.click()});
+function mount(){const shelf=document.querySelector('.liveShelf');if(shelf&&!document.body.contains(dock))document.body.appendChild(dock);if(!shelf&&dock.parentNode)dock.remove()}
 new MutationObserver(mount).observe(document.documentElement,{childList:true,subtree:true});
 mount();
 })();</script>"""
