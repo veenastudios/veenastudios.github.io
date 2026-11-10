@@ -32,10 +32,18 @@ if missing:
  print("FAIL: missing offline assets")
  for origin,ref,why in sorted(set(missing)):print(origin,ref,why)
  sys.exit(1)
+# The published game references one site-root image. Bundle it locally for true offline play.
+site_image="file_00000000c1108207931406ed369edda6.jpg"
+site_source=src.parent/site_image
+if not site_source.is_file():
+ print("FAIL: required site-root image missing:",site_source)
+ sys.exit(1)
 if dst.exists():shutil.rmtree(dst)
 shutil.copytree(src,dst)
+shutil.copy2(site_source,dst/site_image)
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
+ s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
  s=re.sub(r'"serviceWorker"in navigator&&window\.addEventListener\("load",\(\)=>\{navigator\.serviceWorker\.register\("\./sw\.js"\)\.catch\(\(\)=>\{\}\)\}\);?', "",s)
  js.write_text(s,encoding="utf-8")
 print("PASS",len(checked),"references",sum(f.is_file() for f in dst.rglob("*")),"files")
