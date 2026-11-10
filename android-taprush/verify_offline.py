@@ -21,7 +21,7 @@ if hub_path.is_file():
     # The home shelf is injected by the offline packer, not the standalone hub page.
 
     if 'https://veenastudios.in/' not in hub: errors.append("Veena Studios promotion link missing")
-if 'querySelector(\'.liveShelf\')' not in html: errors.append("Hub launcher not scoped to home shelf")
+if "document.querySelector('.hub .liveShelf')" not in html and "document.querySelector('.hub .premiumHome')" not in html: errors.append("Hub launcher not scoped to home shelf")
 for ref in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html):
     p=ref.split("?")[0]
     if p.startswith("/tap-rush/"): p=p[len("/tap-rush/"):]
