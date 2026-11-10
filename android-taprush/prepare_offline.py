@@ -68,7 +68,24 @@ home_css="""<style id="taprush-mobile-home-fix">
 .srGamesGrid button:disabled{opacity:1;color:#e7dce4}
 .srGamesGrid .status{color:#ffd966;font-size:clamp(8px,2vw,11px)}
 
-.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n</style>"""
+.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n.worldMap{position:relative!important;background:#061b1b!important;overflow:hidden!important}
+.worldMap::before{content:"";position:absolute;inset:0;background:url('/tap-rush/approved-world-selection.webp') center center/contain no-repeat;pointer-events:none}
+.worldMap .mapTop,.worldMap .mapIntro,.worldMap .mapNote{opacity:0!important;pointer-events:none!important}
+.worldMap .worldTrail{position:absolute!important;inset:0!important;display:block!important;margin:0!important;padding:0!important;z-index:3!important;pointer-events:none!important}
+.worldMap .worldNode{position:absolute!important;left:7%!important;width:86%!important;height:11%!important;min-height:0!important;opacity:0!important;pointer-events:auto!important;border:0!important}
+.worldMap .worldNode:nth-child(1){top:20%!important}
+.worldMap .worldNode:nth-child(2){top:33%!important}
+.worldMap .worldNode:nth-child(3){top:46%!important}
+.worldMap .worldNode:nth-child(4){top:59%!important}
+.worldMap .worldNode:nth-child(5){top:72%!important}
+.worldMap .mapTop button{position:absolute!important;top:5%!important;left:5%!important;opacity:0!important;pointer-events:auto!important;z-index:4!important;width:16%!important;height:9%!important}
+</style>"""
+# Approved world-selection art is mandatory: fail rather than ship a substitute.
+world_art=Path(__file__).resolve().parent/"approved-world-selection.webp"
+if not world_art.is_file():
+ print("FAIL: exact approved world-selection image not yet in Android source:",world_art)
+ sys.exit(1)
+shutil.copy2(world_art,dst/"approved-world-selection.webp")
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
