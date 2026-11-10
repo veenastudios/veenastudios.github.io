@@ -61,7 +61,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .hub .liveShelf h2{display:none!important}
 .hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
 .hub .liveShelf #sr-games-hub-launcher{position:absolute!important;left:50%!important;top:auto!important;bottom:7%!important;transform:translateX(-50%)!important;pointer-events:auto!important;white-space:nowrap!important}
-</style>"""
+.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n</style>"""
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
