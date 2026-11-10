@@ -10,7 +10,7 @@ css_files=list((root/"assets").glob("*.css"))
 if not js_files: errors.append("No JavaScript bundle")
 if not css_files: errors.append("No CSS bundle")
 if not (root/"game-hub.html").is_file(): errors.append("Game hub page missing")
-if (root/"index.html").is_file() and "More SR Games" not in html: errors.append("Game hub launcher missing")
+if "srPremiumHome" not in html or "srHomePlay" not in html: errors.append("Premium home launcher missing")
 hub_path=root/"game-hub.html"
 if hub_path.is_file():
     hub=hub_path.read_text(encoding="utf-8")
@@ -21,7 +21,7 @@ if hub_path.is_file():
     # The home shelf is injected by the offline packer, not the standalone hub page.
 
     if 'https://veenastudios.in/' not in hub: errors.append("Veena Studios promotion link missing")
-if "document.querySelector('.hub .liveShelf')" not in html and "document.querySelector('.hub .premiumHome')" not in html: errors.append("Hub launcher not scoped to home shelf")
+if "document.querySelector('.hub .premiumHome')" not in html or "document.querySelector('.hub .liveShelf')" not in html: errors.append("Premium home not scoped to original home")
 for ref in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html):
     p=ref.split("?")[0]
     if p.startswith("/tap-rush/"): p=p[len("/tap-rush/"):]
@@ -58,6 +58,9 @@ for marker in ('.worldNode:nth-child(1)', '.worldNode:nth-child(5)', '.mapTop bu
     if marker not in html: errors.append('Approved world-selection interaction region missing: '+marker)
 for marker in ('srGamesPanel','.worldMap{background:linear-gradient','.hub .premiumHome{object-fit:contain'):
     if marker not in html: errors.append("Android layout fix missing: "+marker)
+if not (root/"approved-home-carousel.png").is_file(): errors.append("Approved home carousel PNG missing")
+for marker in ("srCarouselPrev","srCarouselNext","srHomeSettings","srHomeCoins"):
+    if marker not in html: errors.append("Premium home control missing: "+marker)
 if errors:
     print("\n".join(errors));sys.exit(1)
 print("PASS: offline bundle smoke check",len(js_files),"JS",len(css_files),"CSS")
