@@ -55,6 +55,13 @@ if not hub.is_file():
  sys.exit(1)
 shutil.copy2(hub,dst/"game-hub.html")
 # Attach navigation only to the game's existing home shelf; never overlay active rounds.
+home_css="""<style id="taprush-mobile-home-fix">
+.hub .premiumHome{object-fit:contain!important;object-position:center center!important;background:#07111f}
+.hub .liveShelf{left:0!important;right:0!important;bottom:0!important;top:0!important;pointer-events:none!important}
+.hub .liveShelf h2{display:none!important}
+.hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
+.hub .liveShelf #sr-games-hub-launcher{position:absolute!important;left:50%!important;bottom:6%!important;transform:translateX(-50%)!important;pointer-events:auto!important;white-space:nowrap!important}
+</style>"""
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
@@ -70,7 +77,7 @@ mount();
 if "</body>" not in markup:
  print("FAIL: no body tag for home shelf launcher")
  sys.exit(1)
-entry.write_text(markup.replace("</body>",launcher_js+"</body>"),encoding="utf-8")
+entry.write_text(markup.replace("</head>",home_css+"</head>").replace("</body>",launcher_js+"</body>"),encoding="utf-8")
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
  s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
