@@ -11,6 +11,15 @@ if not js_files: errors.append("No JavaScript bundle")
 if not css_files: errors.append("No CSS bundle")
 if not (root/"game-hub.html").is_file(): errors.append("Game hub page missing")
 if (root/"index.html").is_file() and "More SR Games" not in html: errors.append("Game hub launcher missing")
+hub_path=root/"game-hub.html"
+if hub_path.is_file():
+    hub=hub_path.read_text(encoding="utf-8")
+    for title in ("Tap Rush","Jungle Friends Quiz","Math Challenge","Flags &amp; Capitals","Veena"):
+        if title not in hub: errors.append("Approved hub label missing: "+title)
+    if 'name="viewport"' not in hub: errors.append("Portrait viewport meta missing")
+    if 'Coming Soon' not in hub: errors.append("Unreleased games must show Coming Soon")
+    if 'https://veenastudios.in/' not in hub: errors.append("Veena Studios promotion link missing")
+if 'querySelector(\'.liveShelf\')' not in html: errors.append("Hub launcher not scoped to home shelf")
 for ref in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html):
     p=ref.split("?")[0]
     if p.startswith("/tap-rush/"): p=p[len("/tap-rush/"):]
