@@ -1,8 +1,6 @@
 package in.veenastudios.taprush;
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.content.Intent;
 import android.net.Uri;
 import android.webkit.*;
@@ -41,8 +39,6 @@ public class MainActivity extends Activity {
   });
   web.loadUrl("https://"+HOST+"/tap-rush/");
  }
- @Override public boolean onCreateOptionsMenu(Menu menu){menu.add(0,101,0,"More SR Games").setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);return true;}
- @Override public boolean onOptionsItemSelected(MenuItem item){if(item.getItemId()==101){web.loadUrl("https://"+HOST+"/tap-rush/game-hub.html");return true;}return super.onOptionsItemSelected(item);}
  @Override public void onBackPressed(){if(web.canGoBack())web.goBack();else super.onBackPressed();}
  @Override protected void onDestroy(){web.destroy();super.onDestroy();}
 }
