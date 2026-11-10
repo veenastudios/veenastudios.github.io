@@ -64,7 +64,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .srGamesPanel h2{font:900 clamp(13px,3.6vw,19px) system-ui;margin:0 0 3px;color:#ffdb74;letter-spacing:.5px}
 .srGamesGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
 .srGamesGrid button{min-width:0;min-height:48px;border:1px solid #746c5c;border-radius:9px;background:linear-gradient(#183b43,#071a2c);color:white;padding:5px 2px;font:800 clamp(8px,2vw,11px) system-ui;display:flex;flex-direction:column;align-items:center;justify-content:space-around;gap:3px}
-.srGamesGrid button.ready{border-color:#ffd35e;background:linear-gradient(#486b30,#123b25)}
+#srNeverUsed{display:none}.srGamesGrid button.more{border-color:#00dfff;background:linear-gradient(#203c72,#160d42)}\n.srGamesGrid button.ready{border-color:#ffd35e;background:linear-gradient(#486b30,#123b25)}
 .srGamesGrid button:disabled{opacity:1;color:#e7dce4}
 .srGamesGrid .status{color:#ffd966;font-size:clamp(8px,2vw,11px)}
 
@@ -73,8 +73,9 @@ entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
 const panel=document.createElement('section');panel.className='srGamesPanel';panel.setAttribute('aria-label','More SR Games');
-panel.innerHTML='<h2>🎮 More SR Games</h2><div class="srGamesGrid"><button class="ready" type="button">🐯<span>Tap Rush</span><span class="status">▶ PLAY</span></button><button disabled>🦁<span>Jungle Friends Quiz</span><span class="status">🔒 Coming Soon</span></button><button disabled>➕<span>Math Challenge</span><span class="status">🔒 Coming Soon</span></button><button disabled>🌍<span>Flags &amp; Capitals</span><span class="status">🔒 Coming Soon</span></button><button disabled>🎨<span>Color Slide Puzzle</span><span class="status">🔒 Coming Soon</span></button><button disabled>🧩<span>Block Puzzle</span><span class="status">🔒 Coming Soon</span></button><button disabled>🐱<span>Find the Face</span><span class="status">🔒 Coming Soon</span></button></div>';
+panel.innerHTML='<h2>🎮 SR GAMERS</h2><div class="srGamesGrid"><button class="ready" type="button">🐯<span>Tap Rush</span><span class="status">▶ PLAY</span></button><button disabled>🦁<span>Jungle Friends Quiz</span><span class="status">🔒 Coming Soon</span></button><button disabled>➕<span>Math Challenge</span><span class="status">🔒 Coming Soon</span></button><button disabled>🌍<span>Flags &amp; Capitals</span><span class="status">🔒 Coming Soon</span></button><button class="more" type="button">🎮<span>More Games</span><span class="status">View All ›</span></button></div>';
 panel.querySelector('.ready').addEventListener('click',()=>{document.querySelector('.liveShelf .gameCard')?.click()});
+panel.querySelector('.more').addEventListener('click',()=>{window.location.href='/tap-rush/game-hub.html'});
 function position(){const img=document.querySelector('.hub .premiumHome');const shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){panel.remove();return}if(!document.body.contains(panel))document.body.appendChild(panel);const r=img.getBoundingClientRect(),scale=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight);if(!Number.isFinite(scale)||!scale)return;const w=img.naturalWidth*scale,h=img.naturalHeight*scale,x=r.left+(r.width-w)/2,y=r.top+(r.height-h)/2;panel.style.left=x+'px';panel.style.width=w+'px';panel.style.top=(y+h*.64)+'px';panel.style.height=(h*.23)+'px'}
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
 window.addEventListener('resize',position);window.addEventListener('orientationchange',position);
