@@ -1,0 +1,43 @@
+name: Tap Rush offline Android debug
+on:
+  workflow_dispatch:
+  push:
+    branches: [taprush-android-offline-v6]
+    paths:
+      - 'tap-rush/**'
+      - 'android-taprush/**'
+      - '.github/workflows/taprush-android-offline-debug.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: android-taprush
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Bundle offline game
+        run: python3 prepare_offline.py ../tap-rush
+      - name: Verify entrypoint
+        run: |
+          test -s app/src/main/assets/index.html
+          test -s app/src/main/assets/assets/index-B_be548G.js
+          test -s app/src/main/assets/assets/index-DJsOUZk8.css
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: taprush-offline-debug-apk
+          path: android-taprush/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
