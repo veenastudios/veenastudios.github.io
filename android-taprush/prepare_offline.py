@@ -60,7 +60,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .hub .liveShelf{left:0!important;right:0!important;bottom:0!important;top:0!important;pointer-events:none!important}
 .hub .liveShelf h2{display:none!important}
 .hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
-.hub .liveShelf #sr-games-hub-launcher{position:absolute!important;left:50%!important;bottom:6%!important;transform:translateX(-50%)!important;pointer-events:auto!important;white-space:nowrap!important}
+.hub .liveShelf #sr-games-hub-launcher{position:absolute!important;left:50%!important;top:auto!important;bottom:7%!important;transform:translateX(-50%)!important;pointer-events:auto!important;white-space:nowrap!important}
 </style>"""
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
@@ -69,7 +69,7 @@ const link=document.createElement('a');
 link.href='/tap-rush/game-hub.html';
 link.textContent='🎮 More SR Games';
 link.setAttribute('aria-label','Open More SR Games');
-link.style.cssText='display:block;margin:8px auto 0;width:max-content;max-width:100%;padding:7px 14px;border-radius:20px;border:2px solid #00dfff;background:#17094d;color:#fff;font:700 13px system-ui;text-decoration:none;box-shadow:0 0 8px #00dfff';
+link.style.cssText='display:block;margin:0;width:max-content;max-width:100%;padding:7px 14px;border-radius:20px;border:2px solid #00dfff;background:#17094d;color:#fff;font:700 13px system-ui;text-decoration:none;box-shadow:0 0 8px #00dfff';
 function mount(){const shelf=document.querySelector('.liveShelf');if(shelf&&!shelf.contains(link))shelf.appendChild(link)}
 new MutationObserver(mount).observe(document.documentElement,{childList:true,subtree:true});
 mount();
