@@ -1,6 +1,12 @@
 name: Tap Rush offline Android debug
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'android-taprush/**'
+      - 'tap-rush/**'
+      - '.github/workflows/taprush-android-offline-debug.yml'
   push:
     branches: [taprush-android-offline-v6]
     paths:
@@ -24,6 +30,8 @@ jobs:
       - uses: android-actions/setup-android@v3
       - name: Install Android SDK
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Validate offline packer syntax
+        run: python3 -m py_compile prepare_offline.py
       - name: Bundle offline game
         run: python3 prepare_offline.py ../tap-rush
       - name: Verify entrypoint
