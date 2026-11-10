@@ -26,7 +26,7 @@ for css in src.rglob("*.css"):
  for ref in re.findall(r'url\(\s*["\']?([^\)"\']+)',s):check(ref,str(css.relative_to(src)),css.parent)
 for js in src.rglob("*.js"):
  s=js.read_text(encoding="utf-8")
- for ref in re.findall(r'["\']((?:\./|/tap-rush/)[^"\']+\.(?:png|webp|jpg|jpeg|svg|mp3|wav|ogg))["\']',s,re.I):check(ref,str(js.relative_to(src)))
+ for ref in re.findall(r\'["\\\']((?:\\./|/tap-rush/)[^"\\\']+\\.(?:png|webp|jpg|jpeg|svg|mp3|wav|ogg))["\\\']\',s,re.I):check(ref,str(js.relative_to(src)))
  for ref in re.findall(r'["\']([\w-]+-trophy\.(?:webp|png))["\']',s,re.I):check(ref,str(js.relative_to(src)))
 site_image="file_00000000c1108207931406ed369edda6.jpg"
 # Audit any remote image/audio references in compiled JavaScript.
