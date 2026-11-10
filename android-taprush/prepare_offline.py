@@ -32,7 +32,7 @@ site_image="file_00000000c1108207931406ed369edda6.jpg"
 # Audit any remote image/audio references in compiled JavaScript.
 for js in src.rglob("*.js"):
  script=js.read_text(encoding="utf-8")
- remote=set(re.findall(r"https?://[^\\s\\\"'<>]+\\.(?:png|webp|jpe?g|svg|mp3|ogg|wav)(?:\\?[^\\s\\\"'<>]*)?",script,re.I))
+ remote=set(re.findall(r"""https?://[^\s"'<>]+\.(?:png|webp|jpe?g|svg|mp3|ogg|wav)(?:\?[^\s"'<>]*)?""",script,re.I))
  for url in sorted(remote):
   if site_image in url and url.startswith("https://veenastudios.in/"):continue
   missing.append((str(js.relative_to(src)),url,"external runtime asset"))
