@@ -60,23 +60,25 @@ home_css="""<style id="taprush-mobile-home-fix">
 .hub .liveShelf{left:0!important;right:0!important;bottom:0!important;top:0!important;pointer-events:none!important}
 .hub .liveShelf h2{display:none!important}
 .hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
-.srBottomDock{position:fixed;z-index:100;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 18px);display:flex;gap:10px;align-items:stretch;padding:9px;border:2px solid #d4ac54;border-radius:22px;background:linear-gradient(110deg,#062c2a,#10173a);box-shadow:0 0 20px #000b,0 0 10px #d4ac5470;max-width:480px;margin:auto}
-.srBottomDock a,.srBottomDock button{flex:1;min-width:0;min-height:49px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:13px;text-decoration:none;font:800 13px system-ui;cursor:pointer}
-.srBottomDock button{background:linear-gradient(#ffe98d,#f3ae26);color:#231806;border:1px solid #ffdf7d}
-.srBottomDock a{background:#180c4b;color:white;border:2px solid #00dfff}
+.srGamesPanel{position:fixed;z-index:35;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:8px 9px;background:linear-gradient(180deg,#06152dfb,#091a2ffb);border-top:2px solid #d8b15b;border-bottom:2px solid #d8b15b;box-shadow:0 0 15px #020812dd;color:#fff;overflow:hidden}
+.srGamesPanel h2{font:900 clamp(13px,3.6vw,19px) system-ui;margin:0 0 3px;color:#ffdb74;letter-spacing:.5px}
+.srGamesGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.srGamesGrid button{min-width:0;min-height:72px;border:1px solid #746c5c;border-radius:9px;background:linear-gradient(#183b43,#071a2c);color:white;padding:5px 2px;font:800 clamp(9px,2.4vw,12px) system-ui;display:flex;flex-direction:column;align-items:center;justify-content:space-around;gap:3px}
+.srGamesGrid button.ready{border-color:#ffd35e;background:linear-gradient(#486b30,#123b25)}
+.srGamesGrid button:disabled{opacity:1;color:#e7dce4}
+.srGamesGrid .status{color:#ffd966;font-size:clamp(8px,2vw,11px)}
 
 .worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n</style>"""
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<script>(function(){
-const dock=document.createElement('nav');
-dock.className='srBottomDock';
-dock.setAttribute('aria-label','Tap Rush quick actions');
-dock.innerHTML='<button type="button" aria-label="Play Tap Rush">▶ Tap Rush · PLAY</button><a href="/tap-rush/game-hub.html">🎮 More SR Games</a>';
-dock.querySelector('button').addEventListener('click',()=>{const play=document.querySelector('.liveShelf .gameCard');if(play)play.click()});
-function mount(){const shelf=document.querySelector('.liveShelf');if(shelf&&!document.body.contains(dock))document.body.appendChild(dock);if(!shelf&&dock.parentNode)dock.remove()}
-new MutationObserver(mount).observe(document.documentElement,{childList:true,subtree:true});
-mount();
+const panel=document.createElement('section');panel.className='srGamesPanel';panel.setAttribute('aria-label','More SR Games');
+panel.innerHTML='<h2>🎮 More SR Games</h2><div class="srGamesGrid"><button class="ready" type="button">🐯<span>Tap Rush</span><span class="status">▶ PLAY</span></button><button disabled>🦁<span>Jungle Friends Quiz</span><span class="status">🔒 Coming Soon</span></button><button disabled>➕<span>Math Challenge</span><span class="status">🔒 Coming Soon</span></button><button disabled>🌍<span>Flags &amp; Capitals</span><span class="status">🔒 Coming Soon</span></button></div>';
+panel.querySelector('.ready').addEventListener('click',()=>{document.querySelector('.liveShelf .gameCard')?.click()});
+function position(){const img=document.querySelector('.hub .premiumHome');const shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){panel.remove();return}if(!document.body.contains(panel))document.body.appendChild(panel);const r=img.getBoundingClientRect(),scale=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight);if(!Number.isFinite(scale)||!scale)return;const w=img.naturalWidth*scale,h=img.naturalHeight*scale,x=r.left+(r.width-w)/2,y=r.top+(r.height-h)/2;panel.style.left=x+'px';panel.style.width=w+'px';panel.style.top=(y+h*.645)+'px';panel.style.height=(h*.215)+'px'}
+new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+window.addEventListener('resize',position);window.addEventListener('orientationchange',position);
+document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
  print("FAIL: no body tag for home shelf launcher")
