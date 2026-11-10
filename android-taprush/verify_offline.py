@@ -18,6 +18,8 @@ if hub_path.is_file():
         if title not in hub: errors.append("Approved hub label missing: "+title)
     if 'name="viewport"' not in hub: errors.append("Portrait viewport meta missing")
     if 'Coming Soon' not in hub: errors.append("Unreleased games must show Coming Soon")
+    # The home shelf is injected by the offline packer, not the standalone hub page.
+
     if 'https://veenastudios.in/' not in hub: errors.append("Veena Studios promotion link missing")
 if 'querySelector(\'.liveShelf\')' not in html: errors.append("Hub launcher not scoped to home shelf")
 for ref in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html):
@@ -44,6 +46,8 @@ if js_files:
 js_text="\n".join(p.read_text(encoding="utf-8") for p in root.glob("assets/*.js"))
 for marker in ('srPauseButton','srPauseOverlay','pauseStarted.current','Wt.current+=elapsed','born:item.born+elapsed','if(x!=="play"||paused)return'):
     if marker not in js_text: errors.append("Pause functionality missing from shipped JS: "+marker)
+for game in ('Color Slide Puzzle','Block Puzzle','Find the Face'):
+    if game not in html: errors.append("New SR GAMERS shelf item missing: "+game)
 for marker in ('srGamesPanel','.worldMap{background:linear-gradient','.hub .premiumHome{object-fit:contain'):
     if marker not in html: errors.append("Android layout fix missing: "+marker)
 if errors:
