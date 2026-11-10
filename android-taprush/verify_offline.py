@@ -47,7 +47,15 @@ js_text="\n".join(p.read_text(encoding="utf-8") for p in root.glob("assets/*.js"
 for marker in ('srPauseButton','srPauseOverlay','pauseStarted.current','Wt.current+=elapsed','born:item.born+elapsed','if(x!=="play"||paused)return'):
     if marker not in js_text: errors.append("Pause functionality missing from shipped JS: "+marker)
 for game in ('Color Slide Puzzle','Block Puzzle','Find the Face'):
-    if game not in html: errors.append("New SR GAMERS shelf item missing: "+game)
+    if not hub_path.is_file() or game not in hub_path.read_text(encoding='utf-8'):
+        errors.append('Approved seven-game hub item missing: '+game)
+approved=root/'approved-world-selection.webp'
+if not approved.is_file() or approved.stat().st_size < 10000:
+    errors.append('Approved 3D world-selection image missing or too small')
+if 'approved-world-selection.webp' not in html:
+    errors.append('Approved 3D world-selection image not wired into Android screen')
+for marker in ('.worldNode:nth-child(1)', '.worldNode:nth-child(5)', '.mapTop button'):
+    if marker not in html: errors.append('Approved world-selection interaction region missing: '+marker)
 for marker in ('srGamesPanel','.worldMap{background:linear-gradient','.hub .premiumHome{object-fit:contain'):
     if marker not in html: errors.append("Android layout fix missing: "+marker)
 if errors:
