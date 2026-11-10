@@ -26,21 +26,6 @@ for css in src.rglob("*.css"):
  for ref in re.findall(r'url\(\s*["\']?([^\)"\']+)',s):check(ref,str(css.relative_to(src)),css.parent)
 for js in src.rglob("*.js"):
  s=js.read_text(encoding="utf-8")
- # Add real React-managed pause state to the offline bundle, without touching live site.
- if 'const Wt=El.useRef(0),Cl=El.useRef(1)' in s:
-  changes=[
-   ('const Wt=El.useRef(0),Cl=El.useRef(1)', 'const [paused,setPaused]=El.useState(!1),pauseStarted=El.useRef(0),Wt=El.useRef(0),Cl=El.useRef(1)'),
-   ('Wt.current=performance.now(),cl("play")','setPaused(!1),pauseStarted.current=0,Wt.current=performance.now(),cl("play")'),
-   ('if(x!=="play")return;let z=0,L=0;', 'if(x!=="play"||paused)return;let z=0,L=0;'),
-   ('},[x,P]);const dl=z=>', '},[x,P,paused]);const dl=z=>'),
-   ('if(x==="play"){if(Kl(o=>', 'if(x==="play"&&!paused){if(Kl(o=>'),
-   ('x==="play"&&O.jsxs(O.Fragment,{children:[', 'x==="play"&&O.jsxs(O.Fragment,{children:[O.jsx("button",{className:"srPauseButton","aria-label":paused?"Resume game":"Pause game",onClick:()=>{if(paused){Wt.current+=performance.now()-pauseStarted.current;pauseStarted.current=0;setPaused(!1)}else{pauseStarted.current=performance.now();setPaused(!0)}},children:paused?"▶ Resume":"⏸ Pause"}),paused&&O.jsx("div",{className:"srPauseOverlay",children:O.jsxs("div",{children:[O.jsx("h2",{children:"Game Paused"}),O.jsx("button",{onClick:()=>{Wt.current+=performance.now()-pauseStarted.current;pauseStarted.current=0;setPaused(!1)},children:"▶ Resume Game"})]})}),'),
-  ]
-  for old,new in changes:
-   if s.count(old)!=1:
-    print("FAIL: pause patch anchor missing or ambiguous",old,s.count(old))
-    sys.exit(1)
-   s=s.replace(old,new,1)
  for ref in re.findall(r"""["']((?:\./|/tap-rush/)[^"']+\.(?:png|webp|jpg|jpeg|svg|mp3|wav|ogg))["']""",s,re.I):check(ref,str(js.relative_to(src)))
  for ref in re.findall(r'["\']([\w-]+-trophy\.(?:webp|png))["\']',s,re.I):check(ref,str(js.relative_to(src)))
 site_image="file_00000000c1108207931406ed369edda6.jpg"
@@ -96,6 +81,21 @@ entry.write_text(markup.replace("</head>",home_css+"</head>").replace("</body>",
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
  s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
+ # Add real React-managed pause state to the offline bundle, without touching live site.
+ if 'const Wt=El.useRef(0),Cl=El.useRef(1)' in s:
+  changes=[
+   ('const Wt=El.useRef(0),Cl=El.useRef(1)', 'const [paused,setPaused]=El.useState(!1),pauseStarted=El.useRef(0),Wt=El.useRef(0),Cl=El.useRef(1)'),
+   ('Wt.current=performance.now(),cl("play")','setPaused(!1),pauseStarted.current=0,Wt.current=performance.now(),cl("play")'),
+   ('if(x!=="play")return;let z=0,L=0;', 'if(x!=="play"||paused)return;let z=0,L=0;'),
+   ('},[x,P]);const dl=z=>', '},[x,P,paused]);const dl=z=>'),
+   ('if(x==="play"){if(Kl(o=>', 'if(x==="play"&&!paused){if(Kl(o=>'),
+   ('x==="play"&&O.jsxs(O.Fragment,{children:[', 'x==="play"&&O.jsxs(O.Fragment,{children:[O.jsx("button",{className:"srPauseButton","aria-label":paused?"Resume game":"Pause game",onClick:()=>{if(paused){const elapsed=performance.now()-pauseStarted.current;Wt.current+=elapsed;Kl(items=>items.map(item=>({...item,born:item.born+elapsed})));pauseStarted.current=0;setPaused(!1)}else{pauseStarted.current=performance.now();setPaused(!0)}},children:paused?"▶ Resume":"⏸ Pause"}),paused&&O.jsx("div",{className:"srPauseOverlay",children:O.jsxs("div",{children:[O.jsx("h2",{children:"Game Paused"}),O.jsx("button",{onClick:()=>{const elapsed=performance.now()-pauseStarted.current;Wt.current+=elapsed;Kl(items=>items.map(item=>({...item,born:item.born+elapsed})));pauseStarted.current=0;setPaused(!1)},children:"▶ Resume Game"})]})}),'),
+  ]
+  for old,new in changes:
+   if s.count(old)!=1:
+    print("FAIL: pause patch anchor missing or ambiguous",old,s.count(old))
+    sys.exit(1)
+   s=s.replace(old,new,1)
  s=re.sub(r'"serviceWorker"in navigator&&window\.addEventListener\("load",\(\)=>\{navigator\.serviceWorker\.register\("\./sw\.js"\)\.catch\(\(\)=>\{\}\)\}\);?', "",s)
  js.write_text(s,encoding="utf-8")
 print("PASS",len(checked),"references",sum(f.is_file() for f in dst.rglob("*")),"files")
