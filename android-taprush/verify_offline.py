@@ -39,6 +39,13 @@ if js_files:
         errors.append("External background image still in bundle")
     for world in ("jungle","city","space","water","himalaya"):
         if not (root/(world+"-trophy.webp")).is_file(): errors.append("Missing "+world+" trophy")
+
+# Release gate: confirm the shipped JS contains actual pause logic, not only a visual button.
+js_text="\n".join(p.read_text(encoding="utf-8") for p in root.glob("assets/*.js"))
+for marker in ('srPauseButton','srPauseOverlay','pauseStarted.current','Wt.current+=elapsed','born:item.born+elapsed','if(x!=="play"||paused)return'):
+    if marker not in js_text: errors.append("Pause functionality missing from shipped JS: "+marker)
+for marker in ('sr-games-hub-launcher','.worldMap{background:linear-gradient','.hub .premiumHome{object-fit:contain'):
+    if marker not in html: errors.append("Android layout fix missing: "+marker)
 if errors:
     print("\n".join(errors));sys.exit(1)
 print("PASS: offline bundle smoke check",len(js_files),"JS",len(css_files),"CSS")
