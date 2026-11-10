@@ -54,6 +54,23 @@ if not hub.is_file():
  print("FAIL: game hub missing:",hub)
  sys.exit(1)
 shutil.copy2(hub,dst/"game-hub.html")
+# Attach navigation only to the game's existing home shelf; never overlay active rounds.
+entry=dst/"index.html"
+markup=entry.read_text(encoding="utf-8")
+launcher_js="""<script>(function(){
+const link=document.createElement('a');
+link.href='/tap-rush/game-hub.html';
+link.textContent='🎮 More SR Games';
+link.setAttribute('aria-label','Open More SR Games');
+link.style.cssText='display:block;margin:8px auto 0;width:max-content;max-width:100%;padding:7px 14px;border-radius:20px;border:2px solid #00dfff;background:#17094d;color:#fff;font:700 13px system-ui;text-decoration:none;box-shadow:0 0 8px #00dfff';
+function mount(){const shelf=document.querySelector('.liveShelf');if(shelf&&!shelf.contains(link))shelf.appendChild(link)}
+new MutationObserver(mount).observe(document.documentElement,{childList:true,subtree:true});
+mount();
+})();</script>"""
+if "</body>" not in markup:
+ print("FAIL: no body tag for home shelf launcher")
+ sys.exit(1)
+entry.write_text(markup.replace("</body>",launcher_js+"</body>"),encoding="utf-8")
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
  s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
