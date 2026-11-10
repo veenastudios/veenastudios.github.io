@@ -28,10 +28,11 @@ for js in src.rglob("*.js"):
  s=js.read_text(encoding="utf-8")
  for ref in re.findall(r'["\']((?:\./|/tap-rush/)[^"\']+\.(?:png|webp|jpg|jpeg|svg|mp3|wav|ogg))["\']',s,re.I):check(ref,str(js.relative_to(src)))
  for ref in re.findall(r'["\']([\w-]+-trophy\.(?:webp|png))["\']',s,re.I):check(ref,str(js.relative_to(src)))
+site_image="file_00000000c1108207931406ed369edda6.jpg"
 # Audit any remote image/audio references in compiled JavaScript.
 for js in src.rglob("*.js"):
  script=js.read_text(encoding="utf-8")
- remote=set(re.findall(r'https?://[^"\\'\x60\\s<>]+\\.(?:png|webp|jpe?g|svg|mp3|ogg|wav)(?:\\?[^"\\'\x60\\s<>]*)?',script,re.I))
+ remote=set(re.findall(r"https?://[^\\s\\\"'<>]+\\.(?:png|webp|jpe?g|svg|mp3|ogg|wav)(?:\\?[^\\s\\\"'<>]*)?",script,re.I))
  for url in sorted(remote):
   if site_image in url and url.startswith("https://veenastudios.in/"):continue
   missing.append((str(js.relative_to(src)),url,"external runtime asset"))
@@ -40,7 +41,6 @@ if missing:
  for origin,ref,why in sorted(set(missing)):print(origin,ref,why)
  sys.exit(1)
 # The published game references one site-root image. Bundle it locally for true offline play.
-site_image="file_00000000c1108207931406ed369edda6.jpg"
 site_source=src.parent/site_image
 if not site_source.is_file():
  print("FAIL: required site-root image missing:",site_source)
