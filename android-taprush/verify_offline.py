@@ -9,6 +9,8 @@ js_files=list((root/"assets").glob("*.js"))
 css_files=list((root/"assets").glob("*.css"))
 if not js_files: errors.append("No JavaScript bundle")
 if not css_files: errors.append("No CSS bundle")
+if not (root/"game-hub.html").is_file(): errors.append("Game hub page missing")
+if (root/"index.html").is_file() and "More SR Games" not in html: errors.append("Game hub launcher missing")
 for ref in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html):
     p=ref.split("?")[0]
     if p.startswith("/tap-rush/"): p=p[len("/tap-rush/"):]
