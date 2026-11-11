@@ -63,8 +63,28 @@ jobs:
               assert Path('app/src/main/assets', image).stat().st_size > 10000, image
           print('Premium home, live coins, world map and artwork verified')
           PY
-      - name: Build unsigned release AAB for signing preparation
+      - name: Prepare release signing when configured
+        env:
+          KEYSTORE_BASE64: ${{ secrets.TAPRUSH_KEYSTORE_BASE64 }}
+          TAPRUSH_KEYSTORE_PASSWORD: ${{ secrets.TAPRUSH_KEYSTORE_PASSWORD }}
+          TAPRUSH_KEY_ALIAS: ${{ secrets.TAPRUSH_KEY_ALIAS }}
+          TAPRUSH_KEY_PASSWORD: ${{ secrets.TAPRUSH_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$TAPRUSH_KEYSTORE_PASSWORD" ] && [ -n "$TAPRUSH_KEY_ALIAS" ] && [ -n "$TAPRUSH_KEY_PASSWORD" ]; then
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/taprush-release.jks"
+            echo "TAPRUSH_KEYSTORE_FILE=$RUNNER_TEMP/taprush-release.jks" >> "$GITHUB_ENV"
+            echo "TAPRUSH_SIGNED=true" >> "$GITHUB_ENV"
+          elif [ -n "$KEYSTORE_BASE64$TAPRUSH_KEYSTORE_PASSWORD$TAPRUSH_KEY_ALIAS$TAPRUSH_KEY_PASSWORD" ]; then
+            echo "::error::Incomplete Tap Rush signing secrets. Configure all four secrets."
+            exit 1
+          else
+            echo "TAPRUSH_SIGNED=false" >> "$GITHUB_ENV"
+          fi
+      - name: Build release AAB (signed only when secrets configured)
         run: gradle :app:bundleRelease --no-daemon --stacktrace
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/taprush-release.jks"
       - name: Record build environment
         if: always()
         run: |
@@ -80,6 +100,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: taprush-unsigned-release-aab-NOT-FOR-UPLOAD
+          name: taprush-release-aab-SIGNATURE-REQUIRES-VERIFICATION
           path: android-taprush/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
