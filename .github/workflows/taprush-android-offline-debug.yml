@@ -42,6 +42,18 @@ jobs:
         run: python3 prepare_offline.py ../tap-rush
       - name: Verify complete offline assets
         run: python3 verify_offline.py
+      - name: Verify coin unlock integration and lock notice
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          js=Path('app/src/main/assets/assets/index-B_be548G.js').read_text()
+          for token in ('syncWorldLocks', 'data-lock-price', 'srWorldLockTimer', '},800)', 'srWorldLockNotice'):
+              assert token in html, f'Missing lock UI: {token}'
+          for token in ('srWorldUnlocked_', 'city:150', 'space:200', 'underwater:250', 'himalaya:350'):
+              assert token in js, f'Missing world unlock logic: {token}'
+          print('World lock UI and coin prices verified in generated assets')
+          PY
       - name: Verify entrypoint
         run: |
           test -s app/src/main/assets/index.html
