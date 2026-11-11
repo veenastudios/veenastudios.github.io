@@ -84,7 +84,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .worldMap .worldNode{opacity:1!important;background:transparent!important;color:transparent!important;font-size:0!important;box-shadow:none!important}
 .worldMap .worldNode>*{visibility:hidden!important}
 .worldMap .worldNode:not(:first-child):not(.srUnlocked)::after{content:attr(data-lock-price) " COINS 🔒";position:absolute;right:2%;top:30%;width:27%;height:43%;display:flex;align-items:center;justify-content:center;border:2px solid #ffe18b;border-radius:18px;background:linear-gradient(130deg,#101f35,#30425a);box-shadow:0 2px 9px #000b;color:#ffe18b;font:900 clamp(11px,3vw,20px) system-ui;z-index:5;pointer-events:none}
-.worldMap .mapTop button{position:absolute!important;top:5%!important;left:5%!important;opacity:0!important;pointer-events:auto!important;z-index:4!important;width:16%!important;height:9%!important}
+.srRewardAd{display:block;margin:12px auto;padding:12px 18px;border-radius:16px;border:2px solid #f4ce63;background:#122f40;color:#ffdf7b;font:900 15px system-ui;max-width:92%}\n.worldMap .mapTop button{position:absolute!important;top:5%!important;left:5%!important;opacity:0!important;pointer-events:auto!important;z-index:4!important;width:16%!important;height:9%!important}
  .srWorldLockNotice{position:fixed;z-index:100;left:7%;right:7%;bottom:12%;padding:20px;background:#071b2ff5;color:#ffe68b;border:2px solid #f9d86b;border-radius:15px;text-align:center;font:bold 18px system-ui;pointer-events:none}\n</style>"""
 # Approved world-selection art is mandatory: fail rather than ship a substitute.
 world_art=Path(__file__).resolve().parent/"approved-world-selection.webp"
@@ -184,6 +184,16 @@ for js in (dst/"assets").glob("*.js"):
   s=s.replace('children:L.ready?L.mark:"🔒"','children:L.id==="jungle"||localStorage.getItem(Ta("srWorldUnlocked_"+L.id))==="yes"?L.mark:"🔒"',1)
   world_patch_count+=1
   print("Applied world coin unlocks: 150 / 200 / 250 / 350")
+ # Reward coins are granted only after the native AdMob rewarded callback.
+ if 'const[Y,S]=El.useState(0)' in s:
+  state_anchor='[Rl,wt]=El.useState(()=>localStorage.getItem(Ta("srSound"))!=="off");'
+  state_new=state_anchor+'El.useEffect(()=>{const onReward=()=>{ct(prev=>{const next=prev+20;localStorage.setItem(Ta("srCoins"),String(next));return next})};window.addEventListener("srReward20",onReward);return()=>window.removeEventListener("srReward20",onReward)},[]);'
+  result_anchor='O.jsx("button",{className:"resultPlay",onClick:B,children:"▶ PLAY AGAIN"})'
+  result_new='O.jsx("button",{className:"srRewardAd",onClick:()=>{if(window.TapRushAds)window.TapRushAds.showRewarded()},children:"▶ WATCH AD · +20 COINS (OPTIONAL)"}),'+result_anchor
+  for old,new in ((state_anchor,state_new),(result_anchor,result_new)):
+   if s.count(old)!=1:
+    print("FAIL: rewarded ad integration anchor missing",old,s.count(old));sys.exit(1)
+   s=s.replace(old,new,1)
  # Add real React-managed pause state to the offline bundle, without touching live site.
  if 'const Wt=El.useRef(0),Cl=El.useRef(1)' in s:
   changes=[
