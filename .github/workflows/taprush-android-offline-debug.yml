@@ -52,6 +52,19 @@ jobs:
           gradle-version: '8.13'
       - name: Build debug APK
         run: gradle :app:assembleDebug --no-daemon --stacktrace --warning-mode all
+      - name: Validate premium UI and world-map fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path('app/src/main/assets/index.html').read_text()
+          for token in ('srCoinValue', 'srHomePlay', 'worldTrail::before', 'approved-world-selection.webp', 'approved-home-carousel.png'):
+              assert token in html, f'Missing UI requirement: {token}'
+          for image in ('approved-world-selection.webp', 'approved-home-carousel.png'):
+              assert Path('app/src/main/assets', image).stat().st_size > 10000, image
+          print('Premium home, live coins, world map and artwork verified')
+          PY
+      - name: Build unsigned release AAB for signing preparation
+        run: gradle :app:bundleRelease --no-daemon --stacktrace
       - name: Record build environment
         if: always()
         run: |
@@ -63,4 +76,10 @@ jobs:
         with:
           name: taprush-offline-debug-apk
           path: android-taprush/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: taprush-unsigned-release-aab-NOT-FOR-UPLOAD
+          path: android-taprush/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
