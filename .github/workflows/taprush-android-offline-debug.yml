@@ -65,6 +65,17 @@ jobs:
           assert 'rewardItem->sendEvent("srReward20")' in native
           print('Rewarded ad test bridge and 20-coin callback present')
           PY
+      - name: Verify test ads cannot run in production release
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          native=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          packer=Path('prepare_offline.py').read_text()
+          assert 'if (BuildConfig.DEBUG)' in native
+          assert 'web.addJavascriptInterface(new GameBridge(),"TapRushAds");' in native
+          assert 'window.TapRushAds?O.jsx(' in packer
+          print('Release ad gate verified: debug-only native bridge and conditional UI')
+          PY
       - name: Verify entrypoint
         run: |
           test -s app/src/main/assets/index.html
