@@ -71,6 +71,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n.worldMap{position:relative!important;background:#061b1b!important;overflow:hidden!important}
 .worldMap::before{content:"";position:absolute;inset:0;background:url('/tap-rush/approved-world-selection.webp') center center/contain no-repeat;pointer-events:none}
 .worldMap .mapTop,.worldMap .mapIntro,.worldMap .mapNote{opacity:0!important;pointer-events:none!important}
+.worldMap .worldTrail::before{content:none!important;display:none!important}
 .worldMap .worldTrail{position:absolute!important;inset:0!important;display:block!important;margin:0!important;padding:0!important;z-index:3!important;pointer-events:none!important}
 .worldMap .worldNode{position:absolute!important;left:7%!important;width:86%!important;height:11%!important;min-height:0!important;opacity:0!important;pointer-events:auto!important;border:0!important}
 .worldMap .worldNode:nth-child(1){top:20%!important}
@@ -94,6 +95,8 @@ shutil.copy2(home_art,dst/"approved-home-carousel.png")
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<style id="sr-premium-home">
+.hub:has(.premiumHome){background:#061526 url('/tap-rush/approved-home-carousel.png') center center/cover no-repeat!important}
+.hub:has(.premiumHome) .language,.hub:has(.premiumHome) .coinBox,.hub:has(.premiumHome) .gear,.hub:has(.premiumHome) .collectionNote{opacity:0!important;pointer-events:none!important}
 .hub:has(.premiumHome) .premiumHome{opacity:0!important}
 .hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
 body:has(.srPremiumHome)::before{content:'';position:fixed;inset:-24px;z-index:19;pointer-events:none;background:linear-gradient(#06152677,#06152699),url('/tap-rush/approved-home-carousel.png') center center/cover no-repeat;filter:blur(19px);transform:scale(1.06)}
