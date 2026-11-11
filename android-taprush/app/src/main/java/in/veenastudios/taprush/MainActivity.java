@@ -25,8 +25,11 @@ public class MainActivity extends Activity {
  @Override public void onCreate(Bundle state) {
   super.onCreate(state);
   web=new WebView(this); setContentView(web);
-  web.addJavascriptInterface(new GameBridge(),"TapRushAds");
-  MobileAds.initialize(this,status->loadRewarded());
+  // Rewarded ads remain test-only until consent, privacy and production IDs are approved.
+  if (BuildConfig.DEBUG) {
+   web.addJavascriptInterface(new GameBridge(),"TapRushAds");
+   MobileAds.initialize(this,status->loadRewarded());
+  }
   WebSettings s=web.getSettings();
   s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);
   s.setAllowFileAccess(false);s.setAllowContentAccess(false);
