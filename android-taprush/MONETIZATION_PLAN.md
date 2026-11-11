@@ -9,7 +9,7 @@
 - Never commit production ad unit IDs or secrets; no ad revenue is promised.
 
 ## Approved world unlocks (2026-11-11)
-Jungle free; City 150 coins; Space 200; Underwater 250; Rock & Himalaya 300. Four unlocks total 900 coins. Permanent unlock; deduct once atomically; persist balances and entitlements. Insufficient balance never deducts.
+Jungle free; City 150 coins; Space 200; Underwater 250; Rock & Himalaya 350. Four unlocks total 950 coins. Permanent unlock; deduct once atomically; persist balances and entitlements. Insufficient balance never deducts.
 
 ## Paid packs — proposed Google Play one-time products
 - `taprush_all_worlds_199`: ₹199, permanently unlock all worlds; ads remain.
