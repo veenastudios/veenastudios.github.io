@@ -20,3 +20,11 @@ Jungle free; City 150 coins; Space 200; Underwater 250; Rock & Himalaya 350. Fou
 
 ## Rewarded ad reward
 +20 coins only on confirmed completion; no reward on skip/failure; no double grant for same event. Test ads only until consent and release checks pass.
+
+## Player-friendly ad policy (approved)
+- No interstitial/full-screen forced ads, including at launch, between rounds or mid-game.
+- Small adaptive banner only on Home and/or Result screen if it does not obscure controls; hide during gameplay.
+- Rewarded video only after explicit user tap; grant 20 coins only after verified reward callback.
+- Rewarded ads can be full-screen and their duration cannot be guaranteed; clearly label as optional.
+- Respect premium ₹299 ad-free entitlement: no banners or forced ads. Optional rewarded ads only by player choice.
+- Use AdMob test units until privacy/consent, Play policies and device testing pass. Do not claim SDK integration alone means live ads are working.
