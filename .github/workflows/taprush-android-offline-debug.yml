@@ -76,6 +76,17 @@ jobs:
           assert 'window.TapRushAds?O.jsx(' in packer
           print('Release ad gate verified: debug-only native bridge and conditional UI')
           PY
+      - name: Verify Android privacy and backup controls
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          manifest=Path('app/src/main/AndroidManifest.xml').read_text()
+          rules=Path('app/src/main/res/xml/data_extraction_rules.xml').read_text()
+          assert 'android:allowBackup="false"' in manifest
+          assert 'android:dataExtractionRules="@xml/data_extraction_rules"' in manifest
+          assert '<cloud-backup>' in rules and '<device-transfer>' in rules
+          print('Backup and device-transfer exclusion rules present')
+          PY
       - name: Verify entrypoint
         run: |
           test -s app/src/main/assets/index.html
