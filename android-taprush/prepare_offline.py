@@ -163,4 +163,7 @@ for js in (dst/"assets").glob("*.js"):
  s=re.sub(r'"serviceWorker"in navigator&&window\.addEventListener\("load",\(\)=>\{navigator\.serviceWorker\.register\("\./sw\.js"\)\.catch\(\(\)=>\{\}\)\}\);?', "",s)
  js.write_text(s,encoding="utf-8")
 print("PASS",len(checked),"references",sum(f.is_file() for f in dst.rglob("*")),"files")
-\nif world_patch_count!=1:\n print("FAIL: expected exactly one world-map JS bundle, got",world_patch_count)\n sys.exit(1)\n
+
+if world_patch_count!=1:
+ print("FAIL: expected exactly one world-map JS bundle, got",world_patch_count)
+ sys.exit(1)
