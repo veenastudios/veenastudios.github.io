@@ -137,8 +137,8 @@ document.addEventListener('click',function(e){
  const key='srWorldUnlocked_'+['jungle','city','space','underwater','himalaya'][idx];
  const already=Object.keys(localStorage).some(k=>k.endsWith(key)&&localStorage.getItem(k)==='yes');
  if(already)return;
- const coinText=document.querySelector('.hub .coinBox')?.textContent||document.querySelector('.srCoinValue')?.textContent||'0';
- const coins=Number((coinText.match(/[0-9][0-9,]*/)||['0'])[0].replaceAll(',',''));
+ const coinKey=Object.keys(localStorage).find(k=>k.endsWith('srCoins'));
+ const coins=Number(coinKey?localStorage.getItem(coinKey):0)||0;
  if(coins>=price)return; // React handler owns confirmed purchases and deductions.
  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
  let notice=document.querySelector('.srWorldLockNotice');
