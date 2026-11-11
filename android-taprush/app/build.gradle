@@ -1,4 +1,8 @@
 plugins { id 'com.android.application' }
+
+dependencies {
+ implementation 'com.google.android.gms:play-services-ads:24.7.0'
+}
 android {
  namespace 'in.veenastudios.taprush'
  compileSdk 36
