@@ -142,7 +142,10 @@ document.addEventListener('click',function(e){
  if(!notice){notice=document.createElement('div');notice.className='srWorldLockNotice';notice.setAttribute('role','alert');document.body.appendChild(notice)}
  notice.textContent='🔒 '+worldNames[idx]+' requires '+price+' Coins. Available: '+coins;
  notice.style.display='block';
+ clearTimeout(window.srWorldLockTimer);
+ window.srWorldLockTimer=setTimeout(()=>{notice.style.display='none'},2200);
 },true);
+new MutationObserver(()=>{const notice=document.querySelector('.srWorldLockNotice');if(notice&&!document.querySelector('.worldMap'))notice.style.display='none'}).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
