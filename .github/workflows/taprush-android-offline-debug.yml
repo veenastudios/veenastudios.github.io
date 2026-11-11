@@ -121,8 +121,16 @@ jobs:
           path: android-taprush/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
+      - name: Verify signed release bundle before publication artifact
+        if: env.TAPRUSH_SIGNED == 'true'
+        run: |
+          AAB="$(find app/build/outputs/bundle/release -name '*.aab' -type f | head -n 1)"
+          test -n "$AAB"
+          jarsigner -verify -strict "$AAB"
+          echo "Signed release AAB verified"
       - uses: actions/upload-artifact@v4
+        if: env.TAPRUSH_SIGNED == 'true'
         with:
-          name: taprush-release-aab-SIGNATURE-REQUIRES-VERIFICATION
+          name: taprush-release-aab-signed
           path: android-taprush/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
