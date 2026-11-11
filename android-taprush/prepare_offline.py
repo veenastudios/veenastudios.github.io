@@ -72,6 +72,8 @@ home_css="""<style id="taprush-mobile-home-fix">
 .worldMap::before{content:"";position:absolute;inset:0;background:url('/tap-rush/approved-world-selection.webp') center center/contain no-repeat;pointer-events:none}
 .worldMap .mapTop,.worldMap .mapIntro,.worldMap .mapNote{opacity:0!important;pointer-events:none!important}
 .worldMap .worldTrail::before{content:none!important;display:none!important}
+.worldMap .worldTrail:before,.worldMap .worldTrail::after{content:none!important;display:none!important;background:none!important}
+.worldMap .worldTrail{background-image:none!important}
 .worldMap .worldTrail{position:absolute!important;inset:0!important;display:block!important;margin:0!important;padding:0!important;z-index:3!important;pointer-events:none!important}
 .worldMap .worldNode{position:absolute!important;left:7%!important;width:86%!important;height:11%!important;min-height:0!important;opacity:0!important;pointer-events:auto!important;border:0!important}
 .worldMap .worldNode:nth-child(1){top:20%!important}
