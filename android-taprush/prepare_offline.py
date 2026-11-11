@@ -96,6 +96,7 @@ markup=entry.read_text(encoding="utf-8")
 launcher_js="""<style id="sr-premium-home">
 .hub:has(.premiumHome) .premiumHome{opacity:0!important}
 .hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
+body:has(.srPremiumHome)::before{content:'';position:fixed;inset:-24px;z-index:19;pointer-events:none;background:linear-gradient(#06152677,#06152699),url('/tap-rush/approved-home-carousel.png') center center/cover no-repeat;filter:blur(19px);transform:scale(1.06)}
 .srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
 .srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
 .srPremiumHome button:focus-visible{outline:3px solid #ffe078;outline-offset:-3px}
