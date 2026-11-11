@@ -103,6 +103,7 @@ launcher_js="""<style id="sr-premium-home">
 .hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
 body:has(.srPremiumHome)::before{content:'';position:fixed;inset:-24px;z-index:19;pointer-events:none;background:linear-gradient(#06152677,#06152699),url('/tap-rush/approved-home-carousel.png') center center/cover no-repeat;filter:blur(19px);transform:scale(1.06)}
 .srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
+.srPremiumHome .srCoinValue{position:absolute;left:82.1%;top:1.05%;width:5.8%;height:3.3%;display:flex;align-items:center;justify-content:center;background:#07111e;color:#fff;font:900 clamp(12px,3.6vw,22px) system-ui;line-height:1;border-radius:5px;text-shadow:0 1px 2px #000;pointer-events:none}
 .srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
 .srPremiumHome button:focus-visible{outline:3px solid #ffe078;outline-offset:-3px}
 .srPremiumHome .srHomePlay{left:29%;top:46%;width:43%;height:13%}
@@ -113,7 +114,7 @@ body:has(.srPremiumHome)::before{content:'';position:fixed;inset:-24px;z-index:1
 .srPremiumHome .srCarouselPrev:disabled,.srPremiumHome .srCarouselNext:disabled{pointer-events:none}
 </style><script>(function(){
 const home=document.createElement('section');home.className='srPremiumHome';home.setAttribute('aria-label','Tap Rush premium home');
-home.innerHTML='<button class="srHomePlay" aria-label="Play Tap Rush">Play</button><button class="srHomeSettings" aria-label="Settings">Settings</button><button class="srHomeCoins" aria-label="Coins">Coins</button><button class="srCarouselPrev" aria-label="Previous games" disabled>Previous</button><button class="srCarouselNext" aria-label="Next games" disabled>Next</button>';
+home.innerHTML='<button class="srHomePlay" aria-label="Play Tap Rush">Play</button><button class="srHomeSettings" aria-label="Settings">Settings</button><button class="srHomeCoins" aria-label="Coins">Coins</button><span class="srCoinValue" aria-label="Coin balance">0</span><button class="srCarouselPrev" aria-label="Previous games" disabled>Previous</button><button class="srCarouselNext" aria-label="Next games" disabled>Next</button>';
 home.querySelector('.srHomePlay').onclick=()=>document.querySelector('.liveShelf .gameCard')?.click();
 home.querySelector('.srHomeSettings').onclick=()=>document.querySelector('.hub .gear')?.click();
 home.querySelector('.srHomeCoins').onclick=()=>document.querySelector('.hub .coinBox')?.click();
@@ -121,7 +122,7 @@ const titles=['Jungle Friends Quiz','Math Challenge','Flags & Capitals'];let pag
 function updateCarousel(){const pages=Math.ceil(titles.length/3);home.querySelector('.srCarouselPrev').disabled=page===0;home.querySelector('.srCarouselNext').disabled=page>=pages-1}
 home.querySelector('.srCarouselPrev').onclick=()=>{page=Math.max(0,page-1);updateCarousel()};
 home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(titles.length/3)-1,page+1);updateCarousel()};
-function position(){const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel()}
+function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel()}
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
