@@ -132,6 +132,18 @@ entry.write_text(markup.replace("</head>",home_css+"</head>").replace("</body>",
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
  s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
+ # Apply coin-based permanent world locks to the offline Android bundle only.
+ # React owns both the coin balance and world selection, preventing stale UI after spending.
+ if 'const z=[{id:"jungle",name:"Jungle"' in s:
+  s=s.replace('const z=[{id:"jungle",name:"Jungle"', 'const z=[{id:"jungle",name:"Jungle"',1)
+  old='disabled:!L.ready,onClick:L.ready?()=>{const $=L.id;Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}:void 0'
+  new='disabled:!L.ready,onClick:()=>{const $=L.id,prices={city:150,space:200,underwater:250,himalaya:350},cost=prices[$]||0,key=Ta("srWorldUnlocked_"+$);if(cost&&localStorage.getItem(key)!=="yes"){if(ml<cost){window.alert(L.name+" unlock: "+cost+" coins. You have "+ml+" coins.");return}if(!window.confirm("Unlock "+L.name+" permanently for "+cost+" coins?"))return;const remaining=ml-cost;localStorage.setItem(Ta("srCoins"),String(remaining));localStorage.setItem(key,"yes");ct(remaining)}Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}'
+  if old not in s:
+   print("FAIL: world click anchor not found");sys.exit(1)
+  s=s.replace(old,new,1)
+  s=s.replace('children:L.ready?"PLAY ▶":"SOON"','children:L.id==="jungle"||localStorage.getItem(Ta("srWorldUnlocked_"+L.id))==="yes"?"PLAY ▶":({city:150,space:200,underwater:250,himalaya:350}[L.id]+" COINS 🔒")',1)
+  s=s.replace('children:L.ready?L.mark:"🔒"','children:L.id==="jungle"||localStorage.getItem(Ta("srWorldUnlocked_"+L.id))==="yes"?L.mark:"🔒"',1)
+  print("Applied world coin unlocks: 150 / 200 / 250 / 350")
  # Add real React-managed pause state to the offline bundle, without touching live site.
  if 'const Wt=El.useRef(0),Cl=El.useRef(1)' in s:
   changes=[
