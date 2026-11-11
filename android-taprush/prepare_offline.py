@@ -187,7 +187,7 @@ for js in (dst/"assets").glob("*.js"):
  # Reward coins are granted only after the native AdMob rewarded callback.
  if 'const[Y,S]=El.useState(0)' in s:
   state_anchor='[Rl,wt]=El.useState(()=>localStorage.getItem(Ta("srSound"))!=="off");'
-  state_new=state_anchor+'El.useEffect(()=>{const onReward=()=>{ct(prev=>{const next=prev+20;localStorage.setItem(Ta("srCoins"),String(next));return next})};window.addEventListener("srReward20",onReward);return()=>window.removeEventListener("srReward20",onReward)},[]);'
+  state_new=state_anchor+'El.useEffect(()=>{const onReward=()=>{ct(prev=>{const next=prev+20;localStorage.setItem(Ta("srCoins"),String(next));return next})};const onUnavailable=()=>{window.alert("Rewarded ad is unavailable. Please try again later. No coins deducted.")};window.addEventListener("srReward20",onReward);window.addEventListener("srAdUnavailable",onUnavailable);return()=>{window.removeEventListener("srReward20",onReward);window.removeEventListener("srAdUnavailable",onUnavailable)}},[]);'
   result_anchor='O.jsx("button",{className:"resultPlay",onClick:B,children:"▶ PLAY AGAIN"})'
   result_new='O.jsx("button",{className:"srRewardAd",onClick:()=>{if(window.TapRushAds)window.TapRushAds.showRewarded()},children:"▶ WATCH AD · +20 COINS (OPTIONAL)"}),'+result_anchor
   for old,new in ((state_anchor,state_new),(result_anchor,result_new)):
