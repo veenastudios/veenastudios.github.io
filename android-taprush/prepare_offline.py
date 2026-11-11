@@ -129,13 +129,13 @@ if "</body>" not in markup:
  print("FAIL: no body tag for home shelf launcher")
  sys.exit(1)
 entry.write_text(markup.replace("</head>",home_css+"</head>").replace("</body>",launcher_js+"</body>"),encoding="utf-8")
+world_patch_count=0
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
  s=s.replace("https://veenastudios.in/"+site_image+"?v=2","/tap-rush/"+site_image)
  # Apply coin-based permanent world locks to the offline Android bundle only.
  # React owns both the coin balance and world selection, preventing stale UI after spending.
- if 'const z=[{id:"jungle",name:"Jungle"' in s:
-  s=s.replace('const z=[{id:"jungle",name:"Jungle"', 'const z=[{id:"jungle",name:"Jungle"',1)
+ if 'disabled:!L.ready,onClick:L.ready?()=>' in s:
   old='disabled:!L.ready,onClick:L.ready?()=>{const $=L.id;Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}:void 0'
   new='disabled:!L.ready,onClick:()=>{const $=L.id,prices={city:150,space:200,underwater:250,himalaya:350},cost=prices[$]||0,key=Ta("srWorldUnlocked_"+$);if(cost&&localStorage.getItem(key)!=="yes"){if(ml<cost){window.alert(L.name+" unlock: "+cost+" coins. You have "+ml+" coins.");return}if(!window.confirm("Unlock "+L.name+" permanently for "+cost+" coins?"))return;const remaining=ml-cost;localStorage.setItem(Ta("srCoins"),String(remaining));localStorage.setItem(key,"yes");ct(remaining)}Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}'
   if old not in s:
@@ -143,6 +143,7 @@ for js in (dst/"assets").glob("*.js"):
   s=s.replace(old,new,1)
   s=s.replace('children:L.ready?"PLAY ▶":"SOON"','children:L.id==="jungle"||localStorage.getItem(Ta("srWorldUnlocked_"+L.id))==="yes"?"PLAY ▶":({city:150,space:200,underwater:250,himalaya:350}[L.id]+" COINS 🔒")',1)
   s=s.replace('children:L.ready?L.mark:"🔒"','children:L.id==="jungle"||localStorage.getItem(Ta("srWorldUnlocked_"+L.id))==="yes"?L.mark:"🔒"',1)
+  world_patch_count+=1
   print("Applied world coin unlocks: 150 / 200 / 250 / 350")
  # Add real React-managed pause state to the offline bundle, without touching live site.
  if 'const Wt=El.useRef(0),Cl=El.useRef(1)' in s:
@@ -162,3 +163,4 @@ for js in (dst/"assets").glob("*.js"):
  s=re.sub(r'"serviceWorker"in navigator&&window\.addEventListener\("load",\(\)=>\{navigator\.serviceWorker\.register\("\./sw\.js"\)\.catch\(\(\)=>\{\}\)\}\);?', "",s)
  js.write_text(s,encoding="utf-8")
 print("PASS",len(checked),"references",sum(f.is_file() for f in dst.rglob("*")),"files")
+\nif world_patch_count!=1:\n print("FAIL: expected exactly one world-map JS bundle, got",world_patch_count)\n sys.exit(1)\n
