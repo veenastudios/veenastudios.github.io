@@ -81,6 +81,9 @@ home_css="""<style id="taprush-mobile-home-fix">
 .worldMap .worldNode:nth-child(3){top:46%!important}
 .worldMap .worldNode:nth-child(4){top:59%!important}
 .worldMap .worldNode:nth-child(5){top:72%!important}
+.worldMap .worldNode{opacity:1!important;background:transparent!important;color:transparent!important;font-size:0!important;box-shadow:none!important}
+.worldMap .worldNode>*{visibility:hidden!important}
+.worldMap .worldNode:not(:first-child):not(.srUnlocked)::after{content:attr(data-lock-price) " COINS 🔒";position:absolute;right:2%;top:30%;width:27%;height:43%;display:flex;align-items:center;justify-content:center;border:2px solid #ffe18b;border-radius:18px;background:linear-gradient(130deg,#101f35,#30425a);box-shadow:0 2px 9px #000b;color:#ffe18b;font:900 clamp(11px,3vw,20px) system-ui;z-index:5;pointer-events:none}
 .worldMap .mapTop button{position:absolute!important;top:5%!important;left:5%!important;opacity:0!important;pointer-events:auto!important;z-index:4!important;width:16%!important;height:9%!important}
  .srWorldLockNotice{position:fixed;z-index:100;left:7%;right:7%;bottom:12%;padding:20px;background:#071b2ff5;color:#ffe68b;border:2px solid #f9d86b;border-radius:15px;text-align:center;font:bold 18px system-ui;pointer-events:none}\n</style>"""
 # Approved world-selection art is mandatory: fail rather than ship a substitute.
@@ -146,6 +149,19 @@ document.addEventListener('click',function(e){
  window.srWorldLockTimer=setTimeout(()=>{notice.style.display='none'},800);
 },true);
 new MutationObserver(()=>{const notice=document.querySelector('.srWorldLockNotice');if(notice&&!document.querySelector('.worldMap'))notice.style.display='none'}).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+function syncWorldLocks(){
+ const nodes=document.querySelectorAll('.worldMap .worldNode');
+ const names=['jungle','city','space','underwater','himalaya'],prices=[0,150,200,250,350];
+ nodes.forEach((node,i)=>{
+  if(i>=names.length)return;
+  node.dataset.lockPrice=String(prices[i]);
+  const unlocked=i===0||Object.keys(localStorage).some(k=>k.endsWith('srWorldUnlocked_'+names[i])&&localStorage.getItem(k)==='yes');
+  node.classList.toggle('srUnlocked',unlocked);
+  node.setAttribute('aria-label',unlocked?names[i]+' Play':names[i]+' locked. '+prices[i]+' coins to unlock');
+ });
+}
+new MutationObserver(syncWorldLocks).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+syncWorldLocks();
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
