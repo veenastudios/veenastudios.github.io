@@ -91,6 +91,18 @@ jobs:
           assert 'rewardGranted.compareAndSet(false,true)' in native, 'Duplicate ad reward guard missing'
           print('Unlock dialog, background pause and ad preload regression gates PASS')
           PY
+      - name: Verify Billing remains fail-closed before server verification
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          billing=Path('app/src/main/java/in/veenastudios/taprush/TapRushBilling.java').read_text()
+          activity=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          for token in ('taprush_all_worlds_199','taprush_premium_299','queryProductDetailsAsync','queryPurchasesAsync','restoreRequested','PendingPurchasesParams'):
+              assert token in billing, f'Missing Billing safety feature: {token}'
+          assert 'billing.restorePurchases()' in activity
+          assert 'Deliberately no local unlock' in billing
+          print('Billing product discovery, deferred restore and no-unverified-entitlement guard PASS')
+          PY
       - name: Verify Android privacy and backup controls
         run: |
           python3 - <<'PY'
