@@ -10,6 +10,8 @@ android {
  def adUnit = System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID') ?: ''
  def adAppId = System.getenv('TAPRUSH_ADMOB_APP_ID') ?: 'ca-app-pub-3940256099942544~3347511713'
  defaultConfig {
+  // Keep purchases disabled until server-side verification and acknowledgment exist.
+  buildConfigField 'boolean', 'BILLING_VERIFICATION_ENABLED', 'false'
   buildConfigField 'String', 'REWARDED_AD_UNIT_ID', '\"' + adUnit + '\"'
   manifestPlaceholders = [admobAppId: adAppId]
  }
