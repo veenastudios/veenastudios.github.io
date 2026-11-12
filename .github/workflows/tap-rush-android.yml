@@ -42,6 +42,16 @@ jobs:
           assert 'srReward20' in packager
           print("PASS: packager syntax, SDK 36 and monetization safety gates")
           PY
+      - name: Verify source-root paths are audited
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("android-taprush/prepare_offline.py").read_text()
+          assert 'unsupported site-root asset' in s
+          assert 'game entrypoint missing' in s
+          assert 'game hub missing' in s
+          print("PASS: source-root assets and packaging preconditions are checked")
+          PY
       - name: Package and validate offline game
         run: python3 android-taprush/prepare_offline.py tap-rush
       - name: Verify packaged game assets
