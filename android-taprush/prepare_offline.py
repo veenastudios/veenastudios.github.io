@@ -193,6 +193,29 @@ function syncWorldLocks(){
 }
 new MutationObserver(syncWorldLocks).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
 syncWorldLocks();
+// Purchase screen is available for preview, but checkout stays closed until verified fulfillment is enabled.
+const premiumStyle=document.createElement('style');
+premiumStyle.textContent='.srStoreButton{position:fixed;bottom:16px;right:14px;z-index:70;border:2px solid #ffe08b;border-radius:18px;padding:11px 15px;background:#173e44;color:#fff2c3;font:800 14px system-ui;box-shadow:0 5px 18px #0008}.srStoreOverlay{position:fixed;inset:0;z-index:100;background:#000d;display:flex;align-items:center;justify-content:center;padding:18px}.srStorePanel{width:min(100%,430px);border:3px solid #f5d47b;border-radius:23px;background:#102b35;color:#fff;padding:22px;font:16px system-ui;box-shadow:0 16px 42px #000b}.srStorePanel h2{color:#ffe08b;margin:0 0 12px}.srStorePanel button{display:block;width:100%;margin:10px 0;padding:13px;border:1px solid #f5d47b;border-radius:12px;background:#e9bb52;color:#18222a;font:800 15px system-ui}.srStorePanel button:disabled{opacity:.55}.srStorePanel p{font-size:13px;line-height:1.5}';
+document.head.appendChild(premiumStyle);
+const storeButton=document.createElement('button');storeButton.className='srStoreButton';storeButton.textContent='★ PREMIUM';storeButton.setAttribute('aria-label','Premium packs');
+storeButton.onclick=()=>{
+ if(document.querySelector('.srStoreOverlay'))return;
+ const overlay=document.createElement('div');overlay.className='srStoreOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium packs');
+ const panel=document.createElement('div');panel.className='srStorePanel';
+ const title=document.createElement('h2');title.textContent='Tap Rush Premium';
+ const info=document.createElement('p');info.textContent='One-time purchases through Google Play. Actual checkout is available only after secure purchase verification is enabled.';
+ panel.append(title,info);
+ const bridge=window.TapRushBilling;
+ const enabled=Boolean(bridge&&bridge.isCheckoutEnabled());
+ for(const [label,method] of [['₹199 · Unlock all worlds','buyAllWorlds'],['₹299 · All worlds + remove forced ads','buyPremium']]){
+  const button=document.createElement('button');button.textContent=label;button.disabled=!enabled;button.onclick=()=>bridge?.[method]?.();panel.appendChild(button);
+ }
+ const status=document.createElement('p');status.textContent=enabled?'Prices and offers are confirmed at Google Play checkout.':'Purchases coming soon — no payment will be taken.';panel.appendChild(status);
+ const restore=document.createElement('button');restore.textContent='Restore purchases';restore.onclick=()=>bridge?.restore?.();panel.appendChild(restore);
+ const close=document.createElement('button');close.textContent='Close';close.onclick=()=>overlay.remove();panel.appendChild(close);
+ overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);close.focus();
+};
+document.body.appendChild(storeButton);
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
