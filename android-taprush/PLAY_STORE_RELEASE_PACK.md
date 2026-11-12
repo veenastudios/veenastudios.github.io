@@ -46,3 +46,19 @@ Some features, paid upgrades and advertising are still being tested and must be 
 
 ## Release acceptance
 No Play Store 'ready' claim until a verified signed AAB, compliant listing/policies, device testing and Play Console checks all pass.
+
+## Verified build audit — 12 November 2026
+- GitHub Actions build #170: SUCCESS; debug APK artifact produced.
+- Release AAB artifact **not** produced: release signing secrets are not configured/verified.
+- Important: Android main manifest still contains Google's **test AdMob application ID**, and the Ads SDK remains a release dependency even though ad initialization is gated off. This is a **release blocker**, not a completed production ad integration.
+- Paid packs are **not** implemented. Do not advertise or display ₹199/₹299 purchase offers as active features.
+- Privacy Policy is a draft, not yet publicly hosted.
+- Store graphics and real-device acceptance tests are not verified.
+- Play Console registration, testing eligibility and account declarations require developer-owner action.
+
+## Recommended safe release sequence
+1. Validate gameplay and world unlocks on real Android hardware.
+2. Choose either a genuinely ad-free, no-billing initial release (remove the ad SDK and its test manifest ID from release) or a monetized release after AdMob consent/IDs and Play Billing integration are verified.
+3. Sign the release bundle with owner-controlled keystore and confirm certificate fingerprints.
+4. Publish final privacy policy, capture actual screenshots and submit Play Console forms.
+5. Complete required Play testing before production rollout.
