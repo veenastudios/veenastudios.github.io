@@ -23,6 +23,21 @@ jobs:
       - uses: android-actions/setup-android@v3
       - name: Install Android 36
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      - name: Check offline packager syntax and monetization safety
+        run: |
+          python3 -m py_compile android-taprush/prepare_offline.py
+          python3 - <<'PY'
+          from pathlib import Path
+          app = Path("android-taprush/app/src/main/java/in/veenastudios/taprush/MainActivity.java").read_text()
+          gradle = Path("android-taprush/app/build.gradle").read_text()
+          packager = Path("android-taprush/prepare_offline.py").read_text()
+          assert "if (BuildConfig.DEBUG)" in app, "Production rewarded ads must remain gated until consent"
+          assert "rewardGranted.compareAndSet(false,true)" in app, "Reward callback must be one-time"
+          assert "targetSdk 36" in gradle
+          assert 'srWorldUnlocked_' in packager
+          assert 'srReward20' in packager
+          print("PASS: packager syntax, SDK 36 and monetization safety gates")
+          PY
       - name: Package and validate offline game
         run: python3 android-taprush/prepare_offline.py tap-rush
       - name: Verify packaged game assets
