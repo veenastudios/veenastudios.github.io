@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.util.Log;
 import com.android.billingclient.api.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +18,8 @@ public final class TapRushBilling {
     private final Activity activity;
     private final BillingClient client;
     private boolean connected;
+    private boolean connecting;
+    private boolean restoreRequested;
 
     public TapRushBilling(Activity activity) {
         this.activity = activity;
@@ -39,13 +40,18 @@ public final class TapRushBilling {
     }
 
     public void connect() {
-        if (connected) return;
+        if (connected || connecting) return;
+        connecting = true;
         client.startConnection(new BillingClientStateListener() {
             @Override public void onBillingSetupFinished(BillingResult result) {
+                connecting = false;
                 connected = result.getResponseCode() == BillingClient.BillingResponseCode.OK;
-                if (connected) queryProducts();
+                if (connected) {
+                    queryProducts();
+                    if (restoreRequested) restorePurchases();
+                }
             }
-            @Override public void onBillingServiceDisconnected() { connected = false; }
+            @Override public void onBillingServiceDisconnected() { connected = false; connecting = false; }
         });
     }
 
@@ -66,7 +72,9 @@ public final class TapRushBilling {
     }
 
     public void restorePurchases() {
-        if (!connected) return;
+        restoreRequested = true;
+        if (!connected) { connect(); return; }
+        restoreRequested = false;
         client.queryPurchasesAsync(
             QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(),
             (result, purchases) -> {
