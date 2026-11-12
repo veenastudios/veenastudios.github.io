@@ -25,6 +25,12 @@ jobs:
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - name: Package and validate offline game
         run: python3 android-taprush/prepare_offline.py tap-rush
+      - name: Verify packaged game assets
+        run: |
+          test -s android-taprush/app/src/main/assets/index.html
+          test -s android-taprush/app/src/main/assets/game-hub.html
+          test -d android-taprush/app/src/main/assets/assets
+          grep -q "assets/index-" android-taprush/app/src/main/assets/index.html
       - name: Configure optional release signing
         env:
           KEYSTORE_B64: ${{ secrets.TAPRUSH_KEYSTORE_BASE64 }}
@@ -49,6 +55,8 @@ jobs:
           test -s android-taprush/app/build/outputs/apk/debug/app-debug.apk
           test -s android-taprush/app/build/outputs/bundle/release/app-release.aab
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify android-taprush/app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-taprush/app/build/outputs/apk/debug/app-debug.apk | tee "$RUNNER_TEMP/taprush-badging.txt"
+          grep -q "targetSdkVersion:\x2736\x27" "$RUNNER_TEMP/taprush-badging.txt"
           if [[ -n "${TAPRUSH_KEYSTORE_FILE:-}" ]]; then
             jarsigner -verify android-taprush/app/build/outputs/bundle/release/app-release.aab
           else
@@ -61,6 +69,6 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: taprush-offline-release-aab-check-signing
+          name: taprush-offline-release-aab-verify-signing-before-upload
           path: android-taprush/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
