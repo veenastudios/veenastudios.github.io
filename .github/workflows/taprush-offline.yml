@@ -34,6 +34,8 @@ jobs:
           assert "if (BuildConfig.DEBUG)" in app, "Production rewarded ads must remain gated until consent"
           assert "WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)" in app, "Release WebView debugging must be disabled"
           assert "setAllowUniversalAccessFromFileURLs(false)" in app, "File URL universal access must be disabled"
+          assert "Offline resource blocked" in app, "External resources must not load inside offline WebView"
+          assert "web!=null&&web.canGoBack()" in app, "Back navigation must be null-safe"
           assert "rewardGranted.compareAndSet(false,true)" in app, "Reward callback must be one-time"
           assert "targetSdk 36" in gradle
           assert 'srWorldUnlocked_' in packager
