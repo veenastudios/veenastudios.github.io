@@ -193,26 +193,36 @@ function syncWorldLocks(){
 }
 new MutationObserver(syncWorldLocks).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
 syncWorldLocks();
-// Purchase screen is available for preview, but checkout stays closed until verified fulfillment is enabled.
+// Premium preview is playful, but purchases remain disabled until secure verification.
+// Keep pricing clear and make it explicit that a parent/guardian makes any purchase.
 const premiumStyle=document.createElement('style');
-premiumStyle.textContent='.srStoreButton{position:fixed;bottom:16px;right:14px;z-index:70;border:2px solid #ffe08b;border-radius:18px;padding:11px 15px;background:#173e44;color:#fff2c3;font:800 14px system-ui;box-shadow:0 5px 18px #0008}.srStoreOverlay{position:fixed;inset:0;z-index:100;background:#000d;display:flex;align-items:center;justify-content:center;padding:18px}.srStorePanel{width:min(100%,430px);border:3px solid #f5d47b;border-radius:23px;background:#102b35;color:#fff;padding:22px;font:16px system-ui;box-shadow:0 16px 42px #000b}.srStorePanel h2{color:#ffe08b;margin:0 0 12px}.srStorePanel button{display:block;width:100%;margin:10px 0;padding:13px;border:1px solid #f5d47b;border-radius:12px;background:#e9bb52;color:#18222a;font:800 15px system-ui}.srStorePanel button:disabled{opacity:.55}.srStorePanel p{font-size:13px;line-height:1.5}';
+premiumStyle.textContent=`.srStoreButton{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom));right:12px;z-index:70;border:2px solid #ffe08b;border-radius:20px;padding:11px 15px;background:linear-gradient(135deg,#26465e,#143e40);color:#fff2c3;font:900 14px system-ui;box-shadow:0 5px 18px #0008}.srStoreOverlay{position:fixed;inset:0;z-index:100;background:#000d;display:flex;align-items:center;justify-content:center;padding:16px}.srStorePanel{box-sizing:border-box;width:min(100%,440px);max-height:90dvh;overflow-y:auto;border:3px solid #f5d47b;border-radius:26px;background:linear-gradient(155deg,#173f54,#13283d 65%,#182f2a);color:#fff;padding:20px;font:16px system-ui;box-shadow:0 16px 42px #000b}.srStorePanel h2{color:#ffe08b;margin:0 0 6px;text-align:center;font:900 25px system-ui}.srStoreIntro{text-align:center;color:#d7eaf4;margin:0 0 14px}.srStoreMascot{text-align:center;font-size:36px;line-height:1.25}.srPack{width:100%;box-sizing:border-box;border:2px solid #f6d37d;border-radius:18px;background:linear-gradient(115deg,#235c65,#20445a);color:#fff;padding:13px 15px;margin:10px 0;text-align:left;box-shadow:0 4px 0 #071c2c}.srPack.premium{border-color:#e9b5ff;background:linear-gradient(115deg,#563c82,#315a7a)}.srPack strong{display:block;font:900 20px system-ui;color:#ffe08b}.srPack span{display:block;font:600 13px/1.5 system-ui;margin-top:4px}.srPack .srPrice{display:inline-block;background:#ffe08b;color:#1d2632;padding:4px 10px;border-radius:10px;font:900 18px system-ui}.srPack:disabled{opacity:.88;cursor:not-allowed}.srStorePanel .srStoreAction{display:block;width:100%;margin:10px 0;padding:12px;border:1px solid #f5d47b;border-radius:13px;background:#e9bb52;color:#18222a;font:800 15px system-ui}.srStorePanel p{font-size:13px;line-height:1.5}.srStoreNote{border-radius:12px;padding:10px;background:#0b2435;color:#fbe8ac;text-align:center}.srStorePanel button:focus-visible{outline:3px solid #fff;outline-offset:3px}`;
 document.head.appendChild(premiumStyle);
 const storeButton=document.createElement('button');storeButton.className='srStoreButton';storeButton.textContent='★ PREMIUM';storeButton.setAttribute('aria-label','Premium packs');
 storeButton.onclick=()=>{
  if(document.querySelector('.srStoreOverlay'))return;
  const overlay=document.createElement('div');overlay.className='srStoreOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium packs');
  const panel=document.createElement('div');panel.className='srStorePanel';
- const title=document.createElement('h2');title.textContent='Tap Rush Premium';
- const info=document.createElement('p');info.textContent='One-time purchases through Google Play. Actual checkout is available only after secure purchase verification is enabled.';
- panel.append(title,info);
+ const mascot=document.createElement('div');mascot.className='srStoreMascot';mascot.textContent='🐯 ⭐ 🚀';
+ const title=document.createElement('h2');title.textContent='Adventure Pass';
+ const intro=document.createElement('p');intro.className='srStoreIntro';intro.textContent='Explore more Tap Rush worlds! Both packs are optional.';
+ panel.append(mascot,title,intro);
  const bridge=window.TapRushBilling;
  const enabled=Boolean(bridge&&bridge.isCheckoutEnabled());
- for(const [label,method] of [['₹199 · Unlock all worlds','buyAllWorlds'],['₹299 · All worlds + remove forced ads','buyPremium']]){
-  const button=document.createElement('button');button.textContent=label;button.disabled=!enabled;button.onclick=()=>bridge?.[method]?.();panel.appendChild(button);
+ for(const [name,price,description,method,kind] of [
+  ['WORLD EXPLORER','₹199','Unlock all 5 worlds permanently. Optional rewarded ads remain available.','buyAllWorlds','worlds'],
+  ['SUPER EXPLORER','₹299','Unlock all 5 worlds and remove forced ads. Optional rewarded ads remain available.','buyPremium','premium']
+ ]){
+  const button=document.createElement('button');button.className='srPack '+kind;button.disabled=!enabled;
+  const heading=document.createElement('strong');heading.textContent=name;
+  const amount=document.createElement('span');amount.className='srPrice';amount.textContent=price+' · one-time';
+  const details=document.createElement('span');details.textContent=description;
+  button.append(heading,amount,details);button.onclick=()=>bridge?.[method]?.();panel.appendChild(button);
  }
- const status=document.createElement('p');status.textContent=enabled?'Prices and offers are confirmed at Google Play checkout.':'Purchases coming soon — no payment will be taken.';panel.appendChild(status);
- const restore=document.createElement('button');restore.textContent='Restore purchases';restore.onclick=()=>bridge?.restore?.();panel.appendChild(restore);
- const close=document.createElement('button');close.textContent='Close';close.onclick=()=>overlay.remove();panel.appendChild(close);
+ const note=document.createElement('p');note.className='srStoreNote';note.textContent=enabled?'For parents/guardians: Please review the pack and confirm the price in Google Play.':'Preview only · Purchases coming soon. No payment can be taken.';panel.appendChild(note);
+ const free=document.createElement('p');free.textContent='You can keep playing for free and unlock worlds using game coins. No purchase is required.';panel.appendChild(free);
+ const restore=document.createElement('button');restore.className='srStoreAction';restore.textContent='Restore purchases';restore.onclick=()=>bridge?.restore?.();panel.appendChild(restore);
+ const close=document.createElement('button');close.className='srStoreAction';close.textContent='Continue playing';close.onclick=()=>overlay.remove();panel.appendChild(close);
  overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);close.focus();
 };
 document.body.appendChild(storeButton);
