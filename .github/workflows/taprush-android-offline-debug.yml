@@ -77,6 +77,20 @@ jobs:
           assert 'window.TapRushAds?O.jsx(' in packer
           print('Release ad gate verified: debug-only native bridge and conditional UI')
           PY
+      - name: Verify latest gameplay safety regressions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          js=Path('app/src/main/assets/assets/index-B_be548G.js').read_text()
+          native=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          assert 'window.srConfirmUnlock=' in html, 'Missing themed unlock dialog'
+          assert 'await window.srConfirmUnlock(L.name,cost)' in js, 'World purchase does not await themed confirmation'
+          assert 'visibilitychange' in html and 'pause.click()' in html, 'Missing background auto-pause'
+          assert 'Preload failures are silent' in native, 'Ad preload must not show unsolicited error'
+          assert 'rewardGranted.compareAndSet(false,true)' in native, 'Duplicate ad reward guard missing'
+          print('Unlock dialog, background pause and ad preload regression gates PASS')
+          PY
       - name: Verify Android privacy and backup controls
         run: |
           python3 - <<'PY'
