@@ -68,7 +68,8 @@ jobs:
           path: android-taprush/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
+        if: ${{ env.TAPRUSH_KEYSTORE_FILE != '' }}
         with:
-          name: taprush-offline-release-aab-verify-signing-before-upload
+          name: taprush-offline-signed-release-aab
           path: android-taprush/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
