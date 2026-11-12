@@ -222,8 +222,11 @@ storeButton.onclick=()=>{
  const note=document.createElement('p');note.className='srStoreNote';note.textContent=enabled?'For parents/guardians: Please review the pack and confirm the price in Google Play.':'Preview only · Purchases coming soon. No payment can be taken.';panel.appendChild(note);
  const free=document.createElement('p');free.textContent='You can keep playing for free and unlock worlds using game coins. No purchase is required.';panel.appendChild(free);
  const restore=document.createElement('button');restore.className='srStoreAction';restore.textContent='Restore purchases';restore.onclick=()=>bridge?.restore?.();panel.appendChild(restore);
- const close=document.createElement('button');close.className='srStoreAction';close.textContent='Continue playing';close.onclick=()=>overlay.remove();panel.appendChild(close);
- overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);close.focus();
+ const close=document.createElement('button');close.className='srStoreAction';close.textContent='Continue playing';panel.appendChild(close);
+ const dismiss=()=>{document.removeEventListener('keydown',onKey);overlay.remove();storeButton.focus()};
+ const onKey=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}};
+ close.onclick=dismiss;
+ overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)dismiss()};document.body.appendChild(overlay);document.addEventListener('keydown',onKey);close.focus();
 };
 document.body.appendChild(storeButton);
 // Premium is available on Home and World Map, never over active gameplay/results.
