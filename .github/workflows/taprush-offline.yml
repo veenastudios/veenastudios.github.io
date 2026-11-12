@@ -65,9 +65,11 @@ jobs:
           refs = parser.refs
           assert any("assets/index-" in r and r.split("?", 1)[0].endswith(".js") for r in refs), "Game JavaScript entry missing"
           for ref in refs:
-              if ref.startswith(("./", "/tap-rush/")):
-                  local = ref.split("?", 1)[0].removeprefix("/tap-rush/").removeprefix("./")
-                  assert (root / local).is_file(), f"Missing bundled asset: {ref}"
+              if ref.startswith(("http:", "https:", "//", "data:", "#")):
+                  continue
+              local = ref.split("?", 1)[0].split("#", 1)[0].removeprefix("/tap-rush/").removeprefix("./")
+              assert local and not local.startswith("/") and ".." not in Path(local).parts, f"Unsafe asset reference: {ref}"
+              assert (root / local).is_file(), f"Missing bundled asset: {ref}"
           assert (root / "game-hub.html").stat().st_size > 0
           print("PASS: offline entrypoint and referenced assets")
           PY
