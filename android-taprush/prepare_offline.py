@@ -89,7 +89,7 @@ home_css="""<style id="taprush-mobile-home-fix">
 .worldMap .worldNode:nth-child(5){top:72%!important}
 .worldMap .worldNode{opacity:1!important;background:transparent!important;color:transparent!important;font-size:0!important;box-shadow:none!important}
 .worldMap .worldNode>*{visibility:hidden!important}
-.worldMap .worldNode:not(:first-child):not(.srUnlocked)::after{content:attr(data-lock-price) " COINS 🔒";position:absolute;right:31%;top:33%;width:23%;height:36%;display:flex;align-items:center;justify-content:center;border:2px solid #ffe18b;border-radius:18px;background:linear-gradient(130deg,#101f35,#30425a);box-shadow:0 2px 9px #000b;color:#ffe18b;font:900 clamp(11px,3vw,20px) system-ui;z-index:5;pointer-events:none}
+.worldMap .worldNode:not(:first-child):not(.srUnlocked)::after{content:attr(data-lock-price) " COINS 🔒";position:absolute;right:3%;top:9%;width:24%;height:36%;display:flex;align-items:center;justify-content:center;border:2px solid #ffe18b;border-radius:18px;background:linear-gradient(130deg,#101f35,#30425a);box-shadow:0 2px 9px #000b;color:#ffe18b;font:900 clamp(11px,3vw,20px) system-ui;z-index:5;pointer-events:none}
 .srRewardAd{display:block;margin:12px auto;padding:12px 18px;border-radius:16px;border:2px solid #f4ce63;background:#122f40;color:#ffdf7b;font:900 15px system-ui;max-width:92%}\n.worldMap .mapTop button{position:absolute!important;top:5%!important;left:5%!important;opacity:0!important;pointer-events:auto!important;z-index:4!important;width:16%!important;height:9%!important}
  .srWorldLockNotice{position:fixed;z-index:100;left:7%;right:7%;bottom:12%;padding:20px;background:#071b2ff5;color:#ffe68b;border:2px solid #f9d86b;border-radius:15px;text-align:center;font:bold 18px system-ui;pointer-events:none}\n</style>"""
 # Approved world-selection art is mandatory: fail rather than ship a substitute.
@@ -226,6 +226,16 @@ storeButton.onclick=()=>{
  overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);close.focus();
 };
 document.body.appendChild(storeButton);
+// Premium is available on Home and World Map, never over active gameplay/results.
+function syncPremiumVisibility(){
+ const active=Boolean(document.querySelector('.game,.result,.srPauseOverlay'));
+ const allowed=Boolean(document.querySelector('.worldMap,.srPremiumHome,.hub'));
+ storeButton.hidden=active||!allowed;
+ storeButton.style.display=storeButton.hidden?'none':'';
+ if(storeButton.hidden)document.querySelector('.srStoreOverlay')?.remove();
+}
+new MutationObserver(syncPremiumVisibility).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+syncPremiumVisibility();
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
 if "</body>" not in markup:
