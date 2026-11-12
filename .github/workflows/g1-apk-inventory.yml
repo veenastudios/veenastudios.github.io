@@ -1,5 +1,12 @@
 name: G1 APK Read-only Inventory
 on:
+  push:
+    branches:
+      - feature/g1-playstore-recovery
+    paths:
+      - .github/workflows/g1-apk-inventory.yml
+      - g1-recovery/**
+      - games/downloads/jungle-friends-quiz.part*.txt
   workflow_dispatch:
 jobs:
   inspect:
