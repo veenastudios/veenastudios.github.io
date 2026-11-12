@@ -32,6 +32,7 @@ jobs:
           gradle = Path("android-taprush/app/build.gradle").read_text()
           packager = Path("android-taprush/prepare_offline.py").read_text()
           assert "if (BuildConfig.DEBUG)" in app, "Production rewarded ads must remain gated until consent"
+          assert "if(!BuildConfig.DEBUG||adLoading" in app, "Native ad loading must be debug-only"
           assert "WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)" in app, "Release WebView debugging must be disabled"
           assert "setAllowUniversalAccessFromFileURLs(false)" in app, "File URL universal access must be disabled"
           assert "Offline resource blocked" in app, "External resources must not load inside offline WebView"
