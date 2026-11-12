@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
     return true;
    }
    @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest req){
-    Uri u=req.getUrl();if(!"https".equals(u.getScheme())||!HOST.equals(u.getHost()))return null;
+    Uri u=req.getUrl();if(!"https".equals(u.getScheme())||!HOST.equals(u.getHost()))return new WebResourceResponse("text/plain","UTF-8",403,"Offline resource blocked",null,new ByteArrayInputStream(new byte[0]));
     String path=u.getPath();
     if(path==null||!path.startsWith("/tap-rush/"))return error();
     String name=path.substring("/tap-rush/".length());
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
   });
   web.loadUrl("https://"+HOST+"/tap-rush/");
  }
- @Override public void onBackPressed(){if(web.canGoBack())web.goBack();else super.onBackPressed();}
+ @Override public void onBackPressed(){if(web!=null&&web.canGoBack())web.goBack();else super.onBackPressed();}
  @Override protected void onPause(){if(web!=null)web.onPause();super.onPause();}
  @Override protected void onResume(){super.onResume();if(web!=null)web.onResume();}
  @Override protected void onDestroy(){if(web!=null){web.stopLoading();web.destroy();web=null;}super.onDestroy();}
