@@ -45,14 +45,18 @@ site_source=src.parent/site_image
 if not site_source.is_file():
  print("FAIL: required site-root image missing:",site_source)
  sys.exit(1)
-if dst.exists():shutil.rmtree(dst)
-shutil.copytree(src,dst)
-shutil.copy2(site_source,dst/site_image)
-# Ship the approved-structure SR GAMERS hub in the offline APK.
+# Validate all required sources before replacing a previously generated bundle.
 hub=Path(__file__).resolve().parent/"game-hub.html"
 if not hub.is_file():
  print("FAIL: game hub missing:",hub)
  sys.exit(1)
+if not (src/"index.html").is_file():
+ print("FAIL: game entrypoint missing:",src/"index.html")
+ sys.exit(1)
+if dst.exists():shutil.rmtree(dst)
+shutil.copytree(src,dst)
+shutil.copy2(site_source,dst/site_image)
+# Ship the approved-structure SR GAMERS hub in the offline APK.
 shutil.copy2(hub,dst/"game-hub.html")
 # Attach navigation only to the game's existing home shelf; never overlay active rounds.
 home_css="""<style id="taprush-mobile-home-fix">
