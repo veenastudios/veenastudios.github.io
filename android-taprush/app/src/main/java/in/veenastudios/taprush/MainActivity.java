@@ -25,6 +25,7 @@ public class MainActivity extends Activity {
  private final class GameBridge { @JavascriptInterface public void showRewarded(){runOnUiThread(()->{if(adShowing)return;if(rewardedAd==null){sendEvent("srAdUnavailable");loadRewarded();return;}RewardedAd ad=rewardedAd;rewardedAd=null;adShowing=true;final java.util.concurrent.atomic.AtomicBoolean rewardGranted=new java.util.concurrent.atomic.AtomicBoolean(false);ad.setFullScreenContentCallback(new FullScreenContentCallback(){@Override public void onAdDismissedFullScreenContent(){adShowing=false;loadRewarded();}@Override public void onAdFailedToShowFullScreenContent(AdError error){adShowing=false;sendEvent("srAdUnavailable");loadRewarded();}});ad.show(MainActivity.this,rewardItem->{if(rewardGranted.compareAndSet(false,true))sendEvent("srReward20");});});} }
  @Override public void onCreate(Bundle state) {
   super.onCreate(state);
+  WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
   web=new WebView(this); setContentView(web);
   // Rewarded ads remain test-only until consent, privacy and production IDs are approved.
   if (BuildConfig.DEBUG) {
