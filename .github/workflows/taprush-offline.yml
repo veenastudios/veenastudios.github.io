@@ -51,11 +51,19 @@ jobs:
           test -d android-taprush/app/src/main/assets/assets
           python3 - <<'PY'
           from pathlib import Path
-          import re
+          from html.parser import HTMLParser
+          class AssetRefs(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.refs = []
+              def handle_starttag(self, tag, attrs):
+                  self.refs.extend(value for key, value in attrs if key in ("src", "href") and value)
           root = Path("android-taprush/app/src/main/assets")
           html = (root / "index.html").read_text(encoding="utf-8")
-          refs = re.findall(r'(?:src|href)\\s*=\\s*["\\']([^"\\']+)', html)
-          assert any("assets/index-" in r and r.endswith(".js") for r in refs), "Game JavaScript entry missing"
+          parser = AssetRefs()
+          parser.feed(html)
+          refs = parser.refs
+          assert any("assets/index-" in r and r.split("?", 1)[0].endswith(".js") for r in refs), "Game JavaScript entry missing"
           for ref in refs:
               if ref.startswith(("./", "/tap-rush/")):
                   local = ref.split("?", 1)[0].removeprefix("/tap-rush/").removeprefix("./")
