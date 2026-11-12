@@ -7,8 +7,10 @@ dependencies {
 android {
  buildFeatures { buildConfig true }
  def adUnit = System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID') ?: ''
+ def adAppId = System.getenv('TAPRUSH_ADMOB_APP_ID') ?: 'ca-app-pub-3940256099942544~3347511713'
  defaultConfig {
   buildConfigField 'String', 'REWARDED_AD_UNIT_ID', '\"' + adUnit + '\"'
+  manifestPlaceholders = [admobAppId: adAppId]
  }
  namespace 'in.veenastudios.taprush'
  compileSdk 36
@@ -30,6 +32,10 @@ android {
  }
  buildTypes {
   release {
+   if (!System.getenv('TAPRUSH_ADMOB_APP_ID') || !System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID')) {
+    // Keep release builds disabled until owner configures live AdMob IDs.
+    tasks.configureEach { if (name == 'bundleRelease' || name == 'assembleRelease') enabled = false }
+   }
    minifyEnabled false
    if (signingConfigs.findByName('release') != null) signingConfig signingConfigs.release
   }
