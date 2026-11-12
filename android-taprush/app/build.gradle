@@ -2,9 +2,14 @@ plugins { id 'com.android.application' }
 
 dependencies {
  implementation 'com.google.android.gms:play-services-ads:24.7.0'
+ implementation 'com.android.billingclient:billing:8.0.0'
 }
 android {
  buildFeatures { buildConfig true }
+ def adUnit = System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID') ?: ''
+ defaultConfig {
+  buildConfigField 'String', 'REWARDED_AD_UNIT_ID', '\"' + adUnit + '\"'
+ }
  namespace 'in.veenastudios.taprush'
  compileSdk 36
  defaultConfig { applicationId 'in.veenastudios.taprush'; minSdk 23; targetSdk 36; versionCode 1; versionName '1.0.0' }
