@@ -39,7 +39,7 @@ Some features, paid upgrades and advertising are still being tested and must be 
 
 ## Release blockers
 1. Signed AAB: GitHub requires TAPRUSH_KEYSTORE_BASE64, TAPRUSH_KEYSTORE_PASSWORD, TAPRUSH_KEY_ALIAS, TAPRUSH_KEY_PASSWORD. The workflow now uploads a release AAB **only after signature verification**.
-2. Google Play Billing for ₹199/₹299: not implemented; keep purchase controls hidden until products, restore, verification and acknowledgement are complete.
+2. Google Play Billing for ₹199/₹299: product discovery, purchase-flow transport, restore query, and disabled Premium UI are coded. Secure backend verification, purchase acknowledgement, entitlement activation and real Play purchase testing are **not** implemented. Checkout is intentionally disabled.
 3. Production AdMob: test IDs must not be shipped as production monetization; consent and privacy flows need review.
 4. Real-device tests: all five worlds, coin earning/spending/persistence, rewarded success/skip/failure, offline play, pause/resume, Android back, rotation and screen sizes.
 5. Play Console registration and required declarations cannot be completed without owner account access.
@@ -48,10 +48,10 @@ Some features, paid upgrades and advertising are still being tested and must be 
 No Play Store 'ready' claim until a verified signed AAB, compliant listing/policies, device testing and Play Console checks all pass.
 
 ## Verified build audit — 12 November 2026
-- GitHub Actions build #170: SUCCESS; debug APK artifact produced.
+- Earlier debug APK successfully built and was installed/tested on a phone. **The latest Billing/UI commits have not yet been confirmed by a successful CI run.**
 - Release AAB artifact **not** produced: release signing secrets are not configured/verified.
 - Important: Android main manifest still contains Google's **test AdMob application ID**, and the Ads SDK remains a release dependency even though ad initialization is gated off. This is a **release blocker**, not a completed production ad integration.
-- Paid packs are **not** implemented. Do not advertise or display ₹199/₹299 purchase offers as active features.
+- Paid packs have a preview screen and partial Billing transport, but **real purchases and entitlements are not enabled**. Do not advertise ₹199/₹299 as purchasable features.
 - Privacy Policy is a draft, not yet publicly hosted.
 - Store graphics and real-device acceptance tests are not verified.
 - Play Console registration, testing eligibility and account declarations require developer-owner action.
@@ -62,3 +62,9 @@ No Play Store 'ready' claim until a verified signed AAB, compliant listing/polic
 3. Sign the release bundle with owner-controlled keystore and confirm certificate fingerprints.
 4. Publish final privacy policy, capture actual screenshots and submit Play Console forms.
 5. Complete required Play testing before production rollout.
+
+## Retained device-test evidence (older working debug APK)
+- PASS: APK installation and launch; Jungle and City gameplay; scoring and coin balance; City permanent unlock for 150 coins; optional test rewarded ad +20 coins; persistence after app restart.
+- These are historical phone-test results, **not** proof that the latest premium/Billing code builds or passes on-device.
+- Not yet verified: full Space/Underwater/Himalaya gameplay, latest premium UI, production ads, purchase restoration after reinstall, purchase checkout, signed AAB.
+- Retest only changed features and critical regression paths; do not erase historical PASS results without new contradictory evidence.
