@@ -1,4 +1,4 @@
-name: Tap Rush Android build (API 36)
+name: Tap Rush debug APK first (API 36)
 on:
   workflow_dispatch:
   push:
@@ -91,56 +91,4 @@ jobs:
         with:
           name: taprush-debug-apk-first
           path: android-taprush/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-      - name: Configure optional release signing
-        env:
-          KEYSTORE_B64: ${{ secrets.TAPRUSH_KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.TAPRUSH_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.TAPRUSH_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.TAPRUSH_KEY_PASSWORD }}
-        run: |
-          if [[ -n "$KEYSTORE_B64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
-            printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/taprush-release.jks"
-            echo "TAPRUSH_KEYSTORE_FILE=$RUNNER_TEMP/taprush-release.jks" >> "$GITHUB_ENV"
-            echo "TAPRUSH_KEYSTORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
-            echo "TAPRUSH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
-            echo "TAPRUSH_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
-          else
-            echo "::warning::Signing secrets missing; release AAB is NOT ready for Play upload."
-          fi
-      - name: Build APK and AAB
-        working-directory: android-taprush
-        run: |
-          set -o pipefail
-          gradle --no-daemon --stacktrace :app:assembleDebug :app:bundleRelease 2>&1 | tee "$RUNNER_TEMP/taprush-gradle-build.log"
-      - name: Upload build diagnostics on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: taprush-gradle-failure-log
-          path: ${{ runner.temp }}/taprush-gradle-build.log
-          if-no-files-found: ignore
-          retention-days: 7
-      - name: Verify APK and AAB
-        run: |
-          test -s android-taprush/app/build/outputs/apk/debug/app-debug.apk
-          test -s android-taprush/app/build/outputs/bundle/release/app-release.aab
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify android-taprush/app/build/outputs/apk/debug/app-debug.apk
-          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-taprush/app/build/outputs/apk/debug/app-debug.apk | tee "$RUNNER_TEMP/taprush-badging.txt"
-          grep -q "targetSdkVersion:\x2736\x27" "$RUNNER_TEMP/taprush-badging.txt"
-          if [[ -n "${TAPRUSH_KEYSTORE_FILE:-}" ]]; then
-            jarsigner -verify android-taprush/app/build/outputs/bundle/release/app-release.aab
-          else
-            echo "::warning::Unsigned release AAB: do not upload."
-          fi
-      - uses: actions/upload-artifact@v4
-        with:
-          name: taprush-offline-debug-apk
-          path: android-taprush/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v4
-        if: ${{ env.TAPRUSH_KEYSTORE_FILE != '' }}
-        with:
-          name: taprush-offline-signed-release-aab
-          path: android-taprush/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
