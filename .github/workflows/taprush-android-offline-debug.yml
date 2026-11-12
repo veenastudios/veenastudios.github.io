@@ -103,6 +103,18 @@ jobs:
           assert 'Deliberately no local unlock' in billing
           print('Billing product discovery, deferred restore and no-unverified-entitlement guard PASS')
           PY
+      - name: Verify Play Store release preparation files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          pack=Path('PLAY_STORE_RELEASE_PACK.md').read_text()
+          privacy=Path('../tap-rush/privacy-draft.html').read_text()
+          for token in ('Data Safety','Signed AAB','₹199/₹299'):
+              assert token in pack, f'Missing release checklist: {token}'
+          assert 'Not yet the final Play Store privacy policy' in privacy
+          assert 'verified privacy-support email' in privacy
+          print('Store checklist and non-final privacy disclosure draft present')
+          PY
       - name: Verify Android privacy and backup controls
         run: |
           python3 - <<'PY'
