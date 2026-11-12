@@ -23,11 +23,18 @@ public class MainActivity extends Activity {
  private boolean adLoading=false;
  private void sendEvent(String event){if(web!=null)web.evaluateJavascript("window.dispatchEvent(new Event("+org.json.JSONObject.quote(event)+"))",null);}
  private void loadRewarded(){if(!BuildConfig.DEBUG||adLoading||adShowing||isFinishing()||isDestroyed())return;adLoading=true;RewardedAd.load(this,BuildConfig.DEBUG?"ca-app-pub-3940256099942544/5224354917":BuildConfig.REWARDED_AD_UNIT_ID,new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){adLoading=false;rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){adLoading=false;rewardedAd=null;/* Preload failures are silent; only a user-requested ad reports unavailability. */}});}
+ private final class BillingBridge {
+  @JavascriptInterface public void buyAllWorlds(){runOnUiThread(()->{if(billing!=null)billing.launchPurchase(TapRushBilling.ALL_WORLDS);});}
+  @JavascriptInterface public void buyPremium(){runOnUiThread(()->{if(billing!=null)billing.launchPurchase(TapRushBilling.PREMIUM);});}
+  @JavascriptInterface public void restore(){runOnUiThread(()->{if(billing!=null)billing.restorePurchases();});}
+  @JavascriptInterface public boolean isCheckoutEnabled(){return BuildConfig.BILLING_VERIFICATION_ENABLED;}
+ }
  private final class GameBridge { @JavascriptInterface public void showRewarded(){runOnUiThread(()->{if(adShowing)return;if(rewardedAd==null){sendEvent("srAdUnavailable");loadRewarded();return;}RewardedAd ad=rewardedAd;rewardedAd=null;adShowing=true;final java.util.concurrent.atomic.AtomicBoolean rewardGranted=new java.util.concurrent.atomic.AtomicBoolean(false);ad.setFullScreenContentCallback(new FullScreenContentCallback(){@Override public void onAdDismissedFullScreenContent(){adShowing=false;loadRewarded();}@Override public void onAdFailedToShowFullScreenContent(AdError error){adShowing=false;sendEvent("srAdUnavailable");loadRewarded();}});ad.show(MainActivity.this,rewardItem->{if(rewardGranted.compareAndSet(false,true))sendEvent("srReward20");});});} }
  @Override public void onCreate(Bundle state) {
   super.onCreate(state);
   WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
   web=new WebView(this); setContentView(web);
+  web.addJavascriptInterface(new BillingBridge(),"TapRushBilling");
   billing=new TapRushBilling(this);
   billing.connect();
   // Rewarded ads remain test-only until consent, privacy and production IDs are approved.
