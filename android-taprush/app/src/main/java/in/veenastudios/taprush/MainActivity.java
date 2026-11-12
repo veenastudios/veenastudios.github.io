@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
  private RewardedAd rewardedAd;
  private boolean adShowing=false;
  private void sendEvent(String event){if(web!=null)web.evaluateJavascript("window.dispatchEvent(new Event("+org.json.JSONObject.quote(event)+"))",null);}
- private void loadRewarded(){RewardedAd.load(this,"ca-app-pub-3940256099942544/5224354917",new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){rewardedAd=null;sendEvent("srAdUnavailable");}});}
+ private void loadRewarded(){RewardedAd.load(this,BuildConfig.DEBUG?"ca-app-pub-3940256099942544/5224354917":BuildConfig.REWARDED_AD_UNIT_ID,new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){rewardedAd=null;sendEvent("srAdUnavailable");}});}
  private final class GameBridge { @JavascriptInterface public void showRewarded(){runOnUiThread(()->{if(adShowing)return;if(rewardedAd==null){sendEvent("srAdUnavailable");loadRewarded();return;}RewardedAd ad=rewardedAd;rewardedAd=null;adShowing=true;ad.setFullScreenContentCallback(new FullScreenContentCallback(){@Override public void onAdDismissedFullScreenContent(){adShowing=false;loadRewarded();}@Override public void onAdFailedToShowFullScreenContent(AdError error){adShowing=false;sendEvent("srAdUnavailable");loadRewarded();}});ad.show(MainActivity.this,rewardItem->sendEvent("srReward20"));});} }
  @Override public void onCreate(Bundle state) {
   super.onCreate(state);
