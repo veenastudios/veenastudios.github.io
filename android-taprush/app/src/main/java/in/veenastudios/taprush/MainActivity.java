@@ -69,7 +69,15 @@ public class MainActivity extends Activity {
   });
   web.loadUrl("https://"+HOST+"/tap-rush/");
  }
- @Override public void onBackPressed(){if(web!=null&&web.canGoBack())web.goBack();else super.onBackPressed();}
+ @Override public void onBackPressed(){
+  if(web==null){super.onBackPressed();return;}
+  // Let the game dismiss its own dialog first; never navigate away mid-purchase preview.
+  web.evaluateJavascript("(function(){var d=document.querySelector('.srStoreOverlay');if(d){var b=d.querySelector('.srStoreAction:last-child');if(b)b.click();else d.remove();return true;}return false;})()",handled->{
+   if("true".equals(handled))return;
+   if(web!=null&&web.canGoBack())web.goBack();
+   else MainActivity.super.onBackPressed();
+  });
+ }
  @Override protected void onPause(){if(web!=null)web.onPause();super.onPause();}
  @Override protected void onResume(){super.onResume();if(web!=null)web.onResume();if(billing!=null)billing.restorePurchases();}
  @Override protected void onDestroy(){if(billing!=null){billing.close();billing=null;}if(web!=null){web.stopLoading();web.destroy();web=null;}super.onDestroy();}
