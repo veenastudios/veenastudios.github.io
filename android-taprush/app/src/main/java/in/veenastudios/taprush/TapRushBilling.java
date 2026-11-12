@@ -20,6 +20,7 @@ public final class TapRushBilling {
     private boolean connected;
     private boolean connecting;
     private boolean restoreRequested;
+    private final java.util.Map<String, ProductDetails> catalog = new java.util.HashMap<>();
 
     public TapRushBilling(Activity activity) {
         this.activity = activity;
@@ -65,10 +66,36 @@ public final class TapRushBilling {
         client.queryProductDetailsAsync(
             QueryProductDetailsParams.newBuilder().setProductList(products).build(),
             (result, details) -> {
-                // Price and offer details must be taken from Google Play, never hardcoded.
-                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK)
+                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) {
                     Log.w(TAG, "Product query failed: " + result.getResponseCode());
+                    return;
+                }
+                catalog.clear();
+                for (ProductDetails item : details.getProductDetailsList()) catalog.put(item.getProductId(), item);
             });
+    }
+
+    /** Purchase UI remains disabled until backend token verification is configured. */
+    public void launchPurchase(String productId) {
+        if (!ALL_WORLDS.equals(productId) && !PREMIUM.equals(productId)) return;
+        if (!BuildConfig.BILLING_VERIFICATION_ENABLED) {
+            android.widget.Toast.makeText(activity, "Premium purchases are coming soon.", android.widget.Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!connected) { connect(); return; }
+        ProductDetails details = catalog.get(productId);
+        if (details == null || details.getOneTimePurchaseOfferDetails() == null) {
+            queryProducts();
+            android.widget.Toast.makeText(activity, "Product unavailable. Try again later.", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+        BillingFlowParams.ProductDetailsParams item = BillingFlowParams.ProductDetailsParams.newBuilder()
+            .setProductDetails(details).build();
+        BillingFlowParams params = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(java.util.Collections.singletonList(item)).build();
+        BillingResult result = client.launchBillingFlow(activity, params);
+        if (result.getResponseCode() != BillingClient.BillingResponseCode.OK)
+            Log.w(TAG, "Billing flow failed: " + result.getResponseCode());
     }
 
     public void restorePurchases() {
