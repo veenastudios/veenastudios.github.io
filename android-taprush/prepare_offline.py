@@ -11,7 +11,9 @@ def check(raw,origin,base=None):
  path=unquote(u.path)
  if not path:return
  if path.startswith("/tap-rush/"):path=path[len("/tap-rush/"):];base=src
- elif path.startswith("/"):return
+ elif path.startswith("/"):
+  missing.append((origin,raw,"unsupported site-root asset"))
+  return
  elif path.startswith("./"):path=path[2:]
  target=((base or src)/path).resolve()
  if not target.is_relative_to(src):missing.append((origin,raw,"outside root"));return
