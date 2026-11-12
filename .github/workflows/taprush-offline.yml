@@ -32,6 +32,8 @@ jobs:
           gradle = Path("android-taprush/app/build.gradle").read_text()
           packager = Path("android-taprush/prepare_offline.py").read_text()
           assert "if (BuildConfig.DEBUG)" in app, "Production rewarded ads must remain gated until consent"
+          assert "WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)" in app, "Release WebView debugging must be disabled"
+          assert "setAllowUniversalAccessFromFileURLs(false)" in app, "File URL universal access must be disabled"
           assert "rewardGranted.compareAndSet(false,true)" in app, "Reward callback must be one-time"
           assert "targetSdk 36" in gradle
           assert 'srWorldUnlocked_' in packager
