@@ -62,7 +62,8 @@ jobs:
           native=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
           assert 'srRewardAd' in js and 'srReward20' in js
           assert 'showRewarded' in native and 'ca-app-pub-3940256099942544/5224354917' in native
-          assert 'rewardItem->sendEvent("srReward20")' in native
+          assert 'rewardGranted.compareAndSet(false,true)' in native, 'Reward must be granted once per ad'
+          assert 'sendEvent("srReward20")' in native, 'Reward event callback missing'
           print('Rewarded ad test bridge and 20-coin callback present')
           PY
       - name: Verify test ads cannot run in production release
