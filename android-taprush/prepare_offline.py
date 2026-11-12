@@ -151,6 +151,12 @@ window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
  panel.append(heading,message,actions);overlay.appendChild(panel);document.body.appendChild(overlay);
  document.addEventListener('keydown',escape);actions.querySelector('button').focus();
 });
+// Pause active gameplay when the app is backgrounded, so the timer cannot run unseen.
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden)return;
+ const pause=document.querySelector('.srPauseButton[aria-label="Pause game"]');
+ if(pause)pause.click();
+});
 // Capture-phase safety guard: no locked world can start without enough coins.
 const worldPrices=[0,150,200,250,350],worldNames=['Jungle','City','Space','Underwater','Rock & Himalaya'];
 document.addEventListener('click',function(e){
