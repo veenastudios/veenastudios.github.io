@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
     if(path==null||!path.startsWith("/tap-rush/"))return error();
     String name=path.substring("/tap-rush/".length());
     if(name.isEmpty())name="index.html";
-    if(name.contains("..")||name.startsWith("/"))return error();
+    if(name.contains("..")||name.startsWith("/")||name.contains("\\")||name.indexOf(0)>=0)return error();
     String p=name.toLowerCase(Locale.ROOT);
     String mime=p.endsWith(".js")?"application/javascript":p.endsWith(".css")?"text/css":p.endsWith(".html")?"text/html":p.endsWith(".webp")?"image/webp":p.endsWith(".png")?"image/png":p.endsWith(".svg")?"image/svg+xml":p.endsWith(".json")||p.endsWith(".webmanifest")?"application/json":p.endsWith(".mp3")?"audio/mpeg":p.endsWith(".ogg")?"audio/ogg":p.endsWith(".wav")?"audio/wav":"application/octet-stream";
     try{return new WebResourceResponse(mime,"UTF-8",getAssets().open(name));}catch(IOException e){return error();}
