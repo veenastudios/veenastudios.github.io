@@ -68,3 +68,10 @@ No Play Store 'ready' claim until a verified signed AAB, compliant listing/polic
 - These are historical phone-test results, **not** proof that the latest premium/Billing code builds or passes on-device.
 - Not yet verified: full Space/Underwater/Himalaya gameplay, latest premium UI, production ads, purchase restoration after reinstall, purchase checkout, signed AAB.
 - Retest only changed features and critical regression paths; do not erase historical PASS results without new contradictory evidence.
+
+## 13 November 2026 — autonomous UI corrections
+- Premium Adventure Pass redesigned as two optional, parent-facing packs with clear one-time prices and free-play alternative. Payment remains disabled until secure verification.
+- World Map lock-price badges moved to the right to reduce overlap with world names. Requires device screenshot confirmation.
+- Premium launcher hidden during active gameplay and results, to avoid covering targets and controls. Requires device screenshot confirmation.
+- Regression assertions added for both UI fixes. Do not mark phone tests PASS until a new APK is installed and checked.
+- Historical phone tests from Build #272 remain PASS; they do not certify later UI changes.
