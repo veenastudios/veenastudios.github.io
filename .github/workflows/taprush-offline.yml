@@ -90,11 +90,11 @@ jobs:
           else
             echo "::warning::Signing secrets missing; release AAB is NOT ready for Play upload."
           fi
-      - name: Build APK and AAB
+      - name: Build debug APK first
         working-directory: android-taprush
         run: |
           set -o pipefail
-          gradle --no-daemon --stacktrace :app:assembleDebug :app:bundleRelease 2>&1 | tee "$RUNNER_TEMP/taprush-gradle-build.log"
+          gradle --no-daemon --stacktrace :app:assembleDebug 2>&1 | tee "$RUNNER_TEMP/taprush-gradle-build.log"
       - name: Upload build diagnostics on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -103,6 +103,15 @@ jobs:
           path: ${{ runner.temp }}/taprush-gradle-build.log
           if-no-files-found: ignore
           retention-days: 7
+      - name: Upload debug APK immediately
+        uses: actions/upload-artifact@v4
+        with:
+          name: taprush-debug-apk-first
+          path: android-taprush/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Build release AAB after debug APK
+        working-directory: android-taprush
+        run: gradle --no-daemon --stacktrace :app:bundleRelease
       - name: Verify APK and AAB
         run: |
           test -s android-taprush/app/build/outputs/apk/debug/app-debug.apk
