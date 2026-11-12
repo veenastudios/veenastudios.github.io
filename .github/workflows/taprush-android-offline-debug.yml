@@ -115,6 +115,22 @@ jobs:
           assert 'verified privacy-support email' in privacy
           print('Store checklist and non-final privacy disclosure draft present')
           PY
+      - name: Verify premium store UI and checkout safety
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          activity=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          billing=Path('app/src/main/java/in/veenastudios/taprush/TapRushBilling.java').read_text()
+          gradle=Path('app/build.gradle').read_text()
+          for token in ('srStoreOverlay','srStoreButton','buyAllWorlds','buyPremium','Restore purchases','isCheckoutEnabled'):
+              assert token in html, f'Premium store missing: {token}'
+          for token in ('new BillingBridge()','billing.launchPurchase(TapRushBilling.ALL_WORLDS)','billing.launchPurchase(TapRushBilling.PREMIUM)'):
+              assert token in activity, f'Android billing bridge missing: {token}'
+          assert "BILLING_VERIFICATION_ENABLED', 'false'" in gradle, 'Checkout must remain disabled before server verification'
+          assert 'if (!BuildConfig.BILLING_VERIFICATION_ENABLED)' in billing
+          print('Premium UI and fail-closed checkout checks PASS')
+          PY
       - name: Verify Android privacy and backup controls
         run: |
           python3 - <<'PY'
