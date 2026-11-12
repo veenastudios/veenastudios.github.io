@@ -32,10 +32,6 @@ android {
  }
  buildTypes {
   release {
-   if (!System.getenv('TAPRUSH_ADMOB_APP_ID') || !System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID')) {
-    // Keep release builds disabled until owner configures live AdMob IDs.
-    tasks.configureEach { if (name == 'bundleRelease' || name == 'assembleRelease') enabled = false }
-   }
    minifyEnabled false
    if (signingConfigs.findByName('release') != null) signingConfig signingConfigs.release
   }
