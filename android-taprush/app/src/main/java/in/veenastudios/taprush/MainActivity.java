@@ -16,6 +16,7 @@ import com.google.android.gms.ads.AdError;
 import android.webkit.JavascriptInterface;
 public class MainActivity extends Activity {
  private WebView web;
+ private TapRushBilling billing;
  private static final String HOST="appassets.androidplatform.net";
  private RewardedAd rewardedAd;
  private boolean adShowing=false;
@@ -27,6 +28,8 @@ public class MainActivity extends Activity {
   super.onCreate(state);
   WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
   web=new WebView(this); setContentView(web);
+  billing=new TapRushBilling(this);
+  billing.connect();
   // Rewarded ads remain test-only until consent, privacy and production IDs are approved.
   if (BuildConfig.DEBUG) {
    web.addJavascriptInterface(new GameBridge(),"TapRushAds");
@@ -61,6 +64,6 @@ public class MainActivity extends Activity {
  }
  @Override public void onBackPressed(){if(web!=null&&web.canGoBack())web.goBack();else super.onBackPressed();}
  @Override protected void onPause(){if(web!=null)web.onPause();super.onPause();}
- @Override protected void onResume(){super.onResume();if(web!=null)web.onResume();}
- @Override protected void onDestroy(){if(web!=null){web.stopLoading();web.destroy();web=null;}super.onDestroy();}
+ @Override protected void onResume(){super.onResume();if(web!=null)web.onResume();if(billing!=null)billing.restorePurchases();}
+ @Override protected void onDestroy(){if(billing!=null){billing.close();billing=null;}if(web!=null){web.stopLoading();web.destroy();web=null;}super.onDestroy();}
 }
