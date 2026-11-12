@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
   }
   WebSettings s=web.getSettings();
   s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);
-  s.setAllowFileAccess(false);s.setAllowContentAccess(false);
+  s.setAllowFileAccess(false);s.setAllowContentAccess(false);s.setAllowFileAccessFromFileURLs(false);s.setAllowUniversalAccessFromFileURLs(false);s.setJavaScriptCanOpenWindowsAutomatically(false);s.setSupportMultipleWindows(false);android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(web,false);
   s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
   web.setWebChromeClient(new WebChromeClient());
   web.setWebViewClient(new WebViewClient(){
