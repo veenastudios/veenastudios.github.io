@@ -58,5 +58,7 @@ public class MainActivity extends Activity {
   web.loadUrl("https://"+HOST+"/tap-rush/");
  }
  @Override public void onBackPressed(){if(web.canGoBack())web.goBack();else super.onBackPressed();}
- @Override protected void onDestroy(){web.destroy();super.onDestroy();}
+ @Override protected void onPause(){if(web!=null)web.onPause();super.onPause();}
+ @Override protected void onResume(){super.onResume();if(web!=null)web.onResume();}
+ @Override protected void onDestroy(){if(web!=null){web.stopLoading();web.destroy();web=null;}super.onDestroy();}
 }
