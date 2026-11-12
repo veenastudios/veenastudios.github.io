@@ -8,6 +8,8 @@ billing = (root / "app/src/main/java/in/veenastudios/taprush/TapRushBilling.java
 gradle = (root / "app/build.gradle").read_text()
 checks = {
     "premium store overlay": "srStoreOverlay" in html,
+    "premium hidden during gameplay": "function syncPremiumVisibility()" in html and "storeButton.hidden=active||!allowed" in html,
+    "world price badges positioned away from titles": "right:3%;top:9%;width:24%" in html,
     "all-worlds button": "buyAllWorlds" in html and "buyAllWorlds()" in activity,
     "premium button": "buyPremium" in html and "buyPremium()" in activity,
     "restore button": "Restore purchases" in html and "restore()" in activity,
