@@ -132,6 +132,25 @@ function updateCarousel(){const pages=Math.ceil(titles.length/3);home.querySelec
 home.querySelector('.srCarouselPrev').onclick=()=>{page=Math.max(0,page-1);updateCarousel()};
 home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(titles.length/3)-1,page+1);updateCarousel()};
 function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel()}
+// The Android WebView default confirm() exposes an internal URL and clashes with game styling.
+window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
+ const overlay=document.createElement('div');
+ overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
+ overlay.setAttribute('aria-label','Unlock '+name);
+ overlay.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#010b19bb;padding:22px';
+ const panel=document.createElement('div');
+ panel.style.cssText='width:min(100%,420px);border:3px solid #f5d47b;border-radius:24px;background:linear-gradient(160deg,#183d37,#071c2c);color:#ffe7a1;box-shadow:0 14px 40px #000a;padding:25px 20px;text-align:center;font:700 18px system-ui';
+ const heading=document.createElement('h2');heading.textContent='Unlock '+name+'?';heading.style.cssText='font:900 25px system-ui;margin:0 0 12px';
+ const message=document.createElement('p');message.textContent='Unlock permanently for '+cost+' coins?';message.style.cssText='margin:0 0 24px;font:600 16px system-ui';
+ const actions=document.createElement('div');actions.style.cssText='display:flex;gap:12px';
+ const finish=value=>{document.removeEventListener('keydown',escape);overlay.remove();resolve(value)};
+ const escape=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
+ for(const [label,value] of [['CANCEL',false],['UNLOCK',true]]){
+  const button=document.createElement('button');button.textContent=label;button.style.cssText='flex:1;padding:14px 8px;border:2px solid #ffe39a;border-radius:13px;background:'+(value?'#f6bf42':'#203c45')+';color:'+(value?'#1c1a0b':'#fff')+';font:900 16px system-ui';button.onclick=()=>finish(value);actions.appendChild(button);
+ }
+ panel.append(heading,message,actions);overlay.appendChild(panel);document.body.appendChild(overlay);
+ document.addEventListener('keydown',escape);actions.querySelector('button').focus();
+});
 // Capture-phase safety guard: no locked world can start without enough coins.
 const worldPrices=[0,150,200,250,350],worldNames=['Jungle','City','Space','Underwater','Rock & Himalaya'];
 document.addEventListener('click',function(e){
@@ -182,7 +201,7 @@ for js in (dst/"assets").glob("*.js"):
  # React owns both the coin balance and world selection, preventing stale UI after spending.
  if 'disabled:!L.ready,onClick:L.ready?()=>' in s:
   old='disabled:!L.ready,onClick:L.ready?()=>{const $=L.id;Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}:void 0'
-  new='disabled:!L.ready,onClick:()=>{const $=L.id,prices={city:150,space:200,underwater:250,himalaya:350},cost=prices[$]||0,key=Ta("srWorldUnlocked_"+$);if(cost&&localStorage.getItem(key)!=="yes"){const stored=Number(localStorage.getItem(Ta("srCoins"))||0);const available=Number.isFinite(stored)?Math.max(0,Math.floor(stored)):0;if(available<cost){window.alert(L.name+" unlock: "+cost+" coins. You have "+available+" coins.");return}if(!window.confirm("Unlock "+L.name+" permanently for "+cost+" coins?"))return;if(localStorage.getItem(key)==="yes")return;const latest=Number(localStorage.getItem(Ta("srCoins"))||0);if(!Number.isSafeInteger(latest)||latest<cost){window.alert("Coin balance changed. Please try again.");return}const remaining=latest-cost;localStorage.setItem(key,"yes");localStorage.setItem(Ta("srCoins"),String(remaining));ct(remaining)}Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}'
+  new='disabled:!L.ready,onClick:async()=>{const $=L.id,prices={city:150,space:200,underwater:250,himalaya:350},cost=prices[$]||0,key=Ta("srWorldUnlocked_"+$);if(cost&&localStorage.getItem(key)!=="yes"){const stored=Number(localStorage.getItem(Ta("srCoins"))||0);const available=Number.isFinite(stored)?Math.max(0,Math.floor(stored)):0;if(available<cost){window.alert(L.name+" unlock: "+cost+" coins. You have "+available+" coins.");return}if(!await window.srConfirmUnlock(L.name,cost))return;if(localStorage.getItem(key)==="yes")return;const latest=Number(localStorage.getItem(Ta("srCoins"))||0);if(!Number.isSafeInteger(latest)||latest<cost){window.alert("Coin balance changed. Please try again.");return}const remaining=latest-cost;localStorage.setItem(key,"yes");localStorage.setItem(Ta("srCoins"),String(remaining));ct(remaining)}Ol($),Ll(Number(localStorage.getItem(Ta(vd($)))||0)),B()}'
   if old not in s:
    print("FAIL: world click anchor not found");sys.exit(1)
   s=s.replace(old,new,1)
