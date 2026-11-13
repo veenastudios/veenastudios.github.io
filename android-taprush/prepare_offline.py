@@ -93,7 +93,7 @@ button:disabled,[aria-disabled="true"]{cursor:default}
 .srGamesGrid button:disabled{opacity:1;color:#e7dce4}
 .srGamesGrid .status{color:#ffd966;font-size:clamp(8px,2vw,11px)}
 
-.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n.worldMap{position:relative!important;background:#061b1b!important;overflow:hidden!important}
+.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}\n.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}\n.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.game:has(.srPauseOverlay)>.srPauseButton{visibility:hidden!important;pointer-events:none!important}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}\n.worldMap{position:relative!important;background:#061b1b!important;overflow:hidden!important}
 .worldMap::before{content:"";position:absolute;inset:0;background:url('/tap-rush/approved-world-selection.webp') center center/contain no-repeat;pointer-events:none}
 .worldMap .mapTop,.worldMap .mapIntro,.worldMap .mapNote{opacity:0!important;pointer-events:none!important}
 .worldMap .worldTrail::before{content:none!important;display:none!important}
@@ -125,13 +125,13 @@ shutil.copy2(home_art,dst/"approved-home-carousel.png")
 entry=dst/"index.html"
 markup=entry.read_text(encoding="utf-8")
 launcher_js="""<style id="sr-premium-home">
-.hub:has(.premiumHome){background:#061526 url('/tap-rush/approved-home-carousel.png') center center/cover no-repeat!important}
+.hub:has(.premiumHome){background:#061526!important}
 .hub:has(.premiumHome) .language,.hub:has(.premiumHome) .coinBox,.hub:has(.premiumHome) .gear,.hub:has(.premiumHome) .collectionNote{opacity:0!important;pointer-events:none!important}
 .hub:has(.premiumHome) .premiumHome{opacity:0!important}
 .hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
 body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:linear-gradient(180deg,#061526 0%,#102c37 18%,#061526 82%,#061526 100%)}
-/* Fill tall-screen letterboxing with a clean themed extension, never blurred artwork. */
-body:has(.srPremiumHome)::after{content:'';position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(180deg,#06152655 0%,transparent 25%,transparent 75%,#06152677 100%),url('/tap-rush/approved-home-carousel.png') center center/cover no-repeat;opacity:.22}
+/* Solid branded letterboxing: no duplicate or ghosted artwork outside the approved image. */
+body:has(.srPremiumHome)::after{content:none!important}
 .srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
 .srPremiumHome .srCoinValue{position:absolute;left:82.1%;top:1.05%;width:5.8%;height:3.3%;display:flex;align-items:center;justify-content:center;background:#07111e;color:#fff;font:900 clamp(12px,3.6vw,22px) system-ui;line-height:1;border-radius:5px;text-shadow:0 1px 2px #000;pointer-events:none}
 .srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
