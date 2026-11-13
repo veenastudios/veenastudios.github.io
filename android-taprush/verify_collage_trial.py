@@ -20,6 +20,7 @@ checks={
  "image loader avoids literal HTML src false positive": "img.src=new URL(file,document.baseURI).href" in js and "img.src='./'" not in js,
  "artwork fallback is accessible": "img.onerror" in js and "hasArtwork" in css,
  "packer copies approved artwork": "shutil.copy2(source,dst/banner)" in packer,
+ "premium inline layout reset outside home": "p.style.removeProperty(prop)" in js and "if(!home)" in js,
  "premium is retained and positioned": "premium.style.setProperty('top'" in js and "premium.style.setProperty('left'" in js,
 }
 for name,ok in checks.items():
