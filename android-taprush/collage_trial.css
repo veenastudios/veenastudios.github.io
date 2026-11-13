@@ -16,7 +16,7 @@ body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #f
 .srCollageTrial .srCollageShare{z-index:39!important;box-sizing:border-box;border:2px solid #ffcf85;border-radius:24px;background:linear-gradient(160deg,#e0a7ff 0%,#8a31d4 21%,#3b126e 53%,#9d34e4 78%,#f0a8ff 100%);color:white;text-shadow:0 2px 3px #210839,0 0 9px #ffdbff;box-shadow:inset 0 2px 7px #fff8,inset 0 -6px 8px #260942,0 5px 0 #401064,0 8px 19px #0009,0 0 13px #d850ff;font:1000 clamp(13px,3.5vw,21px) system-ui;letter-spacing:.01em;padding:4px 5px;white-space:nowrap}
 
 /* Task 1: image-ready banner skins. Fallback remains readable until actual artwork is packaged. */
-.srCollageTrial .srCollageTop{background-image:linear-gradient(90deg,#09172255,#09172211),url('./sr_gamers_banner.webp');background-size:cover;background-position:center}
-.srCollageTrial .srCollageBottom{background-image:linear-gradient(90deg,#061d2555,#061d2511),url('./sr_kids_banner.webp');background-size:cover;background-position:center}
+.srCollageTrial .srCollageTop{background-image:linear-gradient(90deg,#09172255,#09172211);background-size:cover;background-position:center}
+.srCollageTrial .srCollageBottom{background-image:linear-gradient(90deg,#061d2555,#061d2511);background-size:cover;background-position:center}
 .srCollageTrial .srCollageTop.hasArtwork,.srCollageTrial .srCollageBottom.hasArtwork{border-color:#ffe2a0}
 .srCollageTrial .hasArtwork>*{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
