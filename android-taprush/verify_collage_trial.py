@@ -17,6 +17,7 @@ checks={
  "banner ignores taps outside own elements":'pointer-events:none' in css and 'pointer-events:auto' in css,
  "banner hides outside Home": "layer.style.display=home?'block':'none'" in js,
  "artwork filenames are wired": 'sr_gamers_banner.webp' in js and 'sr_kids_banner.webp' in js and 'background-size:cover' in css and 'element.style.backgroundImage' in js,
+ "image loader avoids literal HTML src false positive": "img.src=new URL(file,document.baseURI).href" in js and "img.src='./'" not in js,
  "artwork fallback is accessible": "img.onerror" in js and "hasArtwork" in css,
  "packer copies approved artwork": "shutil.copy2(source,dst/banner)" in packer,
  "premium is retained and positioned": "premium.style.setProperty('top'" in js and "premium.style.setProperty('left'" in js,
