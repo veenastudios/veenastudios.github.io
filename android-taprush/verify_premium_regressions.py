@@ -25,6 +25,7 @@ checks = {
     "shared tactile press feedback": "transform:translateY(3px) scale(.965)" in html,
     "disabled buttons excluded from press effect": "button:not(:disabled)" in html,
     "reduced motion supported": "prefers-reduced-motion:reduce" in html,
+    "home letterbox has clean backdrop": "Fill tall-screen letterboxing with a clean themed extension" in html and "filter:blur(19px)" not in html,
     "premium aligned with home artwork": "const below=rect.bottom+12" in html and "storeButton.style.top=" in html,
     "premium launcher hidden for unlock dialog": "document.querySelector('.srStoreOverlay,.srWorldUnlockDialog,.srWorldLockNotice" in html,
     "premium overlay mutations observed": "new MutationObserver(syncPremiumVisibility).observe(document.body" in html,
