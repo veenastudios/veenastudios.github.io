@@ -24,11 +24,16 @@ layer.style.display=home?'block':'none';if(!home)return;
 const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
 const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,Math.max(0,rect.top-upperStart-9));
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
-shareButton.style.display=upperHeight>=105?'block':'none';shareButton.style.top=(upperStart+upperHeight-31)+'px';
-let lowerEnd=window.innerHeight-95;
-if(premium&&!premium.hidden){
-premium.style.top=(window.innerHeight-82)+'px';premium.style.bottom='auto';premium.style.left='50%';premium.style.right='auto';premium.style.transform='translateX(-50%)';
-lowerEnd=premium.getBoundingClientRect().top-10;
+shareButton.style.display=upperHeight>=65?'block':'none';shareButton.style.top=(upperStart+8)+'px';
+const lowerStart=rect.bottom+8;
+const bottomLimit=window.innerHeight-90;
+const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart-8));
+bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
+bottom.style.display=lowerHeight>=58?'flex':'none';
+if(premium&&!premium.hidden&&lowerHeight>=58){
+ premium.style.top=(window.innerHeight-74)+'px';premium.style.bottom='auto';
+ premium.style.left='50%';premium.style.right='auto';premium.style.transform='translateX(-50%)';
+}
 }
 const lowerStart=rect.bottom+9,lowerHeight=Math.min(170,Math.max(0,lowerEnd-lowerStart));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';bottom.style.display=lowerHeight>=65?'flex':'none';
