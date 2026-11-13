@@ -6,9 +6,14 @@ const layer=document.createElement('div');layer.className='srCollageTrial';
 layer.innerHTML='<a class="srCollageTop" href="https://veenastudios.in/" target="_blank" rel="noopener noreferrer" aria-label="Explore SR Gamers"><strong>♛ VEENA STUDIOS</strong><b>🎮 SR GAMERS</b><small class="srCollageCTA">EXPLORE OUR GAMES ❯</small></a><a class="srCollageBottom" href="https://veenastudios.in/" target="_blank" rel="noopener noreferrer" aria-label="Explore SR Kids"><strong>📚 SR KIDS 🚀</strong><small>LEARNING · ACTIVITIES · STORIES</small><b class="srCollageCTA">EXPLORE NOW ❯</b></a>';
 document.body.appendChild(layer);
 const shareButton=document.createElement('button');
-shareButton.className='srCollageShare';shareButton.type='button';shareButton.textContent='↗ SHARE GAME';
+shareButton.className='srCollageShare';shareButton.type='button';shareButton.textContent='↗ SHARE GAME';shareButton.setAttribute('title','Share Tap Rush link');
 shareButton.setAttribute('aria-label','Share Tap Rush');
 shareButton.addEventListener('click',async()=>{
+ if(shareButton.disabled)return;
+ shareButton.disabled=true;
+ try{await shareTapRush()}finally{shareButton.disabled=false}
+});
+async function shareTapRush(){
  const url='https://veenastudios.in/tap-rush/';
  const data={title:'Tap Rush — SR GAMERS',text:'Play Tap Rush by Veena Studios!',url};
  try{
@@ -16,7 +21,7 @@ shareButton.addEventListener('click',async()=>{
   if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(url);window.alert('Game link copied');return}
   window.prompt('Copy Tap Rush link',url)
  }catch(err){if(err&&err.name!=='AbortError')window.prompt('Copy Tap Rush link',url)}
-});
+}
 layer.appendChild(shareButton);
 const top=layer.querySelector('.srCollageTop'),bottom=layer.querySelector('.srCollageBottom');
 // Task 2: only hide the accessible text once the actual image decodes successfully.
