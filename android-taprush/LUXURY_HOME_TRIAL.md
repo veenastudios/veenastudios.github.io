@@ -18,3 +18,14 @@ Branch: `experiment/taprush-luxury-home-underlay`. Do not merge into `taprush-an
 5. Compare screenshots against approved Build #358 and obtain explicit approval before any merge.
 
 **Status:** trial branch and acceptance criteria prepared. New generated art has not yet been committed as a binary asset; no trial APK is claimed ready.
+
+## Approved three-panel collage direction (14 Nov)
+- TOP: separate luxury 3D SR GAMERS landscape banner; tap opens verified Veena Studios Games section (not an invented URL).
+- MIDDLE: preserve approved Tap Rush Home artwork and every current interactive hotspot; no flattened replacement of working controls.
+- BOTTOM: separate luxury 3D SR KIDS landscape banner; tap opens verified SR KIDS website section.
+- Thin golden dividers are intentional; avoid overlap. Layout must respect safe areas and available viewport, not simply stretch all three images.
+- Keep current Premium entry, coins and Settings working; do not add duplicate touch targets.
+- Validate web destinations, Android external-link behavior and Back navigation; avoid redirecting players unexpectedly.
+- Existing CSS-only underlay experiment is superseded as the preferred visual design, but do not delete or merge it before an actual collage trial passes.
+- Do not claim the image-generation preview is a deployable UI asset: source assets, crop boundaries and tap regions must be prepared and committed independently.
+- Explicit user acceptance required after on-device trial before merging into the stable branch.
