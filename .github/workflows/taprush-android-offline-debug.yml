@@ -44,6 +44,21 @@ jobs:
         run: python3 verify_collage_trial.py
       - name: Bundle offline game
         run: python3 prepare_offline.py ../tap-rush
+      - name: Verify packaged collage banner assets when provided
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('.')
+          for name in ('sr_gamers_banner.webp','sr_kids_banner.webp'):
+              src=root/name
+              dst=root/'app/src/main/assets'/name
+              if src.exists():
+                  assert dst.is_file() and dst.read_bytes()==src.read_bytes(), f'Banner not packaged correctly: {name}'
+                  print('PASS: bundled artwork',name)
+              else:
+                  assert not dst.exists(), f'Unexpected artwork file: {name}'
+                  print('PENDING: approved artwork file not yet committed',name)
+          PY
       - name: Generate branded Android launcher icons
         run: |
           python3 -m pip install --quiet Pillow
