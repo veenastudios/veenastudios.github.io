@@ -135,7 +135,7 @@ function position(){const coin=document.querySelector('.hub .coinBox'),display=h
 // The Android WebView default confirm() exposes an internal URL and clashes with game styling.
 window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
  const overlay=document.createElement('div');
- overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
+ overlay.className='srWorldUnlockDialog';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
  overlay.setAttribute('aria-label','Unlock '+name);
  overlay.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#010b19bb;padding:22px';
  const panel=document.createElement('div');
@@ -143,7 +143,9 @@ window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
  const heading=document.createElement('h2');heading.textContent='Unlock '+name+'?';heading.style.cssText='font:900 25px system-ui;margin:0 0 12px';
  const message=document.createElement('p');message.textContent='Unlock permanently for '+cost+' coins?';message.style.cssText='margin:0 0 24px;font:600 16px system-ui';
  const actions=document.createElement('div');actions.style.cssText='display:flex;gap:12px';
- const finish=value=>{document.removeEventListener('keydown',escape);overlay.remove();resolve(value)};
+ let settled=false;
+ const finish=value=>{if(settled)return;settled=true;document.removeEventListener('keydown',escape);overlay.remove();resolve(value)};
+ overlay.srCancelUnlock=()=>finish(false);
  const escape=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
  for(const [label,value] of [['CANCEL',false],['UNLOCK',true]]){
   const button=document.createElement('button');button.textContent=label;button.style.cssText='flex:1;padding:14px 8px;border:2px solid #ffe39a;border-radius:13px;background:'+(value?'#f6bf42':'#203c45')+';color:'+(value?'#1c1a0b':'#fff')+';font:900 16px system-ui';button.onclick=()=>finish(value);actions.appendChild(button);
@@ -238,7 +240,7 @@ function syncPremiumVisibility(){
  storeButton.style.display=storeButton.hidden?'none':'';
  if(active||!allowed)document.querySelector('.srStoreOverlay')?.remove();
 }
-new MutationObserver(syncPremiumVisibility).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+new MutationObserver(syncPremiumVisibility).observe(document.body,{childList:true,subtree:true});
 syncPremiumVisibility();
 new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
 })();</script>"""
