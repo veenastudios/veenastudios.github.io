@@ -38,6 +38,8 @@ jobs:
           "$SDKMANAGER" 'platforms;android-36' 'build-tools;36.0.0'
       - name: Validate offline packer syntax
         run: python3 -m py_compile prepare_offline.py verify_offline.py
+      - name: Verify isolated collage and Share Game integration
+        run: python3 verify_collage_trial.py
       - name: Bundle offline game
         run: python3 prepare_offline.py ../tap-rush
       - name: Generate branded Android launcher icons
