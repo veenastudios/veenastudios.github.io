@@ -24,19 +24,19 @@ layer.style.display=home?'block':'none';if(!home)return;
 const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
 const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,Math.max(0,rect.top-upperStart-9));
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
-shareButton.style.display=upperHeight>=65?'block':'none';shareButton.style.top=(upperStart+8)+'px';
+shareButton.style.display='block';
 const lowerStart=rect.bottom+8;
-const bottomLimit=window.innerHeight-90;
+const bottomLimit=window.innerHeight-94;
 const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart-8));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
 bottom.style.display=lowerHeight>=58?'flex':'none';
-if(premium&&!premium.hidden&&lowerHeight>=58){
- premium.style.top=(window.innerHeight-74)+'px';premium.style.bottom='auto';
- premium.style.left='50%';premium.style.right='auto';premium.style.transform='translateX(-50%)';
+if(premium&&!premium.hidden){
+ premium.style.setProperty('top',(window.innerHeight-77)+'px','important');premium.style.setProperty('bottom','auto','important');
+ premium.style.setProperty('left','4%','important');premium.style.setProperty('right','auto','important');premium.style.setProperty('transform','none','important');
+ premium.style.setProperty('width','44%','important');premium.style.setProperty('height','59px','important');
+ premium.style.setProperty('font-size','clamp(13px,3.5vw,21px)','important');
 }
-}
-const lowerStart=rect.bottom+9,lowerHeight=Math.min(170,Math.max(0,lowerEnd-lowerStart));
-bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';bottom.style.display=lowerHeight>=65?'flex':'none';
+shareButton.style.top=(window.innerHeight-77)+'px';shareButton.style.left='52%';shareButton.style.right='4%';shareButton.style.height='59px';
 }
 new MutationObserver(()=>requestAnimationFrame(layout)).observe(root,{childList:true,subtree:true});
 window.addEventListener('resize',layout);window.addEventListener('orientationchange',layout);
