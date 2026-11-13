@@ -10,3 +10,7 @@
 
 .srCollageShare{position:fixed;z-index:2;right:7%;left:auto;border:1px solid #ffde83;border-radius:18px;padding:5px 11px;background:linear-gradient(#fce7a0,#b7822e);color:#1f1a10;font:900 11px system-ui;box-shadow:0 2px 6px #0008;pointer-events:auto;cursor:pointer}
 .srCollageShare:active{transform:scale(.96);filter:brightness(.9)}
+
+/* Matched luxury pair: native Premium remains clickable on left, Share on right. */
+body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #ffdc73!important;border-radius:24px!important;background:linear-gradient(165deg,#91600c 0%,#ffdc72 20%,#4b2908 52%,#d18c21 78%,#ffd978 100%)!important;color:#fff3bd!important;text-shadow:0 2px 3px #160c03,0 0 9px #ffd45a!important;box-shadow:inset 0 2px 6px #fff9c0a6,inset 0 -6px 8px #271300,0 5px 0 #4d2d08,0 8px 19px #0009,0 0 12px #e6a32b!important;font-weight:1000!important;letter-spacing:.015em!important}
+.srCollageTrial .srCollageShare{z-index:39!important;box-sizing:border-box;border:2px solid #ffcf85;border-radius:24px;background:linear-gradient(160deg,#e0a7ff 0%,#8a31d4 21%,#3b126e 53%,#9d34e4 78%,#f0a8ff 100%);color:white;text-shadow:0 2px 3px #210839,0 0 9px #ffdbff;box-shadow:inset 0 2px 7px #fff8,inset 0 -6px 8px #260942,0 5px 0 #401064,0 8px 19px #0009,0 0 13px #d850ff;font:1000 clamp(13px,3.5vw,21px) system-ui;letter-spacing:.01em;padding:4px 5px;white-space:nowrap}
