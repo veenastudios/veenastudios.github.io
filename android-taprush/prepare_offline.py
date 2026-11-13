@@ -115,7 +115,10 @@ body:has(.srPremiumHome)::before{content:'';position:fixed;inset:-24px;z-index:1
 .srPremiumHome .srCoinValue{position:absolute;left:82.1%;top:1.05%;width:5.8%;height:3.3%;display:flex;align-items:center;justify-content:center;background:#07111e;color:#fff;font:900 clamp(12px,3.6vw,22px) system-ui;line-height:1;border-radius:5px;text-shadow:0 1px 2px #000;pointer-events:none}
 .srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
 .srPremiumHome button:focus-visible{outline:3px solid #ffe078;outline-offset:-3px}
-.srPremiumHome .srHomePlay{left:29%;top:46%;width:43%;height:13%}
+.srPremiumHome .srHomePlay{left:29%;top:46%;width:43%;height:13%;border-radius:42%/45%;-webkit-tap-highlight-color:transparent;transition:transform 90ms ease,filter 90ms ease}
+.srPremiumHome .srHomePlay::after{content:"";position:absolute;inset:12% 3%;border-radius:999px;background:linear-gradient(180deg,#fff4b400,#b65c001c);box-shadow:inset 0 3px 6px #fff2a500,inset 0 -5px 9px #3e170000;opacity:0;transition:opacity 90ms ease;pointer-events:none}
+.srPremiumHome .srHomePlay:active,.srPremiumHome .srHomePlay.srPressed{transform:translateY(4px) scale(.965);filter:brightness(.88)}
+.srPremiumHome .srHomePlay:active::after,.srPremiumHome .srHomePlay.srPressed::after{opacity:1;background:linear-gradient(180deg,#3e170040,#fff4b415);box-shadow:inset 0 4px 12px #3e170080,inset 0 -2px 5px #fff4b480}
 .srPremiumHome .srHomeSettings{left:89%;top:0;width:11%;height:7%}
 .srPremiumHome .srHomeCoins{left:76%;top:0;width:13%;height:7%}
 .srPremiumHome .srCarouselPrev{left:0;top:67%;width:10%;height:12%}
