@@ -236,7 +236,7 @@ function syncPremiumVisibility(){
  const dialogOpen=Boolean(document.querySelector('.srStoreOverlay,.srWorldLockNotice[style*="block"]'));
  storeButton.hidden=active||!allowed||dialogOpen;
  storeButton.style.display=storeButton.hidden?'none':'';
- if(storeButton.hidden)document.querySelector('.srStoreOverlay')?.remove();
+ if(active||!allowed)document.querySelector('.srStoreOverlay')?.remove();
 }
 new MutationObserver(syncPremiumVisibility).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
 syncPremiumVisibility();
