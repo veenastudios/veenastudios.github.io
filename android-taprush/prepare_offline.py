@@ -221,6 +221,25 @@ function syncWorldLocks(){
  });
 }
 new MutationObserver(syncWorldLocks).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+// Prevent rapid gameplay taps from accidentally activating the result screen.
+// A new result must be visible for 1.2 seconds before any result action accepts input.
+let srResultEnteredAt=0,srResultWasVisible=false;
+function srTrackResultEntry(){
+ const visible=Boolean(document.querySelector('.result'));
+ if(visible&&!srResultWasVisible)srResultEnteredAt=performance.now();
+ srResultWasVisible=visible;
+}
+new MutationObserver(srTrackResultEntry).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+srTrackResultEntry();
+document.addEventListener('click',e=>{
+ const result=document.querySelector('.result');
+ if(!result||!result.contains(e.target))return;
+ if(performance.now()-srResultEnteredAt>=1200)return;
+ const action=e.target.closest('button,a,[role="button"]');
+ if(!action)return;
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+},true);
+
 syncWorldLocks();
 // Premium preview is playful, but purchases remain disabled until secure verification.
 // Keep pricing clear and make it explicit that a parent/guardian makes any purchase.
