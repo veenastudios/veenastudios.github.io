@@ -38,6 +38,8 @@ jobs:
           "$SDKMANAGER" 'platforms;android-36' 'build-tools;36.0.0'
       - name: Validate offline packer syntax
         run: python3 -m py_compile prepare_offline.py verify_offline.py
+      - name: Validate collage JavaScript syntax
+        run: node --check collage_trial.js
       - name: Verify isolated collage and Share Game integration
         run: python3 verify_collage_trial.py
       - name: Bundle offline game
