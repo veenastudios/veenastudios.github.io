@@ -333,6 +333,15 @@ if "</body>" not in markup:
  print("FAIL: no body tag for home shelf launcher")
  sys.exit(1)
 trial_dir=Path(__file__).resolve().parent
+# Task 3: package the approved image files when present; never silently ship broken image URLs.
+for banner in ("sr_gamers_banner.webp","sr_kids_banner.webp"):
+ source=trial_dir/banner
+ if source.is_file():
+  if source.stat().st_size<1000:
+   print("FAIL: banner asset unexpectedly small:",source);sys.exit(1)
+  shutil.copy2(source,dst/banner)
+ else:
+  print("NOTICE: banner artwork not yet committed; readable fallback will remain:",banner)
 trial_css=(trial_dir/"collage_trial.css").read_text(encoding="utf-8")
 trial_js=(trial_dir/"collage_trial.js").read_text(encoding="utf-8")
 trial_markup=markup.replace("</head>",home_css+"<style id=\"sr-collage-trial\">"+trial_css+"</style></head>")
