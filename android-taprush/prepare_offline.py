@@ -136,7 +136,7 @@ body:has(.srPremiumHome) .srPremiumHome{box-shadow:0 -8px 20px #0a1c1d88,0 8px 2
 body:has(.srPremiumHome)::after{content:'VEENA STUDIOS  ✦  SR GAMERS';display:block!important;position:fixed;top:max(12px,env(safe-area-inset-top));left:5%;right:5%;height:34px;z-index:20;pointer-events:none;text-align:center;color:#ffe6a0;font:900 clamp(12px,3.4vw,19px) system-ui;letter-spacing:.09em;text-shadow:0 2px 2px #061b16,0 0 13px #dfb757}
 
 /* Solid branded letterboxing: no duplicate or ghosted artwork outside the approved image. */
-body:has(.srPremiumHome)::after{content:'VEENA STUDIOS  ✦  SR GAMERS'!important}
+body:has(.srPremiumHome)::after{content:none!important}
 .srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
 .srPremiumHome .srCoinValue{position:absolute;left:82.1%;top:1.05%;width:5.8%;height:3.3%;display:flex;align-items:center;justify-content:center;background:#07111e;color:#fff;font:900 clamp(12px,3.6vw,22px) system-ui;line-height:1;border-radius:5px;text-shadow:0 1px 2px #000;pointer-events:none}
 .srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
@@ -332,7 +332,12 @@ new MutationObserver(position).observe(document.getElementById('root')||document
 if "</body>" not in markup:
  print("FAIL: no body tag for home shelf launcher")
  sys.exit(1)
-entry.write_text(markup.replace("</head>",home_css+"</head>").replace("</body>",launcher_js+"</body>"),encoding="utf-8")
+trial_dir=Path(__file__).resolve().parent
+trial_css=(trial_dir/"collage_trial.css").read_text(encoding="utf-8")
+trial_js=(trial_dir/"collage_trial.js").read_text(encoding="utf-8")
+trial_markup=markup.replace("</head>",home_css+"<style id=\"sr-collage-trial\">"+trial_css+"</style></head>")
+trial_markup=trial_markup.replace("</body>",launcher_js+"<script id=\"sr-collage-trial-js\">"+trial_js+"</script></body>")
+entry.write_text(trial_markup,encoding="utf-8")
 world_patch_count=0
 for js in (dst/"assets").glob("*.js"):
  s=js.read_text(encoding="utf-8")
