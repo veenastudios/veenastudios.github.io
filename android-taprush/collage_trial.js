@@ -38,6 +38,7 @@ const bottomLimit=window.innerHeight-94;
 const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart-8));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
 bottom.style.display=lowerHeight>=58?'flex':'none';
+if(COLLAGE_DEBUG)layer.dataset.layout=`top:${Math.round(upperHeight)},bottom:${Math.round(lowerHeight)},viewport:${innerWidth}x${innerHeight}`;
 // Banner artwork remains separate from the approved game image.
 // When the available space is too short, hide banners instead of covering game controls.
 if(premium&&!premium.hidden){
