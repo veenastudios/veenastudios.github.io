@@ -7,6 +7,12 @@ activity = (root / "app/src/main/java/in/veenastudios/taprush/MainActivity.java"
 billing = (root / "app/src/main/java/in/veenastudios/taprush/TapRushBilling.java").read_text()
 gradle = (root / "app/build.gradle").read_text()
 checks = {
+    "five world prices": "worldPrices=[0,150,200,250,350]" in html,
+    "world unlock persistence lookup": "srWorldUnlocked_" in html and "localStorage.getItem(k)==='yes'" in html,
+    "coin affordability guard": "if(coins>=price)return" in html and "e.stopImmediatePropagation()" in html,
+    "offline host resource restriction": 'Offline resource blocked' in activity and 'name.contains("..")' in activity,
+    "WebView storage and JavaScript": "s.setDomStorageEnabled(true)" in activity and "s.setJavaScriptEnabled(true)" in activity,
+    "WebView mixed-content restricted": "MIXED_CONTENT_NEVER_ALLOW" in activity,
     "world unlock repeated taps guarded": "if(document.querySelector('.srWorldUnlockDialog')){resolve(false);return;}" in html,
     "world unlock restores focus": "previousFocus.focus()" in html,
     "world unlock backdrop cancels": "if(event.target===overlay)finish(false)" in html,
