@@ -241,6 +241,19 @@ function syncPremiumVisibility(){
  const dialogOpen=Boolean(document.querySelector('.srStoreOverlay,.srWorldUnlockDialog,.srWorldLockNotice[style*="block"]'));
  storeButton.hidden=active||!allowed||dialogOpen;
  storeButton.style.display=storeButton.hidden?'none':'';
+ // Keep the Premium action visually attached to the approved home artwork
+ // instead of floating at the very bottom of tall phone screens.
+ if(!storeButton.hidden){
+  const homeArt=document.querySelector('.srPremiumHome');
+  if(homeArt){
+   const rect=homeArt.getBoundingClientRect();
+   const buttonHeight=storeButton.offsetHeight||48;
+   const below=rect.bottom+12;
+   const safeBottom=window.innerHeight-12-buttonHeight;
+   storeButton.style.top=Math.max(12,Math.min(below,safeBottom))+'px';
+   storeButton.style.bottom='auto';
+  }else{storeButton.style.top='';storeButton.style.bottom='';}
+ }
  if(active||!allowed)document.querySelector('.srStoreOverlay')?.remove();
 }
 new MutationObserver(syncPremiumVisibility).observe(document.body,{childList:true,subtree:true});
