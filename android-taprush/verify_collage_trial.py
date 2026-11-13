@@ -16,7 +16,7 @@ checks={
  "share does not award unverified coins":'srCoins' not in js and '100' not in js,
  "banner ignores taps outside own elements":'pointer-events:none' in css and 'pointer-events:auto' in css,
  "banner hides outside Home": "layer.style.display=home?'block':'none'" in js,
- "premium is not removed": "premium.style.top=" in js,
+ "premium is retained and positioned": "premium.style.setProperty('top'" in js and "premium.style.setProperty('left'" in js,
 }
 for name,ok in checks.items():
  print(("PASS" if ok else "FAIL")+": "+name)
