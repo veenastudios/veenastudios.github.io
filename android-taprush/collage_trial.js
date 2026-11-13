@@ -27,7 +27,7 @@ for(const [element,file] of [[top,'sr_gamers_banner.webp'],[bottom,'sr_kids_bann
 function layout(){
 const art=document.querySelector('.srPremiumHome');
 const home=!!art&&!document.querySelector('.worldMap,.game,.result,.srPauseOverlay,.srStoreOverlay,.srExitConfirm');
-layer.style.display=home?'block':'none';if(!home)return;
+layer.style.display=home?'block':'none';if(!home){const p=document.querySelector('.srStoreButton');if(p){for(const prop of ['top','bottom','left','right','transform','width','height','font-size'])p.style.removeProperty(prop)}return;}
 const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
 const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,Math.max(0,rect.top-upperStart-9));
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
