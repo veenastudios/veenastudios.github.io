@@ -1,5 +1,6 @@
 (()=>{
 const root=document.getElementById('root')||document.body;
+const COLLAGE_DEBUG=location.search.includes('collageDebug=1');
 // Deliberately no install-referral coins: native share is not proof of installation.
 const layer=document.createElement('div');layer.className='srCollageTrial';
 layer.innerHTML='<a class="srCollageTop" href="https://veenastudios.in/" target="_blank" rel="noopener noreferrer" aria-label="Explore SR Gamers"><strong>♛ VEENA STUDIOS</strong><b>🎮 SR GAMERS</b><small class="srCollageCTA">EXPLORE OUR GAMES ❯</small></a><a class="srCollageBottom" href="https://veenastudios.in/" target="_blank" rel="noopener noreferrer" aria-label="Explore SR Kids"><strong>📚 SR KIDS 🚀</strong><small>LEARNING · ACTIVITIES · STORIES</small><b class="srCollageCTA">EXPLORE NOW ❯</b></a>';
@@ -21,7 +22,7 @@ const top=layer.querySelector('.srCollageTop'),bottom=layer.querySelector('.srCo
 // Task 2: only hide the accessible text once the actual image decodes successfully.
 for(const [element,file] of [[top,'sr_gamers_banner.webp'],[bottom,'sr_kids_banner.webp']]){
  const img=new Image();img.onload=()=>{if(img.naturalWidth>0){element.style.backgroundImage=`url("./${file}")`;element.classList.add('hasArtwork')}};
- img.onerror=()=>element.classList.remove('hasArtwork');img.src=new URL(file,document.baseURI).href;
+ img.onerror=()=>{element.classList.remove('hasArtwork');if(COLLAGE_DEBUG)console.warn('Tap Rush banner unavailable:',file)};img.src=new URL(file,document.baseURI).href;
 }
 
 function layout(){
