@@ -7,6 +7,9 @@ activity = (root / "app/src/main/java/in/veenastudios/taprush/MainActivity.java"
 billing = (root / "app/src/main/java/in/veenastudios/taprush/TapRushBilling.java").read_text()
 gradle = (root / "app/build.gradle").read_text()
 checks = {
+    "world unlock repeated taps guarded": "if(document.querySelector('.srWorldUnlockDialog')){resolve(false);return;}" in html,
+    "world unlock restores focus": "previousFocus.focus()" in html,
+    "world unlock backdrop cancels": "if(event.target===overlay)finish(false)" in html,
     "world unlock dialog tracked": "overlay.className='srWorldUnlockDialog'" in html and "overlay.srCancelUnlock=()=>finish(false)" in html,
     "world unlock Android back cancels": "document.querySelector('.srWorldUnlockDialog')" in activity and "u.srCancelUnlock()" in activity,
     "premium overlay mutations observed": "new MutationObserver(syncPremiumVisibility).observe(document.body" in html,
