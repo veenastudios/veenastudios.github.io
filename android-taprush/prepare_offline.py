@@ -130,7 +130,11 @@ launcher_js="""<style id="sr-premium-home">
 .hub:has(.premiumHome) .premiumHome{opacity:0!important}
 .hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
 body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:radial-gradient(ellipse 85% 24% at 50% 9%,#244e53 0%,transparent 100%),radial-gradient(ellipse 95% 24% at 50% 93%,#244e53 0%,transparent 100%),linear-gradient(180deg,#061526,#0b2730 45%,#061526)}
-body:has(.srPremiumHome) .srPremiumHome{box-shadow:0 -9px 28px #0b273099,0 9px 28px #0b273099}
+/* Isolated luxury letterbox trial: no modifications to foreground controls. */
+body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:radial-gradient(ellipse 90% 23% at 50% 4%,#6b4c20 0%,#214b3e 48%,transparent 100%),radial-gradient(ellipse 95% 28% at 50% 98%,#775121 0%,#245a48 49%,transparent 100%),linear-gradient(180deg,#0b342d,#071b27 45%,#103c32)!important}
+body:has(.srPremiumHome) .srPremiumHome{box-shadow:0 -8px 20px #0a1c1d88,0 8px 20px #0a1c1d88}
+body:has(.srPremiumHome)::after{content:'VEENA STUDIOS  ✦  SR GAMERS';display:block!important;position:fixed;top:max(12px,env(safe-area-inset-top));left:5%;right:5%;height:34px;z-index:20;pointer-events:none;text-align:center;color:#ffe6a0;font:900 clamp(12px,3.4vw,19px) system-ui;letter-spacing:.09em;text-shadow:0 2px 2px #061b16,0 0 13px #dfb757}
+
 /* Solid branded letterboxing: no duplicate or ghosted artwork outside the approved image. */
 body:has(.srPremiumHome)::after{content:none!important}
 .srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
