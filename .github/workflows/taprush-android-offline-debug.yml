@@ -40,6 +40,11 @@ jobs:
         run: python3 -m py_compile prepare_offline.py verify_offline.py
       - name: Bundle offline game
         run: python3 prepare_offline.py ../tap-rush
+      - name: Generate branded Android launcher icons
+        run: |
+          python3 -m pip install --quiet Pillow
+          python3 generate_launcher_icons.py
+          test -s app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
       - name: Run premium and gameplay regression smoke checks
         run: python3 verify_premium_regressions.py
       - name: Verify complete offline assets
