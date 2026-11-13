@@ -20,7 +20,7 @@ layer.appendChild(shareButton);
 const top=layer.querySelector('.srCollageTop'),bottom=layer.querySelector('.srCollageBottom');
 // Task 2: only hide the accessible text once the actual image decodes successfully.
 for(const [element,file] of [[top,'sr_gamers_banner.webp'],[bottom,'sr_kids_banner.webp']]){
- const img=new Image();img.onload=()=>{if(img.naturalWidth>0)element.classList.add('hasArtwork')};
+ const img=new Image();img.onload=()=>{if(img.naturalWidth>0){element.style.backgroundImage=`url("./${file}")`;element.classList.add('hasArtwork')}};
  img.onerror=()=>element.classList.remove('hasArtwork');img.src='./'+file;
 }
 
