@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
  @Override public void onBackPressed(){
   if(web==null){super.onBackPressed();return;}
   // Let the game dismiss its own dialog first; never navigate away mid-purchase preview.
-  web.evaluateJavascript("(function(){var d=document.querySelector('.srStoreOverlay');if(d){var b=d.querySelector('.srStoreAction:last-child');if(b)b.click();else d.remove();return true;}return false;})()",handled->{
+  web.evaluateJavascript("(function(){var d=document.querySelector('.srStoreOverlay');if(d){var b=d.querySelector('.srStoreAction:last-child');if(b)b.click();else d.remove();return true;}var u=document.querySelector('.srWorldUnlockDialog');if(u){if(typeof u.srCancelUnlock==='function')u.srCancelUnlock();else u.querySelector('button')?.click();return true;}return false;})()",handled->{
    if("true".equals(handled))return;
    if(web!=null&&web.canGoBack())web.goBack();
    else MainActivity.super.onBackPressed();
