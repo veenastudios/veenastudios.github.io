@@ -19,6 +19,7 @@ checks={
  "artwork filenames are wired": 'sr_gamers_banner.webp' in js and 'sr_kids_banner.webp' in js and 'background-size:cover' in css and 'element.style.backgroundImage' in js,
  "image loader avoids literal HTML src false positive": "img.src=new URL(file,document.baseURI).href" in js and "img.src='./'" not in js,
  "artwork fallback is accessible": "img.onerror" in js and "hasArtwork" in css,
+ "artwork integrity checks use size threshold": "source.stat().st_size<1000" in packer,
  "packer copies approved artwork": "shutil.copy2(source,dst/banner)" in packer,
  "share rapid-tap guard": "if(shareButton.disabled)return" in js and "shareButton.disabled=true" in js and "shareButton.disabled=false" in js,
  "opt-in visual QA geometry": "COLLAGE_DEBUG" in js and "layer.dataset.layout" in js,
