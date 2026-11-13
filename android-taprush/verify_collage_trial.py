@@ -16,6 +16,9 @@ checks={
  "share does not award unverified coins":'srCoins' not in js and '100' not in js,
  "banner ignores taps outside own elements":'pointer-events:none' in css and 'pointer-events:auto' in css,
  "banner hides outside Home": "layer.style.display=home?'block':'none'" in js,
+ "artwork filenames are wired": 'sr_gamers_banner.webp' in js and 'sr_kids_banner.webp' in js and 'sr_gamers_banner.webp' in css and 'sr_kids_banner.webp' in css,
+ "artwork fallback is accessible": "img.onerror" in js and "hasArtwork" in css,
+ "packer copies approved artwork": "shutil.copy2(source,dst/banner)" in packer,
  "premium is retained and positioned": "premium.style.setProperty('top'" in js and "premium.style.setProperty('left'" in js,
 }
 for name,ok in checks.items():
