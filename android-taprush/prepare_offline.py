@@ -158,6 +158,26 @@ home.querySelector('.srCarouselPrev').onclick=()=>{page=Math.max(0,page-1);updat
 home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(titles.length/3)-1,page+1);updateCarousel()};
 function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel()}
 // The Android WebView default confirm() exposes an internal URL and clashes with game styling.
+window.srConfirmExit=()=>new Promise(resolve=>{
+ if(document.querySelector('.srExitConfirm')){resolve(false);return}
+ const overlay=document.createElement('div');overlay.className='srExitConfirm';
+ overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Return to Home');
+ overlay.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#020d17cc;padding:22px';
+ const panel=document.createElement('div');panel.style.cssText='width:min(100%,420px);border:3px solid #f5d47b;border-radius:24px;background:linear-gradient(160deg,#183d37,#071c2c);color:#ffe7a1;box-shadow:0 14px 40px #000a;padding:26px 20px;text-align:center;font:700 17px system-ui';
+ const title=document.createElement('h2');title.textContent='Return to Home?';title.style.cssText='font:900 25px system-ui;margin:0 0 14px';
+ const desc=document.createElement('p');desc.textContent='Your current round progress will be lost.';desc.style.cssText='margin:0 0 24px';
+ const buttons=document.createElement('div');buttons.style.cssText='display:flex;gap:12px';
+ const finish=ok=>{document.removeEventListener('keydown',escape);overlay.remove();resolve(ok)};
+ const escape=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
+ for(const [label,ok] of [['KEEP PLAYING',false],['GO HOME',true]]){
+  const btn=document.createElement('button');btn.textContent=label;
+  btn.style.cssText='flex:1;min-height:52px;padding:10px 5px;border:2px solid #ffe39a;border-radius:13px;background:'+(ok?'#f9cd59':'#21463f')+';color:'+(ok?'#10241d':'#fff4ce')+';font:900 14px system-ui';
+  btn.onclick=()=>finish(ok);buttons.appendChild(btn)
+ }
+ panel.append(title,desc,buttons);overlay.appendChild(panel);document.body.appendChild(overlay);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)finish(false)});
+ document.addEventListener('keydown',escape);buttons.firstChild.focus();
+});
 window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
  // Prevent overlapping confirmation prompts from repeated taps.
  if(document.querySelector('.srWorldUnlockDialog')){resolve(false);return;}
@@ -345,7 +365,7 @@ for js in (dst/"assets").glob("*.js"):
    ('if(x!=="play")return;let z=0,L=0;', 'if(x!=="play"||paused)return;let z=0,L=0;'),
    ('},[x,P]);const dl=z=>', '},[x,P,paused]);const dl=z=>'),
    ('if(x==="play"){if(Kl(o=>', 'if(x==="play"&&!paused){if(Kl(o=>'),
-   ('x==="play"&&O.jsxs(O.Fragment,{children:[', 'x==="play"&&O.jsxs(O.Fragment,{children:[O.jsx("button",{className:"srPauseButton","aria-label":paused?"Resume game":"Pause game",onClick:()=>{if(paused){const elapsed=performance.now()-pauseStarted.current;Wt.current+=elapsed;Kl(items=>items.map(item=>({...item,born:item.born+elapsed})));pauseStarted.current=0;setPaused(!1)}else{pauseStarted.current=performance.now();setPaused(!0)}},children:paused?"▶ Resume":"⏸ Pause"}),paused&&O.jsx("div",{className:"srPauseOverlay",children:O.jsxs("div",{children:[O.jsx("h2",{children:"Game Paused"}),O.jsx("button",{onClick:()=>{const elapsed=performance.now()-pauseStarted.current;Wt.current+=elapsed;Kl(items=>items.map(item=>({...item,born:item.born+elapsed})));pauseStarted.current=0;setPaused(!1)},children:"▶ Resume Game"}),O.jsx("button",{className:"srPauseHome",onClick:()=>{if(window.confirm("Leave this round and return to Home? Current round progress will be lost."))window.location.reload()},children:"⌂ Back to Home"})]})}),'),
+   ('x==="play"&&O.jsxs(O.Fragment,{children:[', 'x==="play"&&O.jsxs(O.Fragment,{children:[O.jsx("button",{className:"srPauseButton","aria-label":paused?"Resume game":"Pause game",onClick:()=>{if(paused){const elapsed=performance.now()-pauseStarted.current;Wt.current+=elapsed;Kl(items=>items.map(item=>({...item,born:item.born+elapsed})));pauseStarted.current=0;setPaused(!1)}else{pauseStarted.current=performance.now();setPaused(!0)}},children:paused?"▶ Resume":"⏸ Pause"}),paused&&O.jsx("div",{className:"srPauseOverlay",children:O.jsxs("div",{children:[O.jsx("h2",{children:"Game Paused"}),O.jsx("button",{onClick:()=>{const elapsed=performance.now()-pauseStarted.current;Wt.current+=elapsed;Kl(items=>items.map(item=>({...item,born:item.born+elapsed})));pauseStarted.current=0;setPaused(!1)},children:"▶ Resume Game"}),O.jsx("button",{className:"srPauseHome",onClick:()=>{window.srConfirmExit().then(ok=>{if(ok)window.location.reload()})},children:"⌂ Back to Home"})]})}),'),
   ]
   for old,new in changes:
    if s.count(old)!=1:
@@ -355,7 +375,7 @@ for js in (dst/"assets").glob("*.js"):
  # The tracked game bundle already contains pause controls: patch that version too.
  if 'children:"▶ Resume Game"})]})})' in s and 'children:"⌂ Back to Home"' not in s:
   s=s.replace('children:"▶ Resume Game"})]})})',
-   'children:"▶ Resume Game"}),O.jsx("button",{className:"srPauseHome",onClick:()=>{if(window.confirm("Leave this round and return to Home? Current round progress will be lost."))window.location.reload()},children:"⌂ Back to Home"})]})})',1)
+   'children:"▶ Resume Game"}),O.jsx("button",{className:"srPauseHome",onClick:()=>{window.srConfirmExit().then(ok=>{if(ok)window.location.reload()})},children:"⌂ Back to Home"})]})})',1)
  if 'className:"srPauseHome"' not in s and 'className:"srPauseButton"' in s:
   print("FAIL: pause home action not injected into compiled game");sys.exit(1)
  s=re.sub(r'"serviceWorker"in navigator&&window\.addEventListener\("load",\(\)=>\{navigator\.serviceWorker\.register\("\./sw\.js"\)\.catch\(\(\)=>\{\}\)\}\);?', "",s)
