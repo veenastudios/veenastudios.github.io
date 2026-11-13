@@ -22,6 +22,7 @@ checks = {
     "world unlock backdrop cancels": "if(event.target===overlay)finish(false)" in html,
     "world unlock dialog tracked": "overlay.className='srWorldUnlockDialog'" in html and "overlay.srCancelUnlock=()=>finish(false)" in html,
     "world unlock Android back cancels": "document.querySelector('.srWorldUnlockDialog')" in activity and "u.srCancelUnlock()" in activity,
+    "premium aligned with home artwork": "const below=rect.bottom+12" in html and "storeButton.style.top=" in html,
     "premium launcher hidden for unlock dialog": "document.querySelector('.srStoreOverlay,.srWorldUnlockDialog,.srWorldLockNotice" in html,
     "premium overlay mutations observed": "new MutationObserver(syncPremiumVisibility).observe(document.body" in html,
     "premium store overlay": "srStoreOverlay" in html,
