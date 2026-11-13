@@ -62,6 +62,25 @@ shutil.copy2(site_source,dst/site_image)
 shutil.copy2(hub,dst/"game-hub.html")
 # Attach navigation only to the game's existing home shelf; never overlay active rounds.
 home_css="""<style id="taprush-mobile-home-fix">
+/* Shared tactile feedback for all visible, enabled game controls. */
+/* Invisible image hit-zones must stay transparent to preserve approved artwork. */
+button:not(:disabled):not(.worldNode):not(.srHomePlay):not(.srHomeSettings):not(.srHomeCoins):not(.srCarouselPrev):not(.srCarouselNext):not(.gameCard):not(.srInvisibleHitbox),
+[role="button"]:not([aria-disabled="true"]):not(.worldNode):not(.gameCard){
+ -webkit-tap-highlight-color:transparent;
+ transition:transform 95ms ease,filter 95ms ease,box-shadow 95ms ease;
+ transform-origin:center center;
+}
+button:not(:disabled):not(.worldNode):not(.srHomePlay):not(.srHomeSettings):not(.srHomeCoins):not(.srCarouselPrev):not(.srCarouselNext):not(.gameCard):not(.srInvisibleHitbox):active,
+[role="button"]:not([aria-disabled="true"]):not(.worldNode):not(.gameCard):active{
+ transform:translateY(3px) scale(.965);
+ filter:brightness(.86);
+ box-shadow:inset 0 3px 9px #0005;
+}
+button:disabled,[aria-disabled="true"]{cursor:default}
+@media (prefers-reduced-motion:reduce){
+ button,[role="button"]{transition:none!important}
+}
+
 .hub .premiumHome{object-fit:contain!important;object-position:center center!important;background:#07111f}
 .hub .liveShelf{left:0!important;right:0!important;bottom:0!important;top:0!important;pointer-events:none!important}
 .hub .liveShelf h2{display:none!important}
