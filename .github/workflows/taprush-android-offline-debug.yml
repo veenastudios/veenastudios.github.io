@@ -8,7 +8,7 @@ on:
       - 'tap-rush/**'
       - '.github/workflows/taprush-android-offline-debug.yml'
   push:
-    branches: [taprush-android-offline-v6]
+    branches: [taprush-android-offline-v6, experiment/taprush-luxury-home-underlay]
     paths:
       - 'tap-rush/**'
       - 'android-taprush/**'
