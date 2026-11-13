@@ -129,7 +129,8 @@ launcher_js="""<style id="sr-premium-home">
 .hub:has(.premiumHome) .language,.hub:has(.premiumHome) .coinBox,.hub:has(.premiumHome) .gear,.hub:has(.premiumHome) .collectionNote{opacity:0!important;pointer-events:none!important}
 .hub:has(.premiumHome) .premiumHome{opacity:0!important}
 .hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
-body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:linear-gradient(180deg,#061526 0%,#102c37 18%,#061526 82%,#061526 100%)}
+body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:radial-gradient(ellipse 85% 24% at 50% 9%,#244e53 0%,transparent 100%),radial-gradient(ellipse 95% 24% at 50% 93%,#244e53 0%,transparent 100%),linear-gradient(180deg,#061526,#0b2730 45%,#061526)}
+body:has(.srPremiumHome) .srPremiumHome{box-shadow:0 -9px 28px #0b273099,0 9px 28px #0b273099}
 /* Solid branded letterboxing: no duplicate or ghosted artwork outside the approved image. */
 body:has(.srPremiumHome)::after{content:none!important}
 .srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
@@ -293,9 +294,10 @@ function syncPremiumVisibility(){
    const buttonHeight=storeButton.offsetHeight||48;
    const below=rect.bottom+12;
    const safeBottom=window.innerHeight-12-buttonHeight;
-   storeButton.style.top=Math.max(12,Math.min(below,safeBottom))+'px';
+   storeButton.style.top=Math.max(12,Math.min(below+Math.max(10,(safeBottom-below)*.34),safeBottom))+'px';
+   storeButton.style.left='50%';storeButton.style.right='auto';storeButton.style.transform='translateX(-50%)';
    storeButton.style.bottom='auto';
-  }else{storeButton.style.top='';storeButton.style.bottom='';}
+  }else{storeButton.style.top='';storeButton.style.bottom='';storeButton.style.left='';storeButton.style.right='';storeButton.style.transform='';}
  }
  if(active||!allowed)document.querySelector('.srStoreOverlay')?.remove();
 }
