@@ -24,3 +24,11 @@ Finish as much as possible without Play Console registration, Play Store login, 
 - Work autonomously on Stage 1 tasks where tools permit; ask only for essential device/account actions.
 - Do not claim production-ready or enable real-money payments before all security, policy and store requirements are satisfied.
 - These are temporary project rules, not a claim that Stage 2 requirements disappear.
+
+## Autonomous batch-work policy (owner approved)
+- Continue independent Stage 1 work without asking for micro-approvals on routine bug fixes, minor layout alignment, automated tests, documentation, and CI builds.
+- Respect the already-approved art and game theme; do not silently replace major designs, gameplay economics, or paid features.
+- Batch related changes and CI checks; request phone testing only for meaningful acceptance checkpoints, not after every small commit.
+- If a task needs device evidence, mark it phone-pending and continue other independent work rather than stopping all progress.
+- Ask owner only for major creative changes, unavailable credentials/device access, real-money actions, legal declarations, or irreversible changes.
+- Report concise results with exact commits, CI status, remaining blockers, and clearly separated phone verification.
