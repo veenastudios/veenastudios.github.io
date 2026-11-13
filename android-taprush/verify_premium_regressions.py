@@ -7,6 +7,10 @@ activity = (root / "app/src/main/java/in/veenastudios/taprush/MainActivity.java"
 billing = (root / "app/src/main/java/in/veenastudios/taprush/TapRushBilling.java").read_text()
 gradle = (root / "app/build.gradle").read_text()
 checks = {
+    "world unlock dialog has exactly-once settle": "if(settled)return;settled=true" in html,
+    "world unlock confirms through game logic": "await window.srConfirmUnlock(L.name,cost)" in (root / "app/src/main/assets/assets/index-B_be548G.js").read_text(encoding="utf-8"),
+    "reward grant native exactly once": "rewardGranted.compareAndSet(false,true)" in activity,
+    "debug-only rewarded bridge": "if (BuildConfig.DEBUG)" in activity and "new GameBridge()" in activity,
     "five world prices": "worldPrices=[0,150,200,250,350]" in html,
     "world unlock persistence lookup": "srWorldUnlocked_" in html and "localStorage.getItem(k)==='yes'" in html,
     "coin affordability guard": "if(coins>=price)return" in html and "e.stopImmediatePropagation()" in html,
