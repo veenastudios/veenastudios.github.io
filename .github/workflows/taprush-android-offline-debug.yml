@@ -1,0 +1,220 @@
+name: Tap Rush offline Android debug
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'android-taprush/**'
+      - 'tap-rush/**'
+      - '.github/workflows/taprush-android-offline-debug.yml'
+  push:
+    branches: [taprush-android-offline-v6]
+    paths:
+      - 'tap-rush/**'
+      - 'android-taprush/**'
+      - '.github/workflows/taprush-android-offline-debug.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: android-taprush
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDK using preinstalled command-line tools
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then SDKMANAGER="$ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager"; fi
+          test -x "$SDKMANAGER"
+          "$SDKMANAGER" --version
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Validate offline packer syntax
+        run: python3 -m py_compile prepare_offline.py verify_offline.py
+      - name: Bundle offline game
+        run: python3 prepare_offline.py ../tap-rush
+      - name: Generate branded Android launcher icons
+        run: |
+          python3 -m pip install --quiet Pillow
+          python3 generate_launcher_icons.py
+          test -s app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+      - name: Run premium and gameplay regression smoke checks
+        run: python3 verify_premium_regressions.py
+      - name: Verify complete offline assets
+        run: python3 verify_offline.py
+      - name: Verify coin unlock integration and lock notice
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          js=Path('app/src/main/assets/assets/index-B_be548G.js').read_text()
+          for token in ('syncWorldLocks', 'data-lock-price', 'srWorldLockTimer', '},800)', 'srWorldLockNotice'):
+              assert token in html, f'Missing lock UI: {token}'
+          for token in ('srWorldUnlocked_', 'city:150', 'space:200', 'underwater:250', 'himalaya:350'):
+              assert token in js, f'Missing world unlock logic: {token}'
+          print('World lock UI and coin prices verified in generated assets')
+          PY
+      - name: Verify rewarded ad test integration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          js=Path('app/src/main/assets/assets/index-B_be548G.js').read_text()
+          native=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          assert 'srRewardAd' in js and 'srReward20' in js
+          assert 'showRewarded' in native and 'ca-app-pub-3940256099942544/5224354917' in native
+          assert 'rewardGranted.compareAndSet(false,true)' in native, 'Reward must be granted once per ad'
+          assert 'sendEvent("srReward20")' in native, 'Reward event callback missing'
+          print('Rewarded ad test bridge and 20-coin callback present')
+          PY
+      - name: Verify test ads cannot run in production release
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          native=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          packer=Path('prepare_offline.py').read_text()
+          assert 'if (BuildConfig.DEBUG)' in native
+          assert 'web.addJavascriptInterface(new GameBridge(),"TapRushAds");' in native
+          assert 'window.TapRushAds?O.jsx(' in packer
+          print('Release ad gate verified: debug-only native bridge and conditional UI')
+          PY
+      - name: Verify latest gameplay safety regressions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          js=Path('app/src/main/assets/assets/index-B_be548G.js').read_text()
+          native=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          assert 'window.srConfirmUnlock=' in html, 'Missing themed unlock dialog'
+          assert 'await window.srConfirmUnlock(L.name,cost)' in js, 'World purchase does not await themed confirmation'
+          assert 'visibilitychange' in html and 'pause.click()' in html, 'Missing background auto-pause'
+          assert 'Preload failures are silent' in native, 'Ad preload must not show unsolicited error'
+          assert 'rewardGranted.compareAndSet(false,true)' in native, 'Duplicate ad reward guard missing'
+          print('Unlock dialog, background pause and ad preload regression gates PASS')
+          PY
+      - name: Verify Billing remains fail-closed before server verification
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          billing=Path('app/src/main/java/in/veenastudios/taprush/TapRushBilling.java').read_text()
+          activity=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          for token in ('taprush_all_worlds_199','taprush_premium_299','queryProductDetailsAsync','queryPurchasesAsync','restoreRequested','PendingPurchasesParams'):
+              assert token in billing, f'Missing Billing safety feature: {token}'
+          assert 'billing.restorePurchases()' in activity
+          assert 'Deliberately no local unlock' in billing
+          print('Billing product discovery, deferred restore and no-unverified-entitlement guard PASS')
+          PY
+      - name: Verify Play Store release preparation files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          pack=Path('PLAY_STORE_RELEASE_PACK.md').read_text()
+          privacy=Path('../tap-rush/privacy-draft.html').read_text()
+          for token in ('Data Safety','Signed AAB','₹199/₹299'):
+              assert token in pack, f'Missing release checklist: {token}'
+          assert 'Not yet the final Play Store privacy policy' in privacy
+          assert 'verified privacy-support email' in privacy
+          print('Store checklist and non-final privacy disclosure draft present')
+          PY
+      - name: Verify premium store UI and checkout safety
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('app/src/main/assets/index.html').read_text()
+          activity=Path('app/src/main/java/in/veenastudios/taprush/MainActivity.java').read_text()
+          billing=Path('app/src/main/java/in/veenastudios/taprush/TapRushBilling.java').read_text()
+          gradle=Path('app/build.gradle').read_text()
+          for token in ('srStoreOverlay','srStoreButton','buyAllWorlds','buyPremium','Restore purchases','isCheckoutEnabled'):
+              assert token in html, f'Premium store missing: {token}'
+          for token in ('new BillingBridge()','billing.launchPurchase(TapRushBilling.ALL_WORLDS)','billing.launchPurchase(TapRushBilling.PREMIUM)'):
+              assert token in activity, f'Android billing bridge missing: {token}'
+          assert "BILLING_VERIFICATION_ENABLED', 'false'" in gradle, 'Checkout must remain disabled before server verification'
+          assert 'if (!BuildConfig.BILLING_VERIFICATION_ENABLED)' in billing
+          print('Premium UI and fail-closed checkout checks PASS')
+          PY
+      - name: Verify Android privacy and backup controls
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          manifest=Path('app/src/main/AndroidManifest.xml').read_text()
+          rules=Path('app/src/main/res/xml/data_extraction_rules.xml').read_text()
+          assert 'android:allowBackup="false"' in manifest
+          assert 'android:dataExtractionRules="@xml/data_extraction_rules"' in manifest
+          assert '<cloud-backup>' in rules and '<device-transfer>' in rules
+          print('Backup and device-transfer exclusion rules present')
+          PY
+      - name: Verify entrypoint
+        run: |
+          test -s app/src/main/assets/index.html
+          test -s app/src/main/assets/assets/index-B_be548G.js
+          test -s app/src/main/assets/assets/index-DJsOUZk8.css
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --no-daemon --stacktrace --warning-mode all
+      - name: Validate premium UI and world-map fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path('app/src/main/assets/index.html').read_text()
+          for token in ('srCoinValue', 'srHomePlay', 'worldTrail::before', 'approved-world-selection.webp', 'approved-home-carousel.png'):
+              assert token in html, f'Missing UI requirement: {token}'
+          for image in ('approved-world-selection.webp', 'approved-home-carousel.png'):
+              assert Path('app/src/main/assets', image).stat().st_size > 10000, image
+          print('Premium home, live coins, world map and artwork verified')
+          PY
+      - name: Prepare release signing when configured
+        env:
+          KEYSTORE_BASE64: ${{ secrets.TAPRUSH_KEYSTORE_BASE64 }}
+          TAPRUSH_KEYSTORE_PASSWORD: ${{ secrets.TAPRUSH_KEYSTORE_PASSWORD }}
+          TAPRUSH_KEY_ALIAS: ${{ secrets.TAPRUSH_KEY_ALIAS }}
+          TAPRUSH_KEY_PASSWORD: ${{ secrets.TAPRUSH_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$TAPRUSH_KEYSTORE_PASSWORD" ] && [ -n "$TAPRUSH_KEY_ALIAS" ] && [ -n "$TAPRUSH_KEY_PASSWORD" ]; then
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/taprush-release.jks"
+            echo "TAPRUSH_KEYSTORE_FILE=$RUNNER_TEMP/taprush-release.jks" >> "$GITHUB_ENV"
+            echo "TAPRUSH_SIGNED=true" >> "$GITHUB_ENV"
+          elif [ -n "$KEYSTORE_BASE64$TAPRUSH_KEYSTORE_PASSWORD$TAPRUSH_KEY_ALIAS$TAPRUSH_KEY_PASSWORD" ]; then
+            echo "::error::Incomplete Tap Rush signing secrets. Configure all four secrets."
+            exit 1
+          else
+            echo "TAPRUSH_SIGNED=false" >> "$GITHUB_ENV"
+          fi
+      - name: Build release AAB (signed only when secrets configured)
+        run: gradle :app:bundleRelease --no-daemon --stacktrace
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/taprush-release.jks"
+      - name: Record build environment
+        if: always()
+        run: |
+          java -version
+          gradle --version
+          echo "Android SDK: $ANDROID_HOME"
+          find app/build/outputs -maxdepth 5 -type f 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: taprush-offline-debug-apk
+          path: android-taprush/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Verify signed release bundle before publication artifact
+        if: env.TAPRUSH_SIGNED == 'true'
+        run: |
+          AAB="$(find app/build/outputs/bundle/release -name '*.aab' -type f | head -n 1)"
+          test -n "$AAB"
+          jarsigner -verify -strict "$AAB"
+          echo "Signed release AAB verified"
+      - uses: actions/upload-artifact@v4
+        if: env.TAPRUSH_SIGNED == 'true'
+        with:
+          name: taprush-release-aab-signed
+          path: android-taprush/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
