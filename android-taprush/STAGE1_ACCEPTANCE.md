@@ -8,6 +8,12 @@ Per SR_GAMERS_GAME_RELEASE_RULES.md. Never treat CI success as phone-test succes
 - [x] Coin earning and persistence after restart
 - [x] Debug rewarded test ad can award +20 coins
 
+## Verified CI milestone — 13 November 2026
+- Build #309 (run 43440815985): **SUCCESS**; debug APK artifact `taprush-offline-debug-apk` (artifact ID 14044389499, 12,456,783 bytes).
+- This CI pass includes duplicate world-unlock prompt guard, dialog focus restoration, Android Back cancellation and premium modal visibility regression checks.
+- Additional static checks for world price constants, coin affordability, offline WebView routing and storage security were committed afterward; **not yet CI-verified**.
+- Build success does not establish actual device behavior.
+
 ## CI/code verified, latest phone confirmation required
 - [ ] Adventure Pass opens and stays open; ₹199 and ₹299 packs remain preview-only
 - [ ] Premium button visible on Home and World Map; absent in gameplay/results
