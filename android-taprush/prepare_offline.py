@@ -238,7 +238,7 @@ document.body.appendChild(storeButton);
 function syncPremiumVisibility(){
  const active=Boolean(document.querySelector('.game,.result,.srPauseOverlay'));
  const allowed=Boolean(document.querySelector('.worldMap,.srPremiumHome,.hub'));
- const dialogOpen=Boolean(document.querySelector('.srStoreOverlay,.srWorldLockNotice[style*="block"]'));
+ const dialogOpen=Boolean(document.querySelector('.srStoreOverlay,.srWorldUnlockDialog,.srWorldLockNotice[style*="block"]'));
  storeButton.hidden=active||!allowed||dialogOpen;
  storeButton.style.display=storeButton.hidden?'none':'';
  if(active||!allowed)document.querySelector('.srStoreOverlay')?.remove();
