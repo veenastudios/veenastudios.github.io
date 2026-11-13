@@ -27,7 +27,7 @@ checks = {
     "reduced motion supported": "prefers-reduced-motion:reduce" in html,
     "home letterbox has clean backdrop": "Solid branded letterboxing: no duplicate or ghosted artwork outside the approved image" in html and "filter:blur(19px)" not in html,
     "fast tapping result guard": "performance.now()-srResultEnteredAt>=1200" in html and "e.stopImmediatePropagation()" in html,
-    "pause home navigation": "srPauseHome" in html and "Back to Home" in html,
+    "pause home navigation": "srPauseHome" in (root / "app/src/main/assets/assets/index-B_be548G.js").read_text(encoding="utf-8") and "Back to Home" in (root / "app/src/main/assets/assets/index-B_be548G.js").read_text(encoding="utf-8"),
     "no duplicate pause resume": ".game:has(.srPauseOverlay)>.srPauseButton{visibility:hidden" in html,
     "no duplicate home background": ".hub:has(.premiumHome){background:#061526!important}" in html and "body:has(.srPremiumHome)::after{content:none!important}" in html,
     "premium aligned with home artwork": "const below=rect.bottom+12" in html and "storeButton.style.top=" in html,
