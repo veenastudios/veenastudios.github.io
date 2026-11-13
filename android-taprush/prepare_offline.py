@@ -350,6 +350,12 @@ for js in (dst/"assets").glob("*.js"):
     print("FAIL: pause patch anchor missing or ambiguous",old,s.count(old))
     sys.exit(1)
    s=s.replace(old,new,1)
+ # The tracked game bundle already contains pause controls: patch that version too.
+ if 'children:"▶ Resume Game"})]})})' in s and 'children:"⌂ Back to Home"' not in s:
+  s=s.replace('children:"▶ Resume Game"})]})})',
+   'children:"▶ Resume Game"}),O.jsx("button",{className:"srPauseHome",onClick:()=>{if(window.confirm("Leave this round and return to Home? Current round progress will be lost."))window.location.reload()},children:"⌂ Back to Home"})]})})',1)
+ if 'className:"srPauseHome"' not in s and 'className:"srPauseButton"' in s:
+  print("FAIL: pause home action not injected into compiled game");sys.exit(1)
  s=re.sub(r'"serviceWorker"in navigator&&window\.addEventListener\("load",\(\)=>\{navigator\.serviceWorker\.register\("\./sw\.js"\)\.catch\(\(\)=>\{\}\)\}\);?', "",s)
  js.write_text(s,encoding="utf-8")
 print("PASS",len(checked),"references",sum(f.is_file() for f in dst.rglob("*")),"files")
