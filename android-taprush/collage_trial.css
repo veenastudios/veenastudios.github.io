@@ -20,3 +20,7 @@ body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #f
 .srCollageTrial .srCollageBottom{background-image:linear-gradient(90deg,#061d2555,#061d2511);background-size:cover;background-position:center}
 .srCollageTrial .srCollageTop.hasArtwork,.srCollageTrial .srCollageBottom.hasArtwork{border-color:#ffe2a0}
 .srCollageTrial .hasArtwork>*{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+
+/* Task 3: preserve readable labels and touch target size on narrow Android phones. */
+@media(max-width:360px){.srCollageTrial .srCollageShare{font-size:12px!important;letter-spacing:0!important}.srCollageTrial a{left:2%;right:2%;border-radius:15px}}
+@media(prefers-reduced-motion:reduce){.srCollageTrial a,.srCollageTrial button{transition:none!important;animation:none!important}}
