@@ -134,6 +134,9 @@ home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(title
 function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel()}
 // The Android WebView default confirm() exposes an internal URL and clashes with game styling.
 window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
+ // Prevent overlapping confirmation prompts from repeated taps.
+ if(document.querySelector('.srWorldUnlockDialog')){resolve(false);return;}
+ const previousFocus=document.activeElement;
  const overlay=document.createElement('div');
  overlay.className='srWorldUnlockDialog';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
  overlay.setAttribute('aria-label','Unlock '+name);
@@ -144,13 +147,13 @@ window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
  const message=document.createElement('p');message.textContent='Unlock permanently for '+cost+' coins?';message.style.cssText='margin:0 0 24px;font:600 16px system-ui';
  const actions=document.createElement('div');actions.style.cssText='display:flex;gap:12px';
  let settled=false;
- const finish=value=>{if(settled)return;settled=true;document.removeEventListener('keydown',escape);overlay.remove();resolve(value)};
+ const finish=value=>{if(settled)return;settled=true;document.removeEventListener('keydown',escape);overlay.remove();if(previousFocus&&typeof previousFocus.focus==='function')previousFocus.focus();resolve(value)};
  overlay.srCancelUnlock=()=>finish(false);
  const escape=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
  for(const [label,value] of [['CANCEL',false],['UNLOCK',true]]){
   const button=document.createElement('button');button.textContent=label;button.style.cssText='flex:1;padding:14px 8px;border:2px solid #ffe39a;border-radius:13px;background:'+(value?'#f6bf42':'#203c45')+';color:'+(value?'#1c1a0b':'#fff')+';font:900 16px system-ui';button.onclick=()=>finish(value);actions.appendChild(button);
  }
- panel.append(heading,message,actions);overlay.appendChild(panel);document.body.appendChild(overlay);
+ panel.append(heading,message,actions);overlay.appendChild(panel);overlay.addEventListener('click',event=>{if(event.target===overlay)finish(false)});document.body.appendChild(overlay);
  document.addEventListener('keydown',escape);actions.querySelector('button').focus();
 });
 // Pause active gameplay when the app is backgrounded, so the timer cannot run unseen.
