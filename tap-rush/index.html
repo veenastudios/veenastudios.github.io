@@ -115,7 +115,7 @@ body:has(.srPremiumHome):not(:has(.worldMap,.game,.result,.srStoreOverlay,.srPau
 /* Artwork already includes its own golden frame; avoid double borders. */
 .srCollageTrial a.hasArtwork{border:0!important;box-shadow:none!important;border-radius:0!important;background-color:transparent!important}
 .srCollageTrial .srCollageBottom.hasArtwork{background-size:100% 100%!important}
-</style></head>
+</style><style>body:has(.srPremiumHome) .srCollageTrial .srCollageTop,body:has(.srPremiumHome) .srCollageTrial .srCollageBottom{background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}</style></head>
 <body><div id="root"></div><style id="sr-premium-home">
 .hub:has(.premiumHome){background:#061526!important}
 .hub:has(.premiumHome) .language,.hub:has(.premiumHome) .coinBox,.hub:has(.premiumHome) .gear,.hub:has(.premiumHome) .collectionNote{opacity:0!important;pointer-events:none!important}
@@ -152,7 +152,7 @@ const titles=['Jungle Friends Quiz','Math Challenge','Flags & Capitals'];let pag
 function updateCarousel(){const pages=Math.ceil(titles.length/3);home.querySelector('.srCarouselPrev').disabled=page===0;home.querySelector('.srCarouselNext').disabled=page>=pages-1}
 home.querySelector('.srCarouselPrev').onclick=()=>{page=Math.max(0,page-1);updateCarousel()};
 home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(titles.length/3)-1,page+1);updateCarousel()};
-function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel();if(typeof syncPremiumVisibility==='function')syncPremiumVisibility()}
+function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const nw=1024,nh=1536,vw=document.documentElement.clientWidth,vh=window.innerHeight,banner=Math.min(82,vw*.16),gap=7,available=vh-77-2*banner-4*gap,scale=Math.min((vw-16)/nw,Math.max(100,available)/nh);const w=nw*scale,h=nh*scale;home.style.left=((vw-w)/2)+'px';home.style.top=(gap+banner+gap+Math.max(0,(available-h)/2))+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel();if(typeof syncPremiumVisibility==='function')syncPremiumVisibility()}
 // The Android WebView default confirm() exposes an internal URL and clashes with game styling.
 window.srConfirmExit=()=>new Promise(resolve=>{
  if(document.querySelector('.srExitConfirm')){resolve(false);return}
@@ -358,12 +358,12 @@ const art=document.querySelector('.srPremiumHome');
 const home=!!art&&!document.querySelector('.worldMap,.game,.result,.srPauseOverlay,.srStoreOverlay,.srExitConfirm');
 layer.style.display=home?'block':'none';if(!home){const p=document.querySelector('.srStoreButton');if(p){for(const prop of ['top','bottom','left','right','transform','width','height','font-size'])p.style.removeProperty(prop)}return;}
 const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
-const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,Math.max(0,rect.top-upperStart-9));
-top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
+const upperHeight=Math.min(82,document.documentElement.clientWidth*.16),upperStart=Math.max(4,rect.top-upperHeight-7);
+top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=32?'flex':'none';
 shareButton.style.display='block';
 const lowerStart=rect.bottom+3;
 const bottomLimit=window.innerHeight-18-59-6;
-const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart));
+const lowerHeight=Math.max(0,Math.min(82,document.documentElement.clientWidth*.16,bottomLimit-lowerStart));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
 bottom.style.display=lowerHeight>=16?'flex':'none';
 if(COLLAGE_DEBUG)layer.dataset.layout=`top:${Math.round(upperHeight)},bottom:${Math.round(lowerHeight)},viewport:${innerWidth}x${innerHeight}`;
