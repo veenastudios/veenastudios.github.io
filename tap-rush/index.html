@@ -115,7 +115,7 @@ body:has(.srPremiumHome):not(:has(.worldMap,.game,.result,.srStoreOverlay,.srPau
 /* Artwork already includes its own golden frame; avoid double borders. */
 .srCollageTrial a.hasArtwork{border:0!important;box-shadow:none!important;border-radius:0!important;background-color:transparent!important}
 .srCollageTrial .srCollageBottom.hasArtwork{background-size:100% 100%!important}
-</style><style>body:has(.srPremiumHome) .srCollageTrial .srCollageTop,body:has(.srPremiumHome) .srCollageTrial .srCollageBottom{background-size:100% 100%!important;background-repeat:no-repeat!important;background-position:center!important}</style><style id="sr-web-banner-fix-462">body:has(.srPremiumHome) .srCollageTrial a.hasArtwork{background-size:100% 100%!important;left:2%!important;right:2%!important;width:96%!important}</style></head>
+</style><style>body:has(.srPremiumHome) .srCollageTrial .srCollageTop,body:has(.srPremiumHome) .srCollageTrial .srCollageBottom{background-size:100% 100%!important;background-repeat:no-repeat!important;background-position:center!important}</style><style id="sr-web-banner-fix-463">body:has(.srPremiumHome) .srCollageTrial a.hasArtwork{background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}</style></head>
 <body><div id="root"></div><style id="sr-premium-home">
 .hub:has(.premiumHome){background:#061526!important}
 .hub:has(.premiumHome) .language,.hub:has(.premiumHome) .coinBox,.hub:has(.premiumHome) .gear,.hub:has(.premiumHome) .collectionNote{opacity:0!important;pointer-events:none!important}
@@ -349,7 +349,7 @@ layer.appendChild(shareButton);
 const top=layer.querySelector('.srCollageTop'),bottom=layer.querySelector('.srCollageBottom');
 // Task 2: only hide the accessible text once the actual image decodes successfully.
 for(const [element,file] of [[top,'sr_gamers_banner.webp'],[bottom,'sr_kids_banner.webp']]){
- const img=new Image();img.onload=()=>{if(img.naturalWidth>0){element.style.backgroundImage=`url("./${file}")`;element.classList.add('hasArtwork')}};
+ const img=new Image();img.onload=()=>{if(img.naturalWidth>0){element.dataset.ratio=String(img.naturalWidth/img.naturalHeight);element.style.backgroundImage=`url("./${file}")`;element.classList.add('hasArtwork');layout()}};
  img.onerror=()=>{element.classList.remove('hasArtwork');if(COLLAGE_DEBUG)console.warn('Tap Rush banner unavailable:',file)};img.src=new URL(file,document.baseURI).href;
 }
 
@@ -359,12 +359,12 @@ const home=!!art&&!document.querySelector('.worldMap,.game,.result,.srPauseOverl
 layer.style.display=home?'block':'none';if(!home){const p=document.querySelector('.srStoreButton');if(p){for(const prop of ['top','bottom','left','right','transform','width','height','font-size'])p.style.removeProperty(prop)}return;}
 const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
 for(const banner of [top,bottom]){banner.style.setProperty('left',rect.left+'px','important');banner.style.setProperty('right','auto','important');banner.style.setProperty('width',rect.width+'px','important');banner.style.setProperty('box-sizing','border-box','important');}
-const upperHeight=Math.min(82,document.documentElement.clientWidth*.16),upperStart=Math.max(4,rect.top-upperHeight-7);
+const upperHeight=Math.max(0,Math.min(rect.top-8,rect.width/(Number(top.dataset.ratio)||6))),upperStart=Math.max(4,rect.top-upperHeight-4);
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=32?'flex':'none';
 shareButton.style.display='block';
 const lowerStart=rect.bottom+3;
 const bottomLimit=window.innerHeight-18-59-6;
-const lowerHeight=Math.max(0,Math.min(82,document.documentElement.clientWidth*.16,bottomLimit-lowerStart));
+const lowerHeight=Math.max(0,Math.min(rect.width/(Number(bottom.dataset.ratio)||6),bottomLimit-lowerStart));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
 bottom.style.display=lowerHeight>=16?'flex':'none';
 if(COLLAGE_DEBUG)layer.dataset.layout=`top:${Math.round(upperHeight)},bottom:${Math.round(lowerHeight)},viewport:${innerWidth}x${innerHeight}`;
