@@ -40,10 +40,10 @@ const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,M
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
 shareButton.style.display='block';
 const lowerStart=rect.bottom+3;
-const bottomLimit=window.innerHeight-70;
-const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart-3));
+const bottomLimit=window.innerHeight-18-59-6;
+const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
-bottom.style.display=lowerHeight>=24?'flex':'none';
+bottom.style.display=lowerHeight>=16?'flex':'none';
 if(COLLAGE_DEBUG)layer.dataset.layout=`top:${Math.round(upperHeight)},bottom:${Math.round(lowerHeight)},viewport:${innerWidth}x${innerHeight}`;
 // Banner artwork remains separate from the approved game image.
 // When the available space is too short, hide banners instead of covering game controls.
