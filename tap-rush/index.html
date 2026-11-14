@@ -110,7 +110,7 @@ body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #f
 /* Stable home positioning overrides the original centered premium placement. */
 body:has(.srPremiumHome):not(:has(.worldMap,.game,.result,.srStoreOverlay,.srPauseOverlay,.srExitConfirm)) .srStoreButton{position:fixed!important;top:auto!important;bottom:18px!important;left:4%!important;right:auto!important;transform:none!important;width:44%!important;height:59px!important;box-sizing:border-box!important}
 .srCollageTrial .srCollageShare{top:auto!important;bottom:18px!important;left:52%!important;right:auto!important;width:44%!important;height:59px!important}
-.srCollageTrial .hasArtwork{background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}
+.srCollageTrial .hasArtwork{background-size:100% 100%!important;background-repeat:no-repeat!important;background-position:center!important}
 
 /* Artwork already includes its own golden frame; avoid double borders. */
 .srCollageTrial a.hasArtwork{border:0!important;box-shadow:none!important;border-radius:0!important;background-color:transparent!important}
@@ -358,6 +358,7 @@ const art=document.querySelector('.srPremiumHome');
 const home=!!art&&!document.querySelector('.worldMap,.game,.result,.srPauseOverlay,.srStoreOverlay,.srExitConfirm');
 layer.style.display=home?'block':'none';if(!home){const p=document.querySelector('.srStoreButton');if(p){for(const prop of ['top','bottom','left','right','transform','width','height','font-size'])p.style.removeProperty(prop)}return;}
 const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
+for(const banner of [top,bottom]){banner.style.setProperty('left',rect.left+'px','important');banner.style.setProperty('right','auto','important');banner.style.setProperty('width',rect.width+'px','important');banner.style.setProperty('box-sizing','border-box','important');}
 const upperHeight=Math.min(82,document.documentElement.clientWidth*.16),upperStart=Math.max(4,rect.top-upperHeight-7);
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=32?'flex':'none';
 shareButton.style.display='block';
