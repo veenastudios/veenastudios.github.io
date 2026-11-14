@@ -1,0 +1,52 @@
+plugins { id 'com.android.application' }
+
+dependencies {
+ implementation 'com.google.android.gms:play-services-ads:24.7.0'
+ implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
+ implementation 'com.android.billingclient:billing:8.0.0'
+ implementation 'com.android.installreferrer:installreferrer:2.2'
+}
+android {
+ buildFeatures { buildConfig true }
+ def adUnit = System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID') ?: ''
+ def adAppId = System.getenv('TAPRUSH_ADMOB_APP_ID') ?: 'ca-app-pub-3940256099942544~3347511713'
+ // Production builds must never silently use Google's sample identifiers.
+ tasks.register('verifyProductionAdConfiguration') {
+  doLast {
+   if (!(adAppId ==~ /ca-app-pub-[0-9]{16}~[0-9]{10}/) || adAppId.contains('3940256099942544') || !(adUnit ==~ /ca-app-pub-[0-9]{16}\/[0-9]{10}/) || adUnit.contains('3940256099942544')) {
+    throw new GradleException('Production AdMob app and rewarded unit IDs required; test IDs prohibited.')
+   }
+  }
+ }
+ defaultConfig {
+  // Keep purchases disabled until server-side verification and acknowledgment exist.
+  buildConfigField 'boolean', 'BILLING_VERIFICATION_ENABLED', 'false'
+  buildConfigField 'String', 'REWARDED_AD_UNIT_ID', '\"' + adUnit + '\"'
+  manifestPlaceholders = [admobAppId: adAppId]
+ }
+ namespace 'in.veenastudios.taprush'
+ compileSdk 36
+ defaultConfig { applicationId 'in.veenastudios.taprush'; minSdk 23; targetSdk 36; versionCode 1; versionName '1.0.0' }
+ // Release signing uses an ephemeral keystore file and GitHub Actions secrets.
+ def keyPath = System.getenv('TAPRUSH_KEYSTORE_FILE')
+ def keyPass = System.getenv('TAPRUSH_KEYSTORE_PASSWORD')
+ def alias = System.getenv('TAPRUSH_KEY_ALIAS')
+ def aliasPass = System.getenv('TAPRUSH_KEY_PASSWORD')
+ if ([keyPath,keyPass,alias,aliasPass].every { it != null && !it.isEmpty() }) {
+  signingConfigs {
+   release {
+    storeFile file(keyPath)
+    storePassword keyPass
+    keyAlias alias
+    keyPassword aliasPass
+   }
+  }
+ }
+ buildTypes {
+  release {
+   minifyEnabled false
+   if (signingConfigs.findByName('release') != null) signingConfig signingConfigs.release
+  }
+ }
+ compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

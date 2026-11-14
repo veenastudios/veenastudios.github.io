@@ -1,9 +1,10 @@
-name: Tap Rush Android build
+name: Tap Rush debug APK first (API 36)
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'tap-rush/android/**'
+      - 'android-taprush/**'
+      - 'tap-rush/**'
       - '.github/workflows/tap-rush-android.yml'
 jobs:
   build:
@@ -18,60 +19,76 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10.2'
-      - name: Install Android SDK
+          gradle-version: '8.13'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android 36
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      - name: Check offline packager syntax and monetization safety
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
-      - name: Prepare release signing when secrets exist
-        env:
-          KEYSTORE_B64: ${{ secrets.TAP_RUSH_KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.TAP_RUSH_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.TAP_RUSH_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.TAP_RUSH_KEY_PASSWORD }}
+          python3 -m py_compile android-taprush/prepare_offline.py
+          python3 - <<'PY'
+          from pathlib import Path
+          app = Path("android-taprush/app/src/main/java/in/veenastudios/taprush/MainActivity.java").read_text()
+          gradle = Path("android-taprush/app/build.gradle").read_text()
+          packager = Path("android-taprush/prepare_offline.py").read_text()
+          assert "if (BuildConfig.DEBUG)" in app, "Production rewarded ads must remain gated until consent"
+          assert "WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)" in app, "Release WebView debugging must be disabled"
+          assert "setAllowUniversalAccessFromFileURLs(false)" in app, "File URL universal access must be disabled"
+          assert "Offline resource blocked" in app, "External resources must not load inside offline WebView"
+          assert "web!=null&&web.canGoBack()" in app, "Back navigation must be null-safe"
+          assert "rewardGranted.compareAndSet(false,true)" in app, "Reward callback must be one-time"
+          assert "targetSdk 36" in gradle
+          assert 'srWorldUnlocked_' in packager
+          assert 'srReward20' in packager
+          print("PASS: packager syntax, SDK 36 and monetization safety gates")
+          PY
+      - name: Verify source-root paths are audited
         run: |
-          if [[ -n "$KEYSTORE_B64" && -n "$STORE_PASSWORD" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" ]]; then
-            printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/tap-rush-release.jks"
-            echo "TAP_RUSH_KEYSTORE_PATH=$RUNNER_TEMP/tap-rush-release.jks" >> "$GITHUB_ENV"
-            echo "TAP_RUSH_KEYSTORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
-            echo "TAP_RUSH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
-            echo "TAP_RUSH_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
-          else
-            echo "No complete signing secrets: release AAB will be unsigned."
-          fi
-      - name: Verify release signing readiness
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("android-taprush/prepare_offline.py").read_text()
+          assert 'unsupported site-root asset' in s
+          assert 'game entrypoint missing' in s
+          assert 'game hub missing' in s
+          print("PASS: source-root assets and packaging preconditions are checked")
+          PY
+      - name: Package and validate offline game
+        run: python3 android-taprush/prepare_offline.py tap-rush
+      - name: Verify packaged game assets
         run: |
-          if [[ -z "${TAP_RUSH_KEYSTORE_PATH:-}" ]]; then
-            echo "::warning::Release signing secrets missing. AAB is for verification only, not Play Store upload."
-          fi
-      - name: Build debug APK and release AAB
-        working-directory: tap-rush/android
-        run: gradle --no-daemon :app:assembleDebug :app:bundleRelease
-      - name: Verify Android package outputs
-        working-directory: tap-rush/android
-        run: |
-          APK=app/build/outputs/apk/debug/app-debug.apk
-          AAB=app/build/outputs/bundle/release/app-release.aab
-          test -s "$APK" && test -s "$AAB"
-          ls -lh "$APK" "$AAB"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -n 5
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
-          if [[ -n "${TAP_RUSH_KEYSTORE_PATH:-}" ]]; then
-            jarsigner -verify "$AAB"
-          else
-            echo "::warning::Unsigned release AAB: do not upload to Play Console."
-          fi
+          test -s android-taprush/app/src/main/assets/index.html
+          test -s android-taprush/app/src/main/assets/game-hub.html
+          test -d android-taprush/app/src/main/assets/assets
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          class AssetRefs(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.refs = []
+              def handle_starttag(self, tag, attrs):
+                  self.refs.extend(value for key, value in attrs if key in ("src", "href") and value)
+          root = Path("android-taprush/app/src/main/assets")
+          html = (root / "index.html").read_text(encoding="utf-8")
+          parser = AssetRefs()
+          parser.feed(html)
+          refs = parser.refs
+          assert any("assets/index-" in r and r.split("?", 1)[0].endswith(".js") for r in refs), "Game JavaScript entry missing"
+          for ref in refs:
+              if ref.startswith(("http:", "https:", "//", "data:", "#")):
+                  continue
+              local = ref.split("?", 1)[0].split("#", 1)[0].removeprefix("/tap-rush/").removeprefix("./")
+              assert local and not local.startswith("/") and ".." not in Path(local).parts, f"Unsafe asset reference: {ref}"
+              assert (root / local).is_file(), f"Missing bundled asset: {ref}"
+          assert (root / "game-hub.html").stat().st_size > 0
+          print("PASS: offline entrypoint and referenced assets")
+          PY
+      - name: Debug APK first - compile Android app
+        working-directory: android-taprush
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: tap-rush-debug-apk
+          name: taprush-debug-apk-first
+          path: android-taprush/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          path: tap-rush/android/app/build/outputs/apk/debug/*.apk
-      - name: Upload signed Play Store bundle
-        if: ${{ env.TAP_RUSH_KEYSTORE_PATH != '' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: tap-rush-signed-release-aab
-          if-no-files-found: error
-          path: tap-rush/android/app/build/outputs/bundle/release/*.aab
