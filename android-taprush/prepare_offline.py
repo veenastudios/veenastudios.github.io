@@ -336,6 +336,9 @@ trial_dir=Path(__file__).resolve().parent
 # Task 3: package the approved image files when present; never silently ship broken image URLs.
 for banner in ("sr_gamers_banner.webp","sr_kids_banner.webp"):
  source=trial_dir/banner
+ if not source.is_file():
+  aliases={'sr_gamers_banner.webp':'sr_gamers_banner-1.webp','sr_kids_banner.webp':'sr_kids_banner(1).webp'}
+  source=trial_dir/aliases[banner]
  if source.is_file():
   if source.stat().st_size<1000:
    print("FAIL: banner asset unexpectedly small:",source);sys.exit(1)
