@@ -37,6 +37,22 @@ public class MainActivity extends Activity {
  }
  private void sendEvent(String event){if(web!=null)web.evaluateJavascript("window.dispatchEvent(new Event("+org.json.JSONObject.quote(event)+"))",null);}
  private void loadRewarded(){if((!BuildConfig.DEBUG&&(consent==null||!consent.canRequestAds()))||adLoading||adShowing||isFinishing()||isDestroyed())return;adLoading=true;RewardedAd.load(this,BuildConfig.DEBUG?"ca-app-pub-3940256099942544/5224354917":BuildConfig.REWARDED_AD_UNIT_ID,new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){adLoading=false;rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){adLoading=false;rewardedAd=null;/* Preload failures are silent; only a user-requested ad reports unavailability. */}});}
+ private final class PrivacyBridge {
+  @JavascriptInterface public void showPrivacyOptions(){
+   runOnUiThread(()->{
+    if(isFinishing()||isDestroyed())return;
+    if(consent==null||consent.getPrivacyOptionsRequirementStatus()!=com.google.android.ump.ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED){
+     android.widget.Toast.makeText(MainActivity.this,"Ad privacy options are not currently required or available.",android.widget.Toast.LENGTH_SHORT).show();
+     return;
+    }
+    rewardedAd=null;
+    com.google.android.ump.UserMessagingPlatform.showPrivacyOptionsForm(MainActivity.this,error->{
+     if(error!=null)return;
+     if(consent.canRequestAds()){initializeAllowedAds();if(adsInitialized)loadRewarded();}
+    });
+   });
+  }
+ }
  private final class ShareBridge {
   @JavascriptInterface public void share(String url){
    if(!"https://veenastudios.in/tap-rush/".equals(url))return;
@@ -68,6 +84,7 @@ public class MainActivity extends Activity {
   web=new WebView(this); setContentView(web);
   web.addJavascriptInterface(new BillingBridge(),"TapRushBilling");
   web.addJavascriptInterface(new ShareBridge(),"TapRushShare");
+  web.addJavascriptInterface(new PrivacyBridge(),"TapRushPrivacy");
   billing=new TapRushBilling(this);
   billing.connect();
   // Rewarded ads remain test-only until consent, privacy and production IDs are approved.
