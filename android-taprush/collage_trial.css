@@ -29,3 +29,7 @@ body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #f
 body:has(.srPremiumHome):not(:has(.worldMap,.game,.result,.srStoreOverlay,.srPauseOverlay,.srExitConfirm)) .srStoreButton{position:fixed!important;top:auto!important;bottom:18px!important;left:4%!important;right:auto!important;transform:none!important;width:44%!important;height:59px!important;box-sizing:border-box!important}
 .srCollageTrial .srCollageShare{top:auto!important;bottom:18px!important;left:52%!important;right:auto!important;width:44%!important;height:59px!important}
 .srCollageTrial .hasArtwork{background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}
+
+/* Artwork already includes its own golden frame; avoid double borders. */
+.srCollageTrial a.hasArtwork{border:0!important;box-shadow:none!important;border-radius:0!important;background-color:transparent!important}
+.srCollageTrial .srCollageBottom.hasArtwork{background-size:100% 100%!important}
