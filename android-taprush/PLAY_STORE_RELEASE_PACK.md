@@ -75,3 +75,12 @@ No Play Store 'ready' claim until a verified signed AAB, compliant listing/polic
 - Premium launcher hidden during active gameplay and results, to avoid covering targets and controls. Requires device screenshot confirmation.
 - Regression assertions added for both UI fixes. Do not mark phone tests PASS until a new APK is installed and checked.
 - Historical phone tests from Build #272 remain PASS; they do not certify later UI changes.
+
+## 14 November 2026 — approved gameplay baseline and monetized release gates
+- Frozen reference: baseline/taprush-439-approved, commit aaa683057c1fbebb0797abf8758ae1b25e4dcbdf; CI run 43571429803 succeeded. Debug artifact 14104424614.
+- Owner tested Jungle, score 127, +9 coins; reported no longer noticing valid taps failing to increase score. Simulated touch regression passed; this is not a measured 100% physical tap rate.
+- Owner selected monetized first release: ads and one-time ₹199/₹299 packs. Do not switch to ad-free launch without approval.
+- Keep artwork, game speed and scoring unchanged. Space, Underwater and Himalaya device tests remain outstanding; repeat City critical path on release candidate.
+- Production gates: owner AdMob app and rewarded unit IDs, consent handling, test/production separation; trusted Play purchase verification, acknowledgement and durable entitlements; signed AAB and console testing. Never enable checkout before all purchase gates pass.
+- No reward for rating or review. Referral reward only after verified eligible new installation, with deduplication and abuse controls; not merely sharing a link. Daily login reward requires audit and repeat-claim protection.
+- Support email ownership and privacy publication still need confirmation. Final store assets must match real release build.
