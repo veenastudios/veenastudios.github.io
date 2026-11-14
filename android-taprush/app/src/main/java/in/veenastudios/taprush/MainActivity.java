@@ -23,6 +23,24 @@ public class MainActivity extends Activity {
  private boolean adLoading=false;
  private void sendEvent(String event){if(web!=null)web.evaluateJavascript("window.dispatchEvent(new Event("+org.json.JSONObject.quote(event)+"))",null);}
  private void loadRewarded(){if(!BuildConfig.DEBUG||adLoading||adShowing||isFinishing()||isDestroyed())return;adLoading=true;RewardedAd.load(this,BuildConfig.DEBUG?"ca-app-pub-3940256099942544/5224354917":BuildConfig.REWARDED_AD_UNIT_ID,new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){adLoading=false;rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){adLoading=false;rewardedAd=null;/* Preload failures are silent; only a user-requested ad reports unavailability. */}});}
+ private final class ShareBridge {
+  @JavascriptInterface public void share(String url){
+   if(!"https://veenastudios.in/tap-rush/".equals(url))return;
+   runOnUiThread(()->{
+    if(isFinishing()||isDestroyed())return;
+    Intent send=new Intent(Intent.ACTION_SEND);
+    send.setType("text/plain");
+    send.putExtra(Intent.EXTRA_SUBJECT,"Tap Rush — SR GAMERS");
+    send.putExtra(Intent.EXTRA_TEXT,"Play Tap Rush by Veena Studios! "+url);
+    try{startActivity(Intent.createChooser(send,"Share Tap Rush"));}
+    catch(android.content.ActivityNotFoundException e){
+     android.content.ClipboardManager c=(android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+     if(c!=null)c.setPrimaryClip(android.content.ClipData.newPlainText("Tap Rush",url));
+     android.widget.Toast.makeText(MainActivity.this,"Game link copied",android.widget.Toast.LENGTH_SHORT).show();
+    }
+   });
+  }
+ }
  private final class BillingBridge {
   @JavascriptInterface public void buyAllWorlds(){runOnUiThread(()->{if(billing!=null)billing.launchPurchase(TapRushBilling.ALL_WORLDS);});}
   @JavascriptInterface public void buyPremium(){runOnUiThread(()->{if(billing!=null)billing.launchPurchase(TapRushBilling.PREMIUM);});}
@@ -35,6 +53,7 @@ public class MainActivity extends Activity {
   WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
   web=new WebView(this); setContentView(web);
   web.addJavascriptInterface(new BillingBridge(),"TapRushBilling");
+  web.addJavascriptInterface(new ShareBridge(),"TapRushShare");
   billing=new TapRushBilling(this);
   billing.connect();
   // Rewarded ads remain test-only until consent, privacy and production IDs are approved.
