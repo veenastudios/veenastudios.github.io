@@ -17,6 +17,7 @@ async function shareTapRush(){
  const url='https://veenastudios.in/tap-rush/';
  const data={title:'Tap Rush — SR GAMERS',text:'Play Tap Rush by Veena Studios!',url};
  try{
+  if(window.TapRushShare?.share){window.TapRushShare.share(url);return}
   if(navigator.share){await navigator.share(data);return}
   if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(url);window.alert('Game link copied');return}
   window.prompt('Copy Tap Rush link',url)
@@ -38,11 +39,11 @@ const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreB
 const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,Math.max(0,rect.top-upperStart-9));
 top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
 shareButton.style.display='block';
-const lowerStart=rect.bottom+8;
-const bottomLimit=window.innerHeight-94;
-const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart-8));
+const lowerStart=rect.bottom+3;
+const bottomLimit=window.innerHeight-70;
+const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart-3));
 bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
-bottom.style.display=lowerHeight>=58?'flex':'none';
+bottom.style.display=lowerHeight>=24?'flex':'none';
 if(COLLAGE_DEBUG)layer.dataset.layout=`top:${Math.round(upperHeight)},bottom:${Math.round(lowerHeight)},viewport:${innerWidth}x${innerHeight}`;
 // Banner artwork remains separate from the approved game image.
 // When the available space is too short, hide banners instead of covering game controls.
@@ -54,7 +55,7 @@ if(premium&&!premium.hidden){
 }
 shareButton.style.top=(window.innerHeight-77)+'px';shareButton.style.left='52%';shareButton.style.right='4%';shareButton.style.width='44%';shareButton.style.height='59px';
 }
-new MutationObserver(()=>requestAnimationFrame(layout)).observe(root,{childList:true,subtree:true});
+new MutationObserver(()=>requestAnimationFrame(layout)).observe(document.body,{childList:true,subtree:true});
 window.addEventListener('resize',layout);window.addEventListener('orientationchange',layout);
 document.addEventListener('load',layout,true);requestAnimationFrame(layout);
 })();
