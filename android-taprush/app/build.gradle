@@ -9,6 +9,14 @@ android {
  buildFeatures { buildConfig true }
  def adUnit = System.getenv('TAPRUSH_ADMOB_REWARDED_UNIT_ID') ?: ''
  def adAppId = System.getenv('TAPRUSH_ADMOB_APP_ID') ?: 'ca-app-pub-3940256099942544~3347511713'
+ // Production builds must never silently use Google's sample identifiers.
+ tasks.register('verifyProductionAdConfiguration') {
+  doLast {
+   if (!(adAppId ==~ /ca-app-pub-[0-9]{16}~[0-9]{10}/) || adAppId.contains('3940256099942544') || !(adUnit ==~ /ca-app-pub-[0-9]{16}\/[0-9]{10}/) || adUnit.contains('3940256099942544')) {
+    throw new GradleException('Production AdMob app and rewarded unit IDs required; test IDs prohibited.')
+   }
+  }
+ }
  defaultConfig {
   // Keep purchases disabled until server-side verification and acknowledgment exist.
   buildConfigField 'boolean', 'BILLING_VERIFICATION_ENABLED', 'false'
