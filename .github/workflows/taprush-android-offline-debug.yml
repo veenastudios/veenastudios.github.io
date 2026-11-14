@@ -44,6 +44,9 @@ jobs:
         run: python3 verify_collage_trial.py
       - name: Bundle offline game
         run: python3 prepare_offline.py ../tap-rush
+      - name: Verify touch handler and rapid tap guard
+        run: |
+          python3 verify_touch_trial.py
       - name: Verify packaged collage banner assets when provided
         run: |
           python3 - <<'PY'
