@@ -360,6 +360,17 @@ for banner in ("sr_gamers_banner.webp","sr_kids_banner.webp"):
   shutil.copy2(source,dst/banner)
  else:
   print("NOTICE: banner artwork not yet committed; readable fallback will remain:",banner)
+pause_art=trial_dir/"file_000000009cc48207a74e28fd20225c3e.jpg"
+if not pause_art.is_file() or pause_art.stat().st_size<1000:
+ print("FAIL: approved pause artwork missing");sys.exit(1)
+shutil.copy2(pause_art,dst/"pause_screen.jpg")
+home_css=home_css.replace("</style>", """
+.srPauseOverlay>div{position:relative!important;box-sizing:border-box!important;width:min(94vw,calc(82vh * 1170 / 1280))!important;aspect-ratio:1170/1280;padding:0!important;border:0!important;border-radius:16px!important;background:#12312b url('/tap-rush/pause_screen.jpg') center/100% 100% no-repeat!important;overflow:hidden!important}
+.srPauseOverlay>div>h2{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.srPauseOverlay>div>button{position:absolute!important;left:28.3%!important;top:41.3%!important;width:55.3%!important;height:11.4%!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;opacity:0!important;touch-action:manipulation!important}
+.srPauseOverlay>div>button.srPauseHome{top:54.8%!important}
+.srPauseOverlay>div>button:focus-visible{opacity:1!important;background:transparent!important;color:transparent!important;outline:3px solid white!important}
+</style>""")
 trial_css=(trial_dir/"collage_trial.css").read_text(encoding="utf-8")
 trial_js=(trial_dir/"collage_trial.js").read_text(encoding="utf-8")
 trial_markup=markup.replace("</head>",home_css+"<style id=\"sr-collage-trial\">"+trial_css+"</style></head>")
