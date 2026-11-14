@@ -21,8 +21,22 @@ public class MainActivity extends Activity {
  private RewardedAd rewardedAd;
  private boolean adShowing=false;
  private boolean adLoading=false;
+ private boolean adsInitialized=false;
+ private com.google.android.ump.ConsentInformation consent;
+ private void initializeAllowedAds(){
+  if(isFinishing()||isDestroyed()||adsInitialized||consent==null||!consent.canRequestAds())return;
+  adsInitialized=true;
+  MobileAds.initialize(this,status->runOnUiThread(()->loadRewarded()));
+ }
+ private void requestProductionConsent(){
+  consent=com.google.android.ump.UserMessagingPlatform.getConsentInformation(this);
+  consent.requestConsentInfoUpdate(this,new com.google.android.ump.ConsentRequestParameters.Builder().build(),()->{
+   if(isFinishing()||isDestroyed())return;
+   com.google.android.ump.UserMessagingPlatform.loadAndShowConsentFormIfRequired(this,error->initializeAllowedAds());
+  },error->initializeAllowedAds());
+ }
  private void sendEvent(String event){if(web!=null)web.evaluateJavascript("window.dispatchEvent(new Event("+org.json.JSONObject.quote(event)+"))",null);}
- private void loadRewarded(){if(!BuildConfig.DEBUG||adLoading||adShowing||isFinishing()||isDestroyed())return;adLoading=true;RewardedAd.load(this,BuildConfig.DEBUG?"ca-app-pub-3940256099942544/5224354917":BuildConfig.REWARDED_AD_UNIT_ID,new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){adLoading=false;rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){adLoading=false;rewardedAd=null;/* Preload failures are silent; only a user-requested ad reports unavailability. */}});}
+ private void loadRewarded(){if((!BuildConfig.DEBUG&&(consent==null||!consent.canRequestAds()))||adLoading||adShowing||isFinishing()||isDestroyed())return;adLoading=true;RewardedAd.load(this,BuildConfig.DEBUG?"ca-app-pub-3940256099942544/5224354917":BuildConfig.REWARDED_AD_UNIT_ID,new AdRequest.Builder().build(),new RewardedAdLoadCallback(){@Override public void onAdLoaded(RewardedAd ad){adLoading=false;rewardedAd=ad;sendEvent("srAdReady");}@Override public void onAdFailedToLoad(LoadAdError error){adLoading=false;rewardedAd=null;/* Preload failures are silent; only a user-requested ad reports unavailability. */}});}
  private final class ShareBridge {
   @JavascriptInterface public void share(String url){
    if(!"https://veenastudios.in/tap-rush/".equals(url))return;
@@ -60,6 +74,9 @@ public class MainActivity extends Activity {
   if (BuildConfig.DEBUG) {
    web.addJavascriptInterface(new GameBridge(),"TapRushAds");
    MobileAds.initialize(this,status->loadRewarded());
+  } else if (!BuildConfig.REWARDED_AD_UNIT_ID.isEmpty() && !BuildConfig.REWARDED_AD_UNIT_ID.contains("3940256099942544")) {
+   requestProductionConsent();
+   // Release ad bridge remains disabled until privacy-options UI and release checks are complete.
   }
   WebSettings s=web.getSettings();
   s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);
