@@ -51,13 +51,15 @@ jobs:
           root=Path('.')
           for name in ('sr_gamers_banner.webp','sr_kids_banner.webp'):
               src=root/name
+              if not src.exists():
+                  aliases={'sr_gamers_banner.webp':'sr_gamers_banner-1.webp','sr_kids_banner.webp':'sr_kids_banner(1).webp'}
+                  src=root/aliases[name]
               dst=root/'app/src/main/assets'/name
               if src.exists():
                   assert dst.is_file() and dst.read_bytes()==src.read_bytes(), f'Banner not packaged correctly: {name}'
                   print('PASS: bundled artwork',name)
               else:
-                  assert not dst.exists(), f'Unexpected artwork file: {name}'
-                  print('PENDING: approved artwork file not yet committed',name)
+                  raise AssertionError(f'Approved artwork missing: {name}')
           PY
       - name: Generate branded Android launcher icons
         run: |
