@@ -11,8 +11,374 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=3d-1">
 <link rel="manifest" href="./manifest.webmanifest?v=3d-1">
 <title>Tap Rush | SR Gamers</title>
-  <script type="module" crossorigin src="/tap-rush/assets/index-B_be548G.js"></script>
+  <script type="module" crossorigin src="/tap-rush/assets/index-web459.js"></script>
   <link rel="stylesheet" crossorigin href="/tap-rush/assets/index-DJsOUZk8.css">
-</head>
-<body><div id="root"></div></body>
+<style id="taprush-mobile-home-fix">
+/* Tap targets retain the animation and accept input over the visible sprite. */
+.game .lane{touch-action:none;user-select:none}
+.game .target{touch-action:none;transition:none!important}
+.game .target::after{content:"";position:absolute;inset:-4px;pointer-events:auto}
+.game.jungleGame .target::after{inset:-25% -4px}
+.game:has(.srPauseOverlay) .target::after{pointer-events:none!important}
+/* Shared tactile feedback for all visible, enabled game controls. */
+/* Invisible image hit-zones must stay transparent to preserve approved artwork. */
+button:not(:disabled):not(.worldNode):not(.srHomePlay):not(.srHomeSettings):not(.srHomeCoins):not(.srCarouselPrev):not(.srCarouselNext):not(.gameCard):not(.srInvisibleHitbox),
+[role="button"]:not([aria-disabled="true"]):not(.worldNode):not(.gameCard){
+ -webkit-tap-highlight-color:transparent;
+ transition:transform 95ms ease,filter 95ms ease,box-shadow 95ms ease;
+ transform-origin:center center;
+}
+button:not(:disabled):not(.worldNode):not(.srHomePlay):not(.srHomeSettings):not(.srHomeCoins):not(.srCarouselPrev):not(.srCarouselNext):not(.gameCard):not(.srInvisibleHitbox):active,
+[role="button"]:not([aria-disabled="true"]):not(.worldNode):not(.gameCard):active{
+ transform:translateY(3px) scale(.965);
+ filter:brightness(.86);
+ box-shadow:inset 0 3px 9px #0005;
+}
+button:disabled,[aria-disabled="true"]{cursor:default}
+@media (prefers-reduced-motion:reduce){
+ button,[role="button"]{transition:none!important}
+}
+
+.hub .premiumHome{object-fit:contain!important;object-position:center center!important;background:#07111f}
+.hub .liveShelf{left:0!important;right:0!important;bottom:0!important;top:0!important;pointer-events:none!important}
+.hub .liveShelf h2{display:none!important}
+.hub .liveShelf .gameCard{position:absolute!important;left:0!important;top:53%!important;width:34%!important;height:10%!important;min-height:44px!important;opacity:0!important;border:0!important;padding:0!important;pointer-events:auto!important;z-index:6!important}
+.srGamesPanel{position:fixed;z-index:35;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:8px 9px;background:linear-gradient(180deg,#06152dfb,#091a2ffb);border-top:2px solid #d8b15b;border-bottom:2px solid #d8b15b;box-shadow:0 0 15px #020812dd;color:#fff;overflow:hidden}
+.srGamesPanel h2{font:900 clamp(13px,3.6vw,19px) system-ui;margin:0 0 3px;color:#ffdb74;letter-spacing:.5px}
+.srGamesGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.srGamesGrid button{min-width:0;min-height:48px;border:1px solid #746c5c;border-radius:9px;background:linear-gradient(#183b43,#071a2c);color:white;padding:5px 2px;font:800 clamp(8px,2vw,11px) system-ui;display:flex;flex-direction:column;align-items:center;justify-content:space-around;gap:3px}
+#srNeverUsed{display:none}.srGamesGrid button.more{border-color:#00dfff;background:linear-gradient(#203c72,#160d42)}
+.srGamesGrid button.ready{border-color:#ffd35e;background:linear-gradient(#486b30,#123b25)}
+.srGamesGrid button:disabled{opacity:1;color:#e7dce4}
+.srGamesGrid .status{color:#ffd966;font-size:clamp(8px,2vw,11px)}
+
+.worldMap{background:linear-gradient(#05251b70,#071d1e99),url(/tap-rush/jungle-scene.webp) center/cover!important}
+.worldMap .mapIntro,.worldMap .mapNote{color:#e1f3e8!important;text-shadow:0 1px 3px #001!important}
+.srPauseButton{position:absolute;z-index:40;top:calc(env(safe-area-inset-top) + 102px);right:12px;padding:10px 14px;border:2px solid #ffe19a;border-radius:16px;background:#142a36;color:white;font-weight:900}.game:has(.srPauseOverlay)>.srPauseButton{visibility:hidden!important;pointer-events:none!important}.srPauseOverlay{position:absolute;z-index:39;inset:0;display:grid;place-items:center;background:#020c1cbb;backdrop-filter:blur(4px)}.srPauseOverlay>div{text-align:center;background:#12312b;border:2px solid #f8d985;border-radius:24px;padding:32px}.srPauseOverlay button{background:#ffd65a;border:0;border-radius:12px;padding:13px 22px;font-weight:900}.srPauseOverlay .srPauseHome{display:block;width:100%;margin-top:12px;background:#284a42;color:#fff3d0;border:1px solid #ffe19a}.game:has(.srPauseOverlay) .target{animation-play-state:paused!important;pointer-events:none!important}
+.worldMap{position:relative!important;background:#061b1b!important;overflow:hidden!important}
+.worldMap::before{content:"";position:absolute;inset:0;background:url('/tap-rush/approved-world-selection.webp') center center/contain no-repeat;pointer-events:none}
+.worldMap .mapTop,.worldMap .mapIntro,.worldMap .mapNote{opacity:0!important;pointer-events:none!important}
+.worldMap .worldTrail::before{content:none!important;display:none!important}
+.worldMap .worldTrail:before,.worldMap .worldTrail::after{content:none!important;display:none!important;background:none!important}
+.worldMap .worldTrail{background-image:none!important}
+.worldMap .worldTrail{position:absolute!important;inset:0!important;display:block!important;margin:0!important;padding:0!important;z-index:3!important;pointer-events:none!important}
+.worldMap .worldNode{position:absolute!important;left:7%!important;width:86%!important;height:11%!important;min-height:0!important;opacity:0!important;pointer-events:auto!important;border:0!important}
+.worldMap .worldNode:nth-child(1){top:20%!important}
+.worldMap .worldNode:nth-child(2){top:33%!important}
+.worldMap .worldNode:nth-child(3){top:46%!important}
+.worldMap .worldNode:nth-child(4){top:59%!important}
+.worldMap .worldNode:nth-child(5){top:72%!important}
+.worldMap .worldNode{opacity:1!important;background:transparent!important;color:transparent!important;font-size:0!important;box-shadow:none!important}
+.worldMap .worldNode>*{visibility:hidden!important}
+.worldMap .worldNode:not(:first-child):not(.srUnlocked)::after{content:attr(data-lock-price) " COINS 🔒";position:absolute;right:3%;top:9%;width:24%;height:36%;display:flex;align-items:center;justify-content:center;border:2px solid #ffe18b;border-radius:18px;background:linear-gradient(130deg,#101f35,#30425a);box-shadow:0 2px 9px #000b;color:#ffe18b;font:900 clamp(11px,3vw,20px) system-ui;z-index:5;pointer-events:none}
+.srRewardAd{display:block;margin:12px auto;padding:12px 18px;border-radius:16px;border:2px solid #f4ce63;background:#122f40;color:#ffdf7b;font:900 15px system-ui;max-width:92%}
+.worldMap .mapTop button{position:absolute!important;top:5%!important;left:5%!important;opacity:0!important;pointer-events:auto!important;z-index:4!important;width:16%!important;height:9%!important}
+ .srWorldLockNotice{position:fixed;z-index:100;left:7%;right:7%;bottom:12%;padding:20px;background:#071b2ff5;color:#ffe68b;border:2px solid #f9d86b;border-radius:15px;text-align:center;font:bold 18px system-ui;pointer-events:none}
+
+.srPauseOverlay>div{position:relative!important;box-sizing:border-box!important;width:min(94vw,calc(82vh * 1170 / 1280))!important;aspect-ratio:1170/1280;padding:0!important;border:0!important;border-radius:16px!important;background:#12312b url('/tap-rush/pause_screen.jpg') center/100% 100% no-repeat!important;overflow:hidden!important}
+.srPauseOverlay>div>h2{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.srPauseOverlay>div>button{position:absolute!important;left:28.3%!important;top:41.3%!important;width:55.3%!important;height:11.4%!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;opacity:0!important;touch-action:manipulation!important}
+.srPauseOverlay>div>button.srPauseHome{top:54.8%!important}
+.srPauseOverlay>div>button:focus-visible{opacity:1!important;background:transparent!important;color:transparent!important;outline:3px solid white!important}
+</style><style id="sr-collage-trial">.srCollageTrial{position:fixed;inset:0;z-index:22;pointer-events:none;font-family:system-ui,sans-serif}
+.srCollageTrial a{position:fixed;left:3%;right:3%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;overflow:hidden;border:2px solid #ffdb82;border-radius:20px;pointer-events:auto;color:#fff1b5;text-decoration:none;text-shadow:0 2px 3px #000;box-shadow:inset 0 0 14px #e5ae5270,0 0 12px #f4bb6280}
+.srCollageTop{background:radial-gradient(ellipse at top,#664173,#153e42 65%,#0b202b)}
+.srCollageBottom{background:radial-gradient(ellipse at top,#4fb5d0,#237c70 60%,#0c3a36)}
+.srCollageTrial strong{font-size:clamp(16px,5vw,27px);font-weight:900;letter-spacing:.04em}
+.srCollageTrial b{font-size:clamp(12px,3.5vw,19px);color:#ffdc6c}
+.srCollageTrial small{font-size:clamp(10px,2.8vw,14px);font-weight:700}
+.srCollageTrial .srCollageCTA{background:linear-gradient(#fff19b,#e2a842);color:#201c11;text-shadow:none;padding:4px 16px;border-radius:20px;font-weight:900}
+.srCollageTrial a:active{filter:brightness(.85);transform:scale(.985)}
+
+.srCollageShare{position:fixed;z-index:2;right:7%;left:auto;border:1px solid #ffde83;border-radius:18px;padding:5px 11px;background:linear-gradient(#fce7a0,#b7822e);color:#1f1a10;font:900 11px system-ui;box-shadow:0 2px 6px #0008;pointer-events:auto;cursor:pointer}
+.srCollageShare:active{transform:scale(.96);filter:brightness(.9)}
+
+/* Matched luxury pair: native Premium remains clickable on left, Share on right. */
+body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #ffdc73!important;border-radius:24px!important;background:linear-gradient(165deg,#91600c 0%,#ffdc72 20%,#4b2908 52%,#d18c21 78%,#ffd978 100%)!important;color:#fff3bd!important;text-shadow:0 2px 3px #160c03,0 0 9px #ffd45a!important;box-shadow:inset 0 2px 6px #fff9c0a6,inset 0 -6px 8px #271300,0 5px 0 #4d2d08,0 8px 19px #0009,0 0 12px #e6a32b!important;font-weight:1000!important;letter-spacing:.015em!important}
+.srCollageTrial .srCollageShare{z-index:39!important;box-sizing:border-box;border:2px solid #ffcf85;border-radius:24px;background:linear-gradient(160deg,#e0a7ff 0%,#8a31d4 21%,#3b126e 53%,#9d34e4 78%,#f0a8ff 100%);color:white;text-shadow:0 2px 3px #210839,0 0 9px #ffdbff;box-shadow:inset 0 2px 7px #fff8,inset 0 -6px 8px #260942,0 5px 0 #401064,0 8px 19px #0009,0 0 13px #d850ff;font:1000 clamp(13px,3.5vw,21px) system-ui;letter-spacing:.01em;padding:4px 5px;white-space:nowrap}
+
+/* Task 1: image-ready banner skins. Fallback remains readable until actual artwork is packaged. */
+.srCollageTrial .srCollageTop{background-image:linear-gradient(90deg,#09172255,#09172211);background-size:cover;background-position:center}
+.srCollageTrial .srCollageBottom{background-image:linear-gradient(90deg,#061d2555,#061d2511);background-size:cover;background-position:center}
+.srCollageTrial .srCollageTop.hasArtwork,.srCollageTrial .srCollageBottom.hasArtwork{border-color:#ffe2a0}
+.srCollageTrial .hasArtwork>*{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+
+/* Task 3: preserve readable labels and touch target size on narrow Android phones. */
+@media(max-width:360px){.srCollageTrial .srCollageShare{font-size:12px!important;letter-spacing:0!important}.srCollageTrial a{left:2%;right:2%;border-radius:15px}}
+@media(prefers-reduced-motion:reduce){.srCollageTrial a,.srCollageTrial button{transition:none!important;animation:none!important}}
+
+/* Stable home positioning overrides the original centered premium placement. */
+body:has(.srPremiumHome):not(:has(.worldMap,.game,.result,.srStoreOverlay,.srPauseOverlay,.srExitConfirm)) .srStoreButton{position:fixed!important;top:auto!important;bottom:18px!important;left:4%!important;right:auto!important;transform:none!important;width:44%!important;height:59px!important;box-sizing:border-box!important}
+.srCollageTrial .srCollageShare{top:auto!important;bottom:18px!important;left:52%!important;right:auto!important;width:44%!important;height:59px!important}
+.srCollageTrial .hasArtwork{background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}
+
+/* Artwork already includes its own golden frame; avoid double borders. */
+.srCollageTrial a.hasArtwork{border:0!important;box-shadow:none!important;border-radius:0!important;background-color:transparent!important}
+.srCollageTrial .srCollageBottom.hasArtwork{background-size:100% 100%!important}
+</style></head>
+<body><div id="root"></div><style id="sr-premium-home">
+.hub:has(.premiumHome){background:#061526!important}
+.hub:has(.premiumHome) .language,.hub:has(.premiumHome) .coinBox,.hub:has(.premiumHome) .gear,.hub:has(.premiumHome) .collectionNote{opacity:0!important;pointer-events:none!important}
+.hub:has(.premiumHome) .premiumHome{opacity:0!important}
+.hub:has(.premiumHome) .liveShelf{opacity:0!important;pointer-events:none!important}
+body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:radial-gradient(ellipse 85% 24% at 50% 9%,#244e53 0%,transparent 100%),radial-gradient(ellipse 95% 24% at 50% 93%,#244e53 0%,transparent 100%),linear-gradient(180deg,#061526,#0b2730 45%,#061526)}
+/* Isolated luxury letterbox trial: no modifications to foreground controls. */
+body:has(.srPremiumHome)::before{content:'';position:fixed;inset:0;z-index:19;pointer-events:none;background:radial-gradient(ellipse 90% 23% at 50% 4%,#6b4c20 0%,#214b3e 48%,transparent 100%),radial-gradient(ellipse 95% 28% at 50% 98%,#775121 0%,#245a48 49%,transparent 100%),linear-gradient(180deg,#0b342d,#071b27 45%,#103c32)!important}
+body:has(.srPremiumHome) .srPremiumHome{box-shadow:0 -8px 20px #0a1c1d88,0 8px 20px #0a1c1d88}
+body:has(.srPremiumHome)::after{content:'VEENA STUDIOS  ✦  SR GAMERS';display:block!important;position:fixed;top:max(12px,env(safe-area-inset-top));left:5%;right:5%;height:34px;z-index:20;pointer-events:none;text-align:center;color:#ffe6a0;font:900 clamp(12px,3.4vw,19px) system-ui;letter-spacing:.09em;text-shadow:0 2px 2px #061b16,0 0 13px #dfb757}
+
+/* Solid branded letterboxing: no duplicate or ghosted artwork outside the approved image. */
+body:has(.srPremiumHome)::after{content:none!important}
+.srPremiumHome{position:fixed;z-index:30;background:#061526 url('/tap-rush/approved-home-carousel.png') center/100% 100% no-repeat;overflow:hidden}
+.srPremiumHome .srCoinValue{position:absolute;left:82.1%;top:1.05%;width:5.8%;height:3.3%;display:flex;align-items:center;justify-content:center;background:#07111e;color:#fff;font:900 clamp(12px,3.6vw,22px) system-ui;line-height:1;border-radius:5px;text-shadow:0 1px 2px #000;pointer-events:none}
+.srPremiumHome button{position:absolute;background:transparent;border:0;color:transparent;font-size:0;cursor:pointer;touch-action:manipulation}
+.srPremiumHome button:focus-visible{outline:3px solid #ffe078;outline-offset:-3px}
+.srPremiumHome .srHomePlay{left:29%;top:46%;width:43%;height:13%;border-radius:42%/45%;-webkit-tap-highlight-color:transparent;transition:transform 90ms ease,filter 90ms ease}
+.srPremiumHome .srHomePlay::after{content:"";position:absolute;inset:12% 3%;border-radius:999px;background:linear-gradient(180deg,#fff4b400,#b65c001c);box-shadow:inset 0 3px 6px #fff2a500,inset 0 -5px 9px #3e170000;opacity:0;transition:opacity 90ms ease;pointer-events:none}
+.srPremiumHome .srHomePlay:active,.srPremiumHome .srHomePlay.srPressed{transform:translateY(4px) scale(.965);filter:brightness(.88)}
+.srPremiumHome .srHomePlay:active::after,.srPremiumHome .srHomePlay.srPressed::after{opacity:1;background:linear-gradient(180deg,#3e170040,#fff4b415);box-shadow:inset 0 4px 12px #3e170080,inset 0 -2px 5px #fff4b480}
+.srPremiumHome .srHomeSettings{left:89%;top:0;width:11%;height:7%}
+.srPremiumHome .srHomeCoins{left:76%;top:0;width:13%;height:7%}
+.srPremiumHome .srCarouselPrev{left:0;top:67%;width:10%;height:12%}
+.srPremiumHome .srCarouselNext{right:0;top:67%;width:10%;height:12%}
+.srPremiumHome .srCarouselPrev:disabled,.srPremiumHome .srCarouselNext:disabled{pointer-events:none}
+</style><script>(function(){
+const home=document.createElement('section');home.className='srPremiumHome';home.setAttribute('aria-label','Tap Rush premium home');
+home.innerHTML='<button class="srHomePlay" aria-label="Play Tap Rush">Play</button><button class="srHomeSettings" aria-label="Settings">Settings</button><button class="srHomeCoins" aria-label="Coins">Coins</button><span class="srCoinValue" aria-label="Coin balance">0</span><button class="srCarouselPrev" aria-label="Previous games" disabled>Previous</button><button class="srCarouselNext" aria-label="Next games" disabled>Next</button>';
+home.querySelector('.srHomePlay').onclick=()=>document.querySelector('.liveShelf .gameCard')?.click();
+home.querySelector('.srHomeSettings').onclick=()=>document.querySelector('.hub .gear')?.click();
+home.querySelector('.srHomeCoins').onclick=()=>document.querySelector('.hub .coinBox')?.click();
+const titles=['Jungle Friends Quiz','Math Challenge','Flags & Capitals'];let page=0;
+function updateCarousel(){const pages=Math.ceil(titles.length/3);home.querySelector('.srCarouselPrev').disabled=page===0;home.querySelector('.srCarouselNext').disabled=page>=pages-1}
+home.querySelector('.srCarouselPrev').onclick=()=>{page=Math.max(0,page-1);updateCarousel()};
+home.querySelector('.srCarouselNext').onclick=()=>{page=Math.min(Math.ceil(titles.length/3)-1,page+1);updateCarousel()};
+function position(){const coin=document.querySelector('.hub .coinBox'),display=home.querySelector('.srCoinValue');if(coin&&display){const match=(coin.textContent||'').match(/\d[\d,]*/);if(match&&display.textContent!==match[0])display.textContent=match[0]}const img=document.querySelector('.hub .premiumHome'),shelf=document.querySelector('.hub .liveShelf');if(!img||!shelf){home.remove();return}if(!document.body.contains(home))document.body.appendChild(home);const r=img.getBoundingClientRect(),nw=img.naturalWidth||1024,nh=img.naturalHeight||1536,scale=Math.min(r.width/nw,r.height/nh);const w=nw*scale,h=nh*scale;home.style.left=(r.left+(r.width-w)/2)+'px';home.style.top=(r.top+(r.height-h)/2)+'px';home.style.width=w+'px';home.style.height=h+'px';updateCarousel();if(typeof syncPremiumVisibility==='function')syncPremiumVisibility()}
+// The Android WebView default confirm() exposes an internal URL and clashes with game styling.
+window.srConfirmExit=()=>new Promise(resolve=>{
+ if(document.querySelector('.srExitConfirm')){resolve(false);return}
+ const overlay=document.createElement('div');overlay.className='srExitConfirm';
+ overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Return to Home');
+ overlay.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#020d17cc;padding:22px';
+ const panel=document.createElement('div');panel.style.cssText='width:min(100%,420px);border:3px solid #f5d47b;border-radius:24px;background:linear-gradient(160deg,#183d37,#071c2c);color:#ffe7a1;box-shadow:0 14px 40px #000a;padding:26px 20px;text-align:center;font:700 17px system-ui';
+ const title=document.createElement('h2');title.textContent='Return to Home?';title.style.cssText='font:900 25px system-ui;margin:0 0 14px';
+ const desc=document.createElement('p');desc.textContent='Your current round progress will be lost.';desc.style.cssText='margin:0 0 24px';
+ const buttons=document.createElement('div');buttons.style.cssText='display:flex;gap:12px';
+ const finish=ok=>{document.removeEventListener('keydown',escape);overlay.remove();resolve(ok)};
+ const escape=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
+ for(const [label,ok] of [['KEEP PLAYING',false],['GO HOME',true]]){
+  const btn=document.createElement('button');btn.textContent=label;
+  btn.style.cssText='flex:1;min-height:52px;padding:10px 5px;border:2px solid #ffe39a;border-radius:13px;background:'+(ok?'#f9cd59':'#21463f')+';color:'+(ok?'#10241d':'#fff4ce')+';font:900 14px system-ui';
+  btn.onclick=()=>finish(ok);buttons.appendChild(btn)
+ }
+ panel.append(title,desc,buttons);overlay.appendChild(panel);document.body.appendChild(overlay);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)finish(false)});
+ document.addEventListener('keydown',escape);buttons.firstChild.focus();
+});
+window.srConfirmUnlock=(name,cost)=>new Promise(resolve=>{
+ // Prevent overlapping confirmation prompts from repeated taps.
+ if(document.querySelector('.srWorldUnlockDialog')){resolve(false);return;}
+ const previousFocus=document.activeElement;
+ const overlay=document.createElement('div');
+ overlay.className='srWorldUnlockDialog';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
+ overlay.setAttribute('aria-label','Unlock '+name);
+ overlay.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#010b19bb;padding:22px';
+ const panel=document.createElement('div');
+ panel.style.cssText='width:min(100%,420px);border:3px solid #f5d47b;border-radius:24px;background:linear-gradient(160deg,#183d37,#071c2c);color:#ffe7a1;box-shadow:0 14px 40px #000a;padding:25px 20px;text-align:center;font:700 18px system-ui';
+ const heading=document.createElement('h2');heading.textContent='Unlock '+name+'?';heading.style.cssText='font:900 25px system-ui;margin:0 0 12px';
+ const message=document.createElement('p');message.textContent='Unlock permanently for '+cost+' coins?';message.style.cssText='margin:0 0 24px;font:600 16px system-ui';
+ const actions=document.createElement('div');actions.style.cssText='display:flex;gap:12px';
+ let settled=false;
+ const finish=value=>{if(settled)return;settled=true;document.removeEventListener('keydown',escape);overlay.remove();if(previousFocus&&typeof previousFocus.focus==='function')previousFocus.focus();resolve(value)};
+ overlay.srCancelUnlock=()=>finish(false);
+ const escape=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
+ for(const [label,value] of [['CANCEL',false],['UNLOCK',true]]){
+  const button=document.createElement('button');button.textContent=label;button.style.cssText='flex:1;padding:14px 8px;border:2px solid #ffe39a;border-radius:13px;background:'+(value?'#f6bf42':'#203c45')+';color:'+(value?'#1c1a0b':'#fff')+';font:900 16px system-ui';button.onclick=()=>finish(value);actions.appendChild(button);
+ }
+ panel.append(heading,message,actions);overlay.appendChild(panel);overlay.addEventListener('click',event=>{if(event.target===overlay)finish(false)});document.body.appendChild(overlay);
+ document.addEventListener('keydown',escape);actions.querySelector('button').focus();
+});
+// Pause active gameplay when the app is backgrounded, so the timer cannot run unseen.
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden)return;
+ const pause=document.querySelector('.srPauseButton[aria-label="Pause game"]');
+ if(pause)pause.click();
+});
+// Capture-phase safety guard: no locked world can start without enough coins.
+const worldPrices=[0,150,200,250,350],worldNames=['Jungle','City','Space','Underwater','Rock & Himalaya'];
+document.addEventListener('click',function(e){
+ const button=e.target.closest('.worldMap .worldNode');
+ if(!button)return;
+ const nodes=Array.from(document.querySelectorAll('.worldMap .worldNode'));
+ const idx=nodes.indexOf(button),price=worldPrices[idx];
+ if(idx<1||!price)return;
+ const key='srWorldUnlocked_'+['jungle','city','space','underwater','himalaya'][idx];
+ const already=Object.keys(localStorage).some(k=>k.endsWith(key)&&localStorage.getItem(k)==='yes');
+ if(already)return;
+ const coinKey=Object.keys(localStorage).find(k=>k.endsWith('srCoins'));
+ const coins=Number(coinKey?localStorage.getItem(coinKey):0)||0;
+ if(coins>=price)return; // React handler owns confirmed purchases and deductions.
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+ let notice=document.querySelector('.srWorldLockNotice');
+ if(!notice){notice=document.createElement('div');notice.className='srWorldLockNotice';notice.setAttribute('role','alert');document.body.appendChild(notice)}
+ notice.textContent='🔒 '+worldNames[idx]+' requires '+price+' Coins. Available: '+coins;
+ notice.style.display='block';
+ clearTimeout(window.srWorldLockTimer);
+ window.srWorldLockTimer=setTimeout(()=>{notice.style.display='none'},800);
+},true);
+new MutationObserver(()=>{const notice=document.querySelector('.srWorldLockNotice');if(notice&&!document.querySelector('.worldMap'))notice.style.display='none'}).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+function syncWorldLocks(){
+ const nodes=document.querySelectorAll('.worldMap .worldNode');
+ const names=['jungle','city','space','underwater','himalaya'],prices=[0,150,200,250,350];
+ nodes.forEach((node,i)=>{
+  if(i>=names.length)return;
+  node.dataset.lockPrice=String(prices[i]);
+  const unlocked=i===0||Object.keys(localStorage).some(k=>k.endsWith('srWorldUnlocked_'+names[i])&&localStorage.getItem(k)==='yes');
+  node.classList.toggle('srUnlocked',unlocked);
+  node.setAttribute('aria-label',unlocked?names[i]+' Play':names[i]+' locked. '+prices[i]+' coins to unlock');
+ });
+}
+new MutationObserver(syncWorldLocks).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+// Prevent rapid gameplay taps from accidentally activating the result screen.
+// A new result must be visible for 1.2 seconds before any result action accepts input.
+let srResultEnteredAt=0,srResultWasVisible=false;
+function srTrackResultEntry(){
+ const visible=Boolean(document.querySelector('.result'));
+ if(visible&&!srResultWasVisible)srResultEnteredAt=performance.now();
+ srResultWasVisible=visible;
+}
+new MutationObserver(srTrackResultEntry).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});
+srTrackResultEntry();
+document.addEventListener('click',e=>{
+ const result=document.querySelector('.result');
+ if(!result||!result.contains(e.target))return;
+ if(performance.now()-srResultEnteredAt>=1200)return;
+ const action=e.target.closest('button,a,[role="button"]');
+ if(!action)return;
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+},true);
+
+syncWorldLocks();
+// Premium preview is playful, but purchases remain disabled until secure verification.
+// Keep pricing clear and make it explicit that a parent/guardian makes any purchase.
+const premiumStyle=document.createElement('style');
+premiumStyle.textContent=`.srStoreButton{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom));right:12px;z-index:70;border:2px solid #ffe08b;border-radius:20px;padding:11px 15px;background:linear-gradient(135deg,#26465e,#143e40);color:#fff2c3;font:900 14px system-ui;box-shadow:0 5px 18px #0008}.srStoreOverlay{position:fixed;inset:0;z-index:100;background:#000d;display:flex;align-items:center;justify-content:center;padding:16px}.srStorePanel{box-sizing:border-box;width:min(100%,440px);max-height:90dvh;overflow-y:auto;border:3px solid #f5d47b;border-radius:26px;background:linear-gradient(155deg,#173f54,#13283d 65%,#182f2a);color:#fff;padding:20px;font:16px system-ui;box-shadow:0 16px 42px #000b}.srStorePanel h2{color:#ffe08b;margin:0 0 6px;text-align:center;font:900 25px system-ui}.srStoreIntro{text-align:center;color:#d7eaf4;margin:0 0 14px}.srStoreMascot{text-align:center;font-size:36px;line-height:1.25}.srPack{width:100%;box-sizing:border-box;border:2px solid #f6d37d;border-radius:18px;background:linear-gradient(115deg,#235c65,#20445a);color:#fff;padding:13px 15px;margin:10px 0;text-align:left;box-shadow:0 4px 0 #071c2c}.srPack.premium{border-color:#e9b5ff;background:linear-gradient(115deg,#563c82,#315a7a)}.srPack strong{display:block;font:900 20px system-ui;color:#ffe08b}.srPack span{display:block;font:600 13px/1.5 system-ui;margin-top:4px}.srPack .srPrice{display:inline-block;background:#ffe08b;color:#1d2632;padding:4px 10px;border-radius:10px;font:900 18px system-ui}.srPack:disabled{opacity:.88;cursor:not-allowed}.srStorePanel .srStoreAction{display:block;width:100%;margin:10px 0;padding:12px;border:1px solid #f5d47b;border-radius:13px;background:#e9bb52;color:#18222a;font:800 15px system-ui}.srStorePanel p{font-size:13px;line-height:1.5}.srStoreNote{border-radius:12px;padding:10px;background:#0b2435;color:#fbe8ac;text-align:center}.srStorePanel button:focus-visible{outline:3px solid #fff;outline-offset:3px}`;
+document.head.appendChild(premiumStyle);
+const storeButton=document.createElement('button');storeButton.className='srStoreButton';storeButton.textContent='★ PREMIUM';storeButton.setAttribute('aria-label','Premium packs');
+storeButton.onclick=()=>{
+ if(document.querySelector('.srStoreOverlay'))return;
+ const overlay=document.createElement('div');overlay.className='srStoreOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium packs');
+ const panel=document.createElement('div');panel.className='srStorePanel';
+ const mascot=document.createElement('div');mascot.className='srStoreMascot';mascot.textContent='🐯 ⭐ 🚀';
+ const title=document.createElement('h2');title.textContent='Adventure Pass';
+ const intro=document.createElement('p');intro.className='srStoreIntro';intro.textContent='Explore more Tap Rush worlds! Both packs are optional.';
+ panel.append(mascot,title,intro);
+ const bridge=window.TapRushBilling;
+ const enabled=Boolean(bridge&&bridge.isCheckoutEnabled());
+ for(const [name,price,description,method,kind] of [
+  ['WORLD EXPLORER','₹199','Unlock all 5 worlds permanently. Optional rewarded ads remain available.','buyAllWorlds','worlds'],
+  ['SUPER EXPLORER','₹299','Unlock all 5 worlds and remove forced ads. Optional rewarded ads remain available.','buyPremium','premium']
+ ]){
+  const button=document.createElement('button');button.className='srPack '+kind;button.disabled=!enabled;
+  const heading=document.createElement('strong');heading.textContent=name;
+  const amount=document.createElement('span');amount.className='srPrice';amount.textContent=price+' · one-time';
+  const details=document.createElement('span');details.textContent=description;
+  button.append(heading,amount,details);button.onclick=()=>bridge?.[method]?.();panel.appendChild(button);
+ }
+ const note=document.createElement('p');note.className='srStoreNote';note.textContent=enabled?'For parents/guardians: Please review the pack and confirm the price in Google Play.':'Preview only · Purchases coming soon. No payment can be taken.';panel.appendChild(note);
+ const free=document.createElement('p');free.textContent='You can keep playing for free and unlock worlds using game coins. No purchase is required.';panel.appendChild(free);
+ const restore=document.createElement('button');restore.className='srStoreAction';restore.textContent='Restore purchases';restore.onclick=()=>bridge?.restore?.();panel.appendChild(restore);
+ const close=document.createElement('button');close.className='srStoreAction';close.textContent='Continue playing';panel.appendChild(close);
+ const dismiss=()=>{document.removeEventListener('keydown',onKey);overlay.remove();storeButton.focus()};
+ const onKey=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}};
+ close.onclick=dismiss;
+ overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)dismiss()};document.body.appendChild(overlay);document.addEventListener('keydown',onKey);close.focus();
+};
+document.body.appendChild(storeButton);
+// Premium is available on Home and World Map, never over active gameplay/results.
+function syncPremiumVisibility(){
+ const active=Boolean(document.querySelector('.game,.result,.srPauseOverlay'));
+ const allowed=Boolean(document.querySelector('.worldMap,.srPremiumHome,.hub'));
+ const dialogOpen=Boolean(document.querySelector('.srStoreOverlay,.srWorldUnlockDialog,.srWorldLockNotice[style*="block"]'));
+ storeButton.hidden=active||!allowed||dialogOpen;
+ storeButton.style.display=storeButton.hidden?'none':'';
+ // Keep the Premium action visually attached to the approved home artwork
+ // instead of floating at the very bottom of tall phone screens.
+ if(!storeButton.hidden){
+  const homeArt=document.querySelector('.srPremiumHome');
+  if(homeArt){
+   const rect=homeArt.getBoundingClientRect();
+   const buttonHeight=storeButton.offsetHeight||48;
+   const below=rect.bottom+12;
+   const safeBottom=window.innerHeight-12-buttonHeight;
+   storeButton.style.top=Math.max(12,Math.min(below+Math.max(10,(safeBottom-below)*.34),safeBottom))+'px';
+   storeButton.style.left='50%';storeButton.style.right='auto';storeButton.style.transform='translateX(-50%)';
+   storeButton.style.bottom='auto';
+  }else{storeButton.style.top='';storeButton.style.bottom='';storeButton.style.left='';storeButton.style.right='';storeButton.style.transform='';}
+ }
+ if(active||!allowed)document.querySelector('.srStoreOverlay')?.remove();
+}
+new MutationObserver(syncPremiumVisibility).observe(document.body,{childList:true,subtree:true});
+syncPremiumVisibility();
+new MutationObserver(position).observe(document.getElementById('root')||document.body,{childList:true,subtree:true});window.addEventListener('resize',position);window.addEventListener('orientationchange',position);document.addEventListener('load',position,true);position();
+})();</script><script id="sr-collage-trial-js">(()=>{
+const root=document.getElementById('root')||document.body;
+const COLLAGE_DEBUG=location.search.includes('collageDebug=1');
+// Deliberately no install-referral coins: native share is not proof of installation.
+const layer=document.createElement('div');layer.className='srCollageTrial';
+layer.innerHTML='<a class="srCollageTop" href="https://veenastudios.in/" target="_blank" rel="noopener noreferrer" aria-label="Explore SR Gamers"><strong>♛ VEENA STUDIOS</strong><b>🎮 SR GAMERS</b><small class="srCollageCTA">EXPLORE OUR GAMES ❯</small></a><a class="srCollageBottom" href="https://veenastudios.in/" target="_blank" rel="noopener noreferrer" aria-label="Explore SR Kids"><strong>📚 SR KIDS 🚀</strong><small>LEARNING · ACTIVITIES · STORIES</small><b class="srCollageCTA">EXPLORE NOW ❯</b></a>';
+document.body.appendChild(layer);
+const shareButton=document.createElement('button');
+shareButton.className='srCollageShare';shareButton.type='button';shareButton.textContent='↗ SHARE GAME';shareButton.setAttribute('title','Share Tap Rush link');
+shareButton.setAttribute('aria-label','Share Tap Rush');
+shareButton.addEventListener('click',async()=>{
+ if(shareButton.disabled)return;
+ shareButton.disabled=true;
+ try{await shareTapRush()}finally{shareButton.disabled=false}
+});
+async function shareTapRush(){
+ const url='https://veenastudios.in/tap-rush/';
+ const data={title:'Tap Rush — SR GAMERS',text:'Play Tap Rush by Veena Studios!',url};
+ try{
+  if(window.TapRushShare?.share){window.TapRushShare.share(url);return}
+  if(navigator.share){await navigator.share(data);return}
+  if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(url);window.alert('Game link copied');return}
+  window.prompt('Copy Tap Rush link',url)
+ }catch(err){if(err&&err.name!=='AbortError')window.prompt('Copy Tap Rush link',url)}
+}
+layer.appendChild(shareButton);
+const top=layer.querySelector('.srCollageTop'),bottom=layer.querySelector('.srCollageBottom');
+// Task 2: only hide the accessible text once the actual image decodes successfully.
+for(const [element,file] of [[top,'sr_gamers_banner.webp'],[bottom,'sr_kids_banner.webp']]){
+ const img=new Image();img.onload=()=>{if(img.naturalWidth>0){element.style.backgroundImage=`url("./${file}")`;element.classList.add('hasArtwork')}};
+ img.onerror=()=>{element.classList.remove('hasArtwork');if(COLLAGE_DEBUG)console.warn('Tap Rush banner unavailable:',file)};img.src=new URL(file,document.baseURI).href;
+}
+
+function layout(){
+const art=document.querySelector('.srPremiumHome');
+const home=!!art&&!document.querySelector('.worldMap,.game,.result,.srPauseOverlay,.srStoreOverlay,.srExitConfirm');
+layer.style.display=home?'block':'none';if(!home){const p=document.querySelector('.srStoreButton');if(p){for(const prop of ['top','bottom','left','right','transform','width','height','font-size'])p.style.removeProperty(prop)}return;}
+const rect=art.getBoundingClientRect(),premium=document.querySelector('.srStoreButton');
+const upperStart=Math.max(46,window.innerHeight*.045),upperHeight=Math.min(175,Math.max(0,rect.top-upperStart-9));
+top.style.top=upperStart+'px';top.style.height=upperHeight+'px';top.style.display=upperHeight>=65?'flex':'none';
+shareButton.style.display='block';
+const lowerStart=rect.bottom+3;
+const bottomLimit=window.innerHeight-18-59-6;
+const lowerHeight=Math.max(0,Math.min(158,bottomLimit-lowerStart));
+bottom.style.top=lowerStart+'px';bottom.style.height=lowerHeight+'px';
+bottom.style.display=lowerHeight>=16?'flex':'none';
+if(COLLAGE_DEBUG)layer.dataset.layout=`top:${Math.round(upperHeight)},bottom:${Math.round(lowerHeight)},viewport:${innerWidth}x${innerHeight}`;
+// Banner artwork remains separate from the approved game image.
+// When the available space is too short, hide banners instead of covering game controls.
+if(premium&&!premium.hidden){
+ premium.style.setProperty('top',(window.innerHeight-77)+'px','important');premium.style.setProperty('bottom','auto','important');
+ premium.style.setProperty('left','4%','important');premium.style.setProperty('right','auto','important');premium.style.setProperty('transform','none','important');
+ premium.style.setProperty('width','44%','important');premium.style.setProperty('height','59px','important');
+ premium.style.setProperty('font-size','clamp(13px,3.5vw,21px)','important');
+}
+shareButton.style.top=(window.innerHeight-77)+'px';shareButton.style.left='52%';shareButton.style.right='4%';shareButton.style.width='44%';shareButton.style.height='59px';
+}
+new MutationObserver(()=>requestAnimationFrame(layout)).observe(document.body,{childList:true,subtree:true});
+window.addEventListener('resize',layout);window.addEventListener('orientationchange',layout);
+document.addEventListener('load',layout,true);requestAnimationFrame(layout);
+})();</script></body>
 </html>

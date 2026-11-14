@@ -1,5 +1,5 @@
-const CACHE = 'tap-rush-offline-v4';
-const CORE = ['./', './index.html', './manifest.webmanifest', './assets/index-B_be548G.js', './assets/index-DJsOUZk8.css', './icon-192.png', './icon-512.png', './tap-rush-3d.webp', './jungle-trophy.webp', './city-trophy.webp', './space-trophy.webp', './water-trophy.webp', './himalaya-trophy.webp'];
+const CACHE = 'tap-rush-offline-v459';
+const CORE = ['./', './index.html', './manifest.webmanifest', './assets/index-web459.js', './assets/index-DJsOUZk8.css', './icon-192.png', './icon-512.png', './tap-rush-3d.webp', './jungle-trophy.webp', './city-trophy.webp', './space-trophy.webp', './water-trophy.webp', './himalaya-trophy.webp'];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
