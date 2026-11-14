@@ -237,10 +237,12 @@ jobs:
           gradle --version
           echo "Android SDK: $ANDROID_HOME"
           find app/build/outputs -maxdepth 5 -type f 2>/dev/null || true
+      - name: Give Tap Rush APK a unique build filename
+        run: cp app/build/outputs/apk/debug/app-debug.apk "app/build/outputs/apk/debug/Tap-Rush-Build-${GITHUB_RUN_NUMBER}.apk"
       - uses: actions/upload-artifact@v4
         with:
-          name: taprush-offline-debug-apk
-          path: android-taprush/app/build/outputs/apk/debug/*.apk
+          name: Tap-Rush-Build-${{ github.run_number }}
+          path: android-taprush/app/build/outputs/apk/debug/Tap-Rush-Build-*.apk
           if-no-files-found: error
 
       - name: Verify signed release bundle before publication artifact
