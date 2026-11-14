@@ -84,3 +84,9 @@ No Play Store 'ready' claim until a verified signed AAB, compliant listing/polic
 - Production gates: owner AdMob app and rewarded unit IDs, consent handling, test/production separation; trusted Play purchase verification, acknowledgement and durable entitlements; signed AAB and console testing. Never enable checkout before all purchase gates pass.
 - No reward for rating or review. Referral reward only after verified eligible new installation, with deduplication and abuse controls; not merely sharing a link. Daily login reward requires audit and repeat-claim protection.
 - Support email ownership and privacy publication still need confirmation. Final store assets must match real release build.
+
+## Approved visual baseline — Build 459
+- Preserve baseline/taprush-459-approved (58fb24b2a2ec46d59368433ed7f16ee0bdb4e8a5); owner confirmed premium pause artwork, Resume/timer and Back to Home on phone.
+- Artifact 14107165891, run 43577067476. Unique APK filenames prevent confusion with other games.
+- Owner elected to defer remaining world-specific manual testing to Play Console test stage, not waive tests before public rollout.
+- Production consent UI, verified billing and referral backend, privacy contact/publication and signed commercial AAB remain release gates. No public launch or payment activation until verified.
