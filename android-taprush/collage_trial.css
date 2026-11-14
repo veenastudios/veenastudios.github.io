@@ -24,3 +24,8 @@ body:has(.srPremiumHome) .srStoreButton{z-index:38!important;border:2px solid #f
 /* Task 3: preserve readable labels and touch target size on narrow Android phones. */
 @media(max-width:360px){.srCollageTrial .srCollageShare{font-size:12px!important;letter-spacing:0!important}.srCollageTrial a{left:2%;right:2%;border-radius:15px}}
 @media(prefers-reduced-motion:reduce){.srCollageTrial a,.srCollageTrial button{transition:none!important;animation:none!important}}
+
+/* Stable home positioning overrides the original centered premium placement. */
+body:has(.srPremiumHome):not(:has(.worldMap,.game,.result,.srStoreOverlay,.srPauseOverlay,.srExitConfirm)) .srStoreButton{position:fixed!important;top:auto!important;bottom:18px!important;left:4%!important;right:auto!important;transform:none!important;width:44%!important;height:59px!important;box-sizing:border-box!important}
+.srCollageTrial .srCollageShare{top:auto!important;bottom:18px!important;left:52%!important;right:auto!important;width:44%!important;height:59px!important}
+.srCollageTrial .hasArtwork{background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important}
