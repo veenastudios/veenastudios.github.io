@@ -57,11 +57,26 @@ if not (src/"index.html").is_file():
  sys.exit(1)
 if dst.exists():shutil.rmtree(dst)
 shutil.copytree(src,dst)
+# Android-only touch trial: preserve game rules and reject repeat input on a consumed target.
+touch_old='onPointerDown:L=>{F(z,L),dl(z)}'
+touch_new='onPointerDown:L=>{if(L.button!==0||L.currentTarget.dataset.srConsumed)return;L.preventDefault();L.currentTarget.dataset.srConsumed="1";F(z,L),dl(z)}'
+touch_files=[j for j in (dst/"assets").glob("*.js") if touch_old in j.read_text(encoding="utf-8")]
+assert len(touch_files)==1,"Unexpected gameplay input bundle"
+touch_js=touch_files[0].read_text(encoding="utf-8")
+assert touch_js.count(touch_old)==1,"Unexpected gameplay input handler count"
+touch_files[0].write_text(touch_js.replace(touch_old,touch_new),encoding="utf-8")
+
 shutil.copy2(site_source,dst/site_image)
 # Ship the approved-structure SR GAMERS hub in the offline APK.
 shutil.copy2(hub,dst/"game-hub.html")
 # Attach navigation only to the game's existing home shelf; never overlay active rounds.
 home_css="""<style id="taprush-mobile-home-fix">
+/* Tap targets retain the animation and accept input over the visible sprite. */
+.game .lane{touch-action:none;user-select:none}
+.game .target{touch-action:none;transition:none!important}
+.game .target::after{content:"";position:absolute;inset:-4px;pointer-events:auto}
+.game.jungleGame .target::after{inset:-25% -4px}
+.game:has(.srPauseOverlay) .target::after{pointer-events:none!important}
 /* Shared tactile feedback for all visible, enabled game controls. */
 /* Invisible image hit-zones must stay transparent to preserve approved artwork. */
 button:not(:disabled):not(.worldNode):not(.srHomePlay):not(.srHomeSettings):not(.srHomeCoins):not(.srCarouselPrev):not(.srCarouselNext):not(.gameCard):not(.srInvisibleHitbox),
