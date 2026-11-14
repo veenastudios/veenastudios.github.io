@@ -211,8 +211,22 @@ jobs:
           else
             echo "TAPRUSH_SIGNED=false" >> "$GITHUB_ENV"
           fi
+      - name: Validate production ad configuration before signed release
+        if: env.TAPRUSH_SIGNED == 'true'
+        env:
+          TAPRUSH_ADMOB_APP_ID: ${{ secrets.TAPRUSH_ADMOB_APP_ID }}
+          TAPRUSH_ADMOB_REWARDED_UNIT_ID: ${{ secrets.TAPRUSH_ADMOB_REWARDED_UNIT_ID }}
+        run: gradle :app:verifyProductionAdConfiguration --no-daemon
       - name: Build release AAB (signed only when secrets configured)
-        run: gradle :app:bundleRelease --no-daemon --stacktrace
+        env:
+          TAPRUSH_ADMOB_APP_ID: ${{ secrets.TAPRUSH_ADMOB_APP_ID }}
+          TAPRUSH_ADMOB_REWARDED_UNIT_ID: ${{ secrets.TAPRUSH_ADMOB_REWARDED_UNIT_ID }}
+        run: |
+          if [ "$TAPRUSH_SIGNED" = true ]; then
+            echo "::error::Commercial release blocked until production consent and verified billing are implemented."
+            exit 1
+          fi
+          gradle :app:bundleRelease --no-daemon --stacktrace
       - name: Remove temporary signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/taprush-release.jks"
