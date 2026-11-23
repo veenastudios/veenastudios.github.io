@@ -39,3 +39,26 @@ Status: organizational index, 2026-11-23. This is a directory guide, not proof t
 - Prisoner_of_Time_Chapter_10_Final.pdf (root; linked from book page)
 
 Next: inventory actual repository files, map references, copy assets to organized folders, update links, verify, then consider old-file cleanup.
+
+## Project directory index (folders created 2026-11-23)
+
+| Area | Folder | Status |
+| --- | --- | --- |
+| Novel | assets/books/prisoner-of-time/ | Folders ready; chapters not migrated |
+| Publishing | assets/books/veena-publishing/ | Folder ready; masters not migrated |
+| Pratilipi | assets/books/pratilipi-series/ | Folder ready; story files not migrated |
+| Tap Rush | assets/games/tap-rush/ | Folder ready; game source/build not migrated |
+| Brain Quiz | assets/games/brain-quiz/ | Folder ready; game source/build not migrated |
+| G2 | assets/games/g2/ | Folder ready; no verified build |
+| Flags & Capitals | assets/games/flags-and-capitals/ | Folder ready; implementation unverified |
+| Veena Shorts | assets/social/veena-shorts/ | Folder ready; videos not migrated |
+| Veena Originals | assets/social/veena-originals/ | Folder ready; media not migrated |
+| Quotes & Cards | assets/social/quotes-and-cards/ | Folder ready; media not migrated |
+| AI Reels | assets/social/ai-reels/ | Folder ready; videos not migrated |
+| Vishnu Design Studio | assets/apps/vishnu-design-studio/ | Folder ready; source/build not migrated |
+| Veena Wishes & Quotes | assets/apps/veena-wishes-quotes/ | Folder ready; source/build not migrated |
+| Brand | assets/brand/ | Folder ready; brand files not migrated |
+| Website | assets/site/ | Folder ready; live site files retain existing paths |
+
+### File register requirements
+For each actual file, record: project, filename, file type, version, approval status, public/private, verified location, backup location, and links that depend on it. **Do not mark a file archived until its bytes have been verified at its location.** Public GitHub Pages is not a private backup or a suitable repository for large video masters, private agreements, or secrets.
