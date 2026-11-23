@@ -651,6 +651,17 @@ section{padding:64px 0}.nav{flex-wrap:wrap;padding:18px 0;gap:14px}nav{flex-wrap
 #books .book-cover{max-height:calc(clamp(155px,54vw,300px) - 7px)}}
 @media(prefers-reduced-motion:reduce){#books .book{transition:none}#books .book:hover{transform:none}}
 </style>
+<style>
+#books .book-row{--gap:clamp(14px,4vw,42px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(26px,5vw,54px) var(--gap);max-width:860px;margin-inline:auto}
+#books .shelf-stage{position:relative;isolation:isolate;display:flex;justify-content:center;align-items:flex-end;width:100%;height:clamp(150px,61vw,410px);padding:0 10px 9px}
+#books .shelf-stage::before{content:"";position:absolute;z-index:-1;bottom:0;left:0;right:0;height:9px;background:linear-gradient(#b28152 0 2px,#684026 3px,#3a2218);box-shadow:0 7px 13px #0008}
+#books .book:nth-child(odd):not(:last-child) .shelf-stage::before{right:calc(var(--gap) / -2)}
+#books .book:nth-child(even) .shelf-stage::before{left:calc(var(--gap) / -2)}
+#books .book{min-width:0}#books .book:hover{transform:none}
+#books .shelf-volume{border-radius:2px 4px 4px 2px;box-shadow:3px 0 #e2d2b5,6px 0 #846d53,9px 12px 24px #000a;}
+#books .book-cover{max-height:calc(clamp(150px,61vw,410px) - 9px)}
+
+</style>
 </head><body><header><div class="container nav"><a class="logo" href="/">VEENA <span>STUDIOS</span></a><nav aria-label="Main navigation"><a href="/catalogue.html">Books</a><a href="/stories/">Stories &amp; Quotes</a><a href="/videos.html">Videos</a><a href="/games.html">Games</a><a href="/about.html">About</a><a href="/#contact">Contact</a></nav></div></header><main><section class="page-intro"><div class="container"><div class="section-tag">VEENA STUDIOS</div><h1>Our Books</h1><p>Veena Publishing · Original stories and ideas, one book at a time.</p></div></section><section class="books" id="books">
 <div class="container">
 
