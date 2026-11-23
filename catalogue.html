@@ -634,7 +634,24 @@ footer{
 </style><style>
 section{padding:64px 0}.nav{flex-wrap:wrap;padding:18px 0;gap:14px}nav{flex-wrap:wrap;gap:18px}.hero .buttons{gap:12px}.world-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:32px}.world-card{border:1px solid #e7bd6240;border-radius:24px;overflow:hidden;background:linear-gradient(145deg,#191d28,#0d111a);display:flex;flex-direction:column;transition:transform .2s,border-color .2s}.world-card:hover{transform:translateY(-3px);border-color:#e7bd62}.world-art{height:195px;width:100%;object-fit:cover}.world-copy{padding:24px}.world-copy h3{font-family:Georgia,serif;font-size:30px;color:#fff4dc}.world-copy p{color:#b9bbc5;margin:8px 0 20px}.world-copy span{display:inline-block;background:#e7bd62;color:#111;padding:10px 20px;border-radius:30px;font-weight:bold}.compact-about{background:#0d111b}.compact-about p{max-width:760px;color:#b9bbc5;margin-top:18px}.compact-soon{padding:30px 0;border-block:1px solid #e7bd6225}.compact-soon .container{display:flex;flex-wrap:wrap;gap:18px;align-items:center}.connect-grid{display:grid;grid-template-columns:1fr auto;gap:35px;align-items:center}.connect-qr{text-align:center}.connect-qr img{display:block;width:112px;height:112px;background:white;padding:8px;border-radius:12px;margin:auto}.connect-qr p{font-size:12px;color:#e7bd62;margin-top:10px}.page-intro{padding-bottom:0}.page-intro h1{font-size:clamp(36px,6vw,64px);letter-spacing:-1.5px;line-height:1.15}.page-intro p{color:#b9bbc5;margin-top:15px}.reading-panel{padding:28px;border:1px solid #e7bd6240;border-radius:22px;background:#111724;margin-top:25px}.reading-panel h2{font-size:26px}.reading-panel p{color:#b9bbc5;margin-top:12px}.quote-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px}.quote-grid blockquote{border-left:2px solid #e7bd62;padding:24px;background:#111724;border-radius:0 20px 20px 0;font-size:20px;line-height:1.8}.quote-grid cite{display:block;font-size:14px;color:#e7bd62;margin-top:16px}.section-title{letter-spacing:-1px}a:focus-visible,button:focus-visible{outline:3px solid #e7bd62;outline-offset:5px}.site-share-btn{margin-top:14px}.book-feature .buttons{margin-top:22px}.book-feature video{width:170px!important}.book-feature{border-block:1px solid #e7bd6220}nav a{white-space:nowrap}
 @media(max-width:800px){nav{display:flex;font-size:12px;gap:10px 16px}.nav{gap:12px}.logo{font-size:18px}.world-grid,.quote-grid,.connect-grid{grid-template-columns:1fr}.world-art{height:185px}.world-copy{padding:22px}.hero-grid{gap:26px!important}.creator{min-height:390px!important}.connect-qr{display:flex;align-items:center;gap:18px;text-align:left}.connect-qr img{margin:0;width:96px;height:96px}.section-title{font-size:34px}.hero p{font-size:16px}.book-feature .container{gap:24px!important}.book-feature video{width:145px!important}.book-feature h2{font-size:29px!important}.book-row{gap:20px}}
-</style></head><body><header><div class="container nav"><a class="logo" href="/">VEENA <span>STUDIOS</span></a><nav aria-label="Main navigation"><a href="/catalogue.html">Books</a><a href="/stories/">Stories &amp; Quotes</a><a href="/videos.html">Videos</a><a href="/games.html">Games</a><a href="/about.html">About</a><a href="/#contact">Contact</a></nav></div></header><main><section class="page-intro"><div class="container"><div class="section-tag">VEENA STUDIOS</div><h1>Our Books</h1><p>Veena Publishing · Original stories and ideas, one book at a time.</p></div></section><section class="books" id="books">
+</style><style>
+/* Catalogue bookshelf */
+#books .book-row{grid-template-columns:repeat(4,minmax(0,1fr));gap:38px 26px}
+#books .book{min-height:0;padding:0;border:0;border-radius:0;background:none;justify-content:flex-start}
+#books .shelf-stage{height:clamp(220px,27vw,330px);display:flex;justify-content:center;align-items:flex-end;padding:0 9px 7px;position:relative;margin-bottom:15px}
+#books .shelf-stage::before{content:"";position:absolute;inset:auto 0 0;height:6px;background:linear-gradient(180deg,#7d6140,#392c26);border-radius:2px;box-shadow:0 5px 12px #0007}
+#books .shelf-volume{position:relative;display:inline-flex;max-width:100%;max-height:100%;box-shadow:3px 0 0 #e2d2b5,6px 0 0 #84715b,8px 7px 13px #000a;border-radius:2px 3px 3px 2px}
+#books .shelf-volume::after{content:"";position:absolute;inset:0 auto 0 0;width:10px;background:linear-gradient(90deg,#0008,transparent);pointer-events:none}
+#books .book-cover{width:auto;max-width:100%;height:auto;max-height:calc(clamp(220px,27vw,330px) - 7px);margin:0;border-radius:2px 3px 3px 2px;background:none;object-fit:contain}
+#books .book h3{font-size:clamp(17px,2vw,24px);line-height:1.3}
+#books .book-number{font-size:10px;letter-spacing:1.4px}
+#books .book p{line-height:1.55}
+@media(max-width:800px){#books .book-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 16px}
+#books .shelf-stage{height:clamp(155px,54vw,300px)}
+#books .book-cover{max-height:calc(clamp(155px,54vw,300px) - 7px)}}
+@media(prefers-reduced-motion:reduce){#books .book{transition:none}#books .book:hover{transform:none}}
+</style>
+</head><body><header><div class="container nav"><a class="logo" href="/">VEENA <span>STUDIOS</span></a><nav aria-label="Main navigation"><a href="/catalogue.html">Books</a><a href="/stories/">Stories &amp; Quotes</a><a href="/videos.html">Videos</a><a href="/games.html">Games</a><a href="/about.html">About</a><a href="/#contact">Contact</a></nav></div></header><main><section class="page-intro"><div class="container"><div class="section-tag">VEENA STUDIOS</div><h1>Our Books</h1><p>Veena Publishing · Original stories and ideas, one book at a time.</p></div></section><section class="books" id="books">
 <div class="container">
 
   <div class="section-tag">VEENA PUBLISHING</div>
@@ -646,16 +663,16 @@ section{padding:64px 0}.nav{flex-wrap:wrap;padding:18px 0;gap:14px}nav{flex-wrap
   </p>
 
   <div class="book-row">
-<a class="book" href="/books/prisoner-of-time-or-destiny.html"><img class="book-cover" src="/a_cinematic_high_detail_sci_fi_thriller_poster_wi.png" alt="Prisoner of Time or Destiny official poster" loading="lazy"><div class="book-number">VEENA STUDIOS ORIGINAL · 3 PARTS</div><h3>Prisoner of Time or Destiny?</h3><p>Science fiction, mystery and destiny. Explore the series.</p></a>
+<a class="book" href="/books/prisoner-of-time-or-destiny.html"><div class="shelf-stage"><span class="shelf-volume"><img class="book-cover" src="/a_cinematic_high_detail_sci_fi_thriller_poster_wi.png" alt="Prisoner of Time or Destiny official poster" loading="lazy"></span></div><div class="book-number">VEENA STUDIOS ORIGINAL · 3 PARTS</div><h3>Prisoner of Time or Destiny?</h3><p>Science fiction, mystery and destiny. Explore the series.</p></a>
 
-    <a class="book" href="/books/aakash-ki-zameeni-udaan.html" aria-label="Open आकाश की ज़मीनी उड़ान details"><img class="book-cover" src="/VS-001-Aakash-Ki-Zameeni-Udaan.png" alt="आकाश की ज़मीनी उड़ान book cover">
+    <a class="book" href="/books/aakash-ki-zameeni-udaan.html" aria-label="Open आकाश की ज़मीनी उड़ान details"><div class="shelf-stage"><span class="shelf-volume"><img class="book-cover" src="/VS-001-Aakash-Ki-Zameeni-Udaan.png" alt="आकाश की ज़मीनी उड़ान book cover"></span></div>
       <div class="book-number">VS-001</div>
       <h3>आकाश की ज़मीनी उड़ान</h3>
       <p>संघर्ष से अकेलेपन तक की कहानी।</p>
     </a>
 
     <a class="book" href="/books/the-grounded-wings.html" aria-label="Open The Grounded Wings details">
-      <img class="book-cover" src="VS-002-The-Grounded-Wings.png" alt="The Grounded Wings book cover">
+      <div class="shelf-stage"><span class="shelf-volume"><img class="book-cover" src="VS-002-The-Grounded-Wings.png" alt="The Grounded Wings book cover"></span></div>
       <div class="book-number">VS-002</div>
       <h3>The Grounded Wings</h3>
       <p>
@@ -665,7 +682,7 @@ section{padding:64px 0}.nav{flex-wrap:wrap;padding:18px 0;gap:14px}nav{flex-wrap
     </a>
 
     <a class="book" href="/books/love.html" aria-label="Open LOVE book details">
-      <img class="book-cover" src="LOVE-The-Complete-Guide.png" alt="LOVE The Complete Guide book cover">
+      <div class="shelf-stage"><span class="shelf-volume"><img class="book-cover" src="LOVE-The-Complete-Guide.png" alt="LOVE The Complete Guide book cover"></span></div>
       <div class="book-number">VEENA PUBLISHING</div>
       <h3>LOVE</h3>
       <p>
